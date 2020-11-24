@@ -2,7 +2,7 @@ import sys, os
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
-import SecondWindow
+from GUI import SecondWindow
 
 class MemoryDialog(QDialog):
     def __init__(self):
