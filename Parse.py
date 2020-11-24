@@ -23,11 +23,3 @@ if __name__ == "__main__":
 
     print("[*] Parsing Registry")
     os.system('python RegistryParse\REGParse.py REGHIVE\SYSTEM REGHIVE\SOFTWARE REGHIVE\SAM REGHIVE\82102.NTUSER.DAT REGHIVE\82102.USRCLASS.DAT')
-
-'''
-Need Library
-pip install pypiwin32
-pip install pytz
-pip install beautifulsoup4
-pip install lxml
-'''

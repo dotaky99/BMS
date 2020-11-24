@@ -7,7 +7,6 @@ import string
 from ctypes  import windll
 import getpass
 
-
 def get_drives():
     drives = []
     bitmask = windll.kernel32.GetLogicalDrives()
@@ -41,9 +40,9 @@ def file_copy():
     if not os.path.isdir(reg_dir):
         os.mkdir(reg_dir)
     for r in reg:
-        os.system(r'RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}\REGHIVE'.format(reg_path,r,cur_path))
-    os.system(r'RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
-    os.system(r'RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
+        os.system(r'COPY\RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}\REGHIVE'.format(reg_path,r,cur_path))
+    os.system(r'COPY\RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
+    os.system(r'COPY\RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
 
 
     # mft ./NTFS
@@ -52,26 +51,16 @@ def file_copy():
     if not os.path.isdir(nt_dir):
         os.mkdir(nt_dir)
     for drive in drive_list:
-        os.system(r'RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
-    os.system(r'ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\NTFS /OutputName:$UsnJrnl'.format(cur_path))
+        os.system(r'COPY\RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
+    os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
-
-    # 이벤트로그 ./EVENTLOG
-    '''
-    evtx_list = os.listdir(eventlog_path)
-    if not os.path.isdir(evtx_dir):
-        os.mkdir(evtx_dir)
-    for e in evtx_list:
-        os.system(r'RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}\EVENTLOG'.format(eventlog_path2, e, cur_path))
-    '''
-    os.system(r'forecopy_handy.exe -e {}'.format(cur_path)) # ./eventlogs/Logs
-
+    # Event Log
+    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path)) # ./eventlogs/Logs
 
     # 브라우저 ./BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" ./BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default\Cache" ./BROWSER/Cache'.format(cur_user_dir))
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default\GPUCache" ./BROWSER/GPUCache'.format(cur_user_dir))
-
 
     # 바로가기 ./LNK
     lnk_list = ['C:\\Users\\Default','%UserProfile%']
