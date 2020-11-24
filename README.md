@@ -13,7 +13,7 @@
   
 
 ### 설치 라이브러리
-
+(no module named 에러 해결 방법)
 - File->Setting->Project:[Name] -> python Interpreter 에서 라이브러리 add
 
 - beautifulsoup4
