@@ -1,9 +1,9 @@
 # BMS
 ### 사용법
-(무조건 수정된 소스코만 commit할 것, db 및 다른거 XX)
+(무조건 수정된 소스코만 commit할 것, db 및 다른거 복사된 파일 커밋 금지) 
 1. VCS -> Commit
-2. VCS -> Git -> Push
-
+2. VCS -> Git -> Push(단축키 : Ctrl + Shift + K)
+3. commit 메시지는 [본인이름 + add/edit 등등 적기]
 ### 주의사항
 
 - 프로그램 실행할 때 관리자권한으로 실행할 것
@@ -22,7 +22,6 @@
 - lxml
 - python-evtx
 - 등등 더 있음
-
 
 
 ### 프로그램 실행순서
