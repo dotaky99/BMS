@@ -100,8 +100,11 @@ def PC_Processing(file_et):
                                             reason = 'System time synchronized with the hardware clock.'
                                         elif data.string == '3':
                                             reason = 'System time adjusted to the new time zone.'
-                            # evt num = 1
-                            elif soup.version.string == '3':
+                        except:
+                            pass
+                        # evt num = 1
+                        try:
+                            if soup.version.string == '3':
                                 detailed = file_et[each_et][eventid]
                                 for data in soup.findAll('data'):
                                     if 'SleepTime' == data['name']:
@@ -109,7 +112,7 @@ def PC_Processing(file_et):
                                     if 'WakeTime' == data['name']:
                                         wake_time = data.string
                         except:
-                            continue
+                            pass
 
                     if eventid == '22' and soup.task.string == '8':
                         detailed = file_et[each_et][eventid]
@@ -175,11 +178,14 @@ def PC_Processing(file_et):
                 # 애플리케이션 이벤트 파일에서 선별된 이벤트만을 파싱
                 if 'Application' in each_et and eventid in file_et[each_et]:
                     if eventid == '1002':
-                        detailed = file_et[each_et][eventid]
-                        temp = ((soup.data.string).replace('<string>', '').replace('</string>','')).split('\n')
-                        app_name = temp[0]
-                        app_version = temp[1]
-                        app_path = temp[5]
+                        try:
+                            detailed = file_et[each_et][eventid]
+                            temp = ((soup.data.string).replace('<string>', '').replace('</string>','')).split('\n')
+                            app_name = temp[0]
+                            app_version = temp[1]
+                            app_path = temp[5]
+                        except:
+                            pass
 
                 # 보안 이벤트 파일
                 if 'Security' in each_et and eventid in file_et[each_et]:
