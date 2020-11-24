@@ -21,6 +21,7 @@
 - pytz
 - lxml
 - python-evtx
+- pycryptodomex
 - 등등 더 있음
 
 
