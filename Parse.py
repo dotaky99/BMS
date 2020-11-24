@@ -2,7 +2,7 @@ from EventLogParse import Save_Event
 from LnkParse import Lnk_Parse
 from BrowserParse import BrowserParser
 from PretchParse import Prefetch_Parse
-# import MFT_Parser
+# import NTFSParse
 import os
 
 if __name__ == "__main__":
