@@ -13,14 +13,15 @@
   
 
 ### 설치 라이브러리
-
-- File->Setting->Project:[Name] -> python Interpreter 에서 라이브러리 add
+(no module named 에러 해결 방법)
+- File->Setting->Project:[Name] -> python Interpreter 에서 라이브러리 add(+버튼)
 
 - beautifulsoup4
 - pypiwin32
 - pytz
 - lxml
 - python-evtx
+- pycryptodomex
 - 등등 더 있음
 
 
