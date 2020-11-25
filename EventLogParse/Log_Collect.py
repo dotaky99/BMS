@@ -18,7 +18,7 @@ def PC_Processing(file_et):
     ---------------------------------------------------
     '''
     for each_et in file_et:
-        print('[*]{0}'.format(each_et))
+        print('     [*] {0}'.format(each_et))
         # 로그 추출
         with evtx.Evtx(each_et) as log:
             #변수 초기화 작업 있으면 좋을 듯
