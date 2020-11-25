@@ -28,7 +28,6 @@ def file_copy():
 
     nt_dir = "./COPY/NTFS"
     reg_dir = "./COPY/REGHIVE"
-    #evtx_dir = "./EVENTLOG"
 
     # prefetch BMS/COPY/PREFETCH
     os.system('robocopy {} ./PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
