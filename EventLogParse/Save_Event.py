@@ -1,22 +1,73 @@
 from EventLogParse import Log_Collect
 import Database
+import os
 
 def Save_Event():
-    system_et = 'eventlogs/Logs/System.evtx'
-    security_et = 'eventlogs/Logs/Security.evtx'
-    application_et = 'eventlogs/Logs/Application.evtx'
-    setup_et = 'eventlogs/Logs/Setup.evtx'
-    compat_assistant_et = 'eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'
-    terminal_local_et = 'eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'
-    terminal_remote_et = 'eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'
-    terminal_rdp_et = 'eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'
-    wlan_config_et = 'eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'
-    net_profile_et = 'eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'
-    kernel_boot_et = 'eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'
-    partition_et = 'eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'
-    biometrics_et = 'eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/System.evtx'):
+        system_et = 'COPY/eventlogs/Logs/System.evtx'
+    else:
+        system_et = 'system_et'
 
-    #pc on/off and sleep mode
+    if os.path.isfile('COPY/eventlogs/Logs/Security.evtx'):
+        security_et = 'COPY/eventlogs/Logs/Security.evtx'
+    else:
+        security_et = 'security_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Application.evtx'):
+        application_et = 'COPY/eventlogs/Logs/Application.evtx'
+    else:
+        application_et = 'application_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/setup.evtx'):
+        setup_et = 'COPY/eventlogs/Logs/Setup.evtx'
+    else:
+        setup_et = 'setup_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'):
+        compat_assistant_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'
+    else:
+        compat_assistant_et = 'compat_assistant_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'):
+        terminal_local_et = 'COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'
+    else:
+        terminal_local_et = 'terminal_local_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'):
+        terminal_remote_et = 'COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'
+    else:
+        terminal_remote_et = 'terminal_remote_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'):
+        terminal_rdp_et = 'COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'
+    else:
+        terminal_rdp_et = 'terminal_rdp_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'):
+        wlan_config_et = 'COPY/eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'
+    else:
+        wlan_config_et = 'wlan_config_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'):
+        net_profile_et = 'COPY/eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'
+    else:
+        net_profile_et = 'net_profile_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'):
+        kernel_boot_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'
+    else:
+        kernel_boot_et = 'kernel_boot_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'):
+        partition_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'
+    else:
+        partition_et = 'partition_et'
+
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'):
+        biometrics_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'
+    else:
+        biometrics_et = 'biometrics_et'
+
     all_information = {
         biometrics_et:{
           '1004':'Login Success using fingerprint recognition.', '1005':'Login Failed using fingerprint recognition.'
@@ -84,7 +135,16 @@ def Save_Event():
             '1002': 'Kill process'
         }
     }
+    # if evtx file is not exist in pc, delete in dictionary
+    del_list = []
+    for tmp in all_information:
+        if "/" not in tmp:
+            del_list.append(tmp)
 
+    for tmp in del_list:
+        del all_information[tmp]
+
+    # evtx processing
     data_list = Log_Collect.PC_Processing(all_information)
-
+    # data insert in DB
     Database.Event_Log_Database(data_list)
