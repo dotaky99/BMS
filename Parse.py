@@ -3,6 +3,7 @@ from LnkParse import Lnk_Parse
 from BrowserParse import BrowserParser
 from PretchParse import Prefetch_Parse
 from NTFSParse import MFT_Parser, UsnJrnl_Parser
+import os
 
 if __name__ == "__main__":
     print("[*] Parsing Event Log")
