@@ -26,9 +26,9 @@ def file_copy():
     reg = ['SAM', 'SECURITY', 'SOFTWARE', 'SYSTEM']
     cur_user_dir = r"C:\Users"+"\\"+getpass.getuser()
 
-    nt_dir = "./NTFS"
-    reg_dir = "./REGHIVE"
-    evtx_dir = "./EVENTLOG"
+    nt_dir = "./COPY/NTFS"
+    reg_dir = "./COPY/REGHIVE"
+    #evtx_dir = "./EVENTLOG"
 
     # prefetch BMS/COPY/PREFETCH
     os.system('robocopy {} ./PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
