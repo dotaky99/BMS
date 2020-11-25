@@ -139,7 +139,7 @@ def main():
     data_list = []
 
     for a in lnk_lists:
-        print(a)
+
         indata = open(a, 'rb')
         x = LnkParse.lnk_file(indata)
         #shell_link_header
