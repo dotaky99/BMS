@@ -19,19 +19,16 @@ def file_copy():
     # path
     cur_path = os.getcwd()
     prefetch_path = "C:/Windows/Prefetch"
-    eventlog_path = "C:\windows\sysnative\winevt\logs" #https://nroses-taek.tistory.com/337
-    eventlog_path2 = "C:\Windows\System32\winevt\Logs"
 
     reg_path = "C:\Windows\System32\config"
     reg = ['SAM', 'SECURITY', 'SOFTWARE', 'SYSTEM']
     cur_user_dir = r"C:\Users"+"\\"+getpass.getuser()
 
-    nt_dir = "./NTFS"
-    reg_dir = "./REGHIVE"
-    evtx_dir = "./EVENTLOG"
+    nt_dir = "./COPY/NTFS"
+    reg_dir = "./COPY/REGHIVE"
 
     # prefetch BMS/COPY/PREFETCH
-    os.system('robocopy {} ./PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
+    os.system('robocopy {} ./COPY/PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
 
     # registry BMS/COPY/REGHIVE
     if not os.path.isdir(reg_dir):
@@ -50,8 +47,8 @@ def file_copy():
         os.system(r'COPY\RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\COPY\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
     os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\COPY\NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
-    # Event Log
-    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path)) # ./eventlogs/Logs
+    # Event Log BMS/COPY/eventlogs/Logs
+    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path))
 
     # 브라우저 BMS/COPY/BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" ./COPY/BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))
