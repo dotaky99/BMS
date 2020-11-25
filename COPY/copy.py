@@ -41,7 +41,7 @@ def file_copy():
     os.system(r'COPY\RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
     os.system(r'COPY\RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
 
-
+    #Hello world
     # mft ./NTFS
     drive_list = get_drives()
 
