@@ -949,11 +949,5 @@ def Browser_parser():
     Database.browser_db_insert(url_data_list_2, autofill_data_list_2, bookmark_data_list_2, cookie_data_list_2,
                                 login_data_list_2, pref_data_list_2, keyword_data_list_2, download_data_list_2, cloud_data_list_2)
 
-
-if __name__ == "__main__":
-    Browser_parser()
-
-    cache_parser.get_cache('Cache', 'Cache')
-    cache_parser.get_cache('cache', 'GPUCache')
-
-    print("success")
+    CacheParser.get_cache('Cache', 'Cache')
+    CacheParser.get_cache('cache', 'GPUCache')
