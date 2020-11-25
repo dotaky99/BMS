@@ -50,8 +50,8 @@ def file_copy():
         os.system(r'COPY\RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\COPY\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
     os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\COPY\NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
-    # Event Log
-    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path)) # ./eventlogs/Logs
+    # Event Log BMS/COPY/eventlogs/Logs
+    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path))
 
     # 브라우저 BMS/COPY/BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" ./COPY/BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))
