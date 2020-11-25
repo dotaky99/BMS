@@ -3,6 +3,7 @@ from LnkParse import Lnk_Parse
 from BrowserParse import BrowserParser
 from PretchParse import Prefetch_Parse
 from NTFSParse import MFT_Parser, UsnJrnl_Parser
+import os
 
 if __name__ == "__main__":
     print("[*] Parsing Event Log")
@@ -22,7 +23,6 @@ if __name__ == "__main__":
 
     print("[*] Parsing $UsnJrnl")
     UsnJrnl_Parser.usn_parse()
-
 
     # print("[*] Parsing Registry")
     # os.system('python RegistryParse\REGParse.py COPY\REGHIVE\SYSTEM COPY\REGHIVE\SOFTWARE COPY\REGHIVE\SAM COPY\REGHIVE\\NTUSER.DAT COPY\REGHIVE\\USRCLASS.DAT')
