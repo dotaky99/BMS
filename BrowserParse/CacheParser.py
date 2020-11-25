@@ -443,9 +443,9 @@ def get_cache(self, dir_name, row_type=None):
     results = []
 
     if dir_name == 'Cache':
-        path = os.path.join('COPY\\BROWSER\\Cache', dir_name)
+        path = os.path.join('COPY\\BROWSER', dir_name)
     elif dir_name =='GPUCache':
-        path = os.path.join('COPY\\BROWSER\\GPUCache', dir_name)
+        path = os.path.join('COPY\\BROWSER', dir_name)
 
     cacheBlock = CacheBlock(os.path.join(path, 'index'))
 
