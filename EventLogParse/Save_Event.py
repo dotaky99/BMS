@@ -135,7 +135,7 @@ def Save_Event():
             '1002': 'Kill process'
         }
     }
-
+    # if evtx file is not exist in pc, delete in dictionary
     del_list = []
     for tmp in all_information:
         if "/" not in tmp:
@@ -144,6 +144,7 @@ def Save_Event():
     for tmp in del_list:
         del all_information[tmp]
 
+    # evtx processing
     data_list = Log_Collect.PC_Processing(all_information)
-
+    # data insert in DB
     Database.Event_Log_Database(data_list)
