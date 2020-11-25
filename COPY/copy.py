@@ -48,7 +48,7 @@ def file_copy():
     os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\COPY\NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
     # Event Log BMS/COPY/eventlogs/Logs
-    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path))
+    os.system(r'COPY\forecopy_handy.exe -e {}\COPY'.format(cur_path))
 
     # Browser BMS/COPY/BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" ./COPY/BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))
