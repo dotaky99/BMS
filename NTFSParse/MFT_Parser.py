@@ -3,8 +3,12 @@ import Database
 from NTFSParse.ntfs import MFT, Attributes, WSL, Format
 
 def parsing(): ## MAIN ##
-    mft_path = "../COPY/NTFS/"
-    mft_list = os.listdir(mft_path)
+    mft_path = "./COPY/NTFS/"
+    mft_list = []
+
+    for f in os.listdir(mft_path):
+        if f.endswith("mft"):
+            mft_list.append(f)
     mft_list.sort()
 
     data_list = []
@@ -16,7 +20,7 @@ def parsing(): ## MAIN ##
 
 def mft_parse(mft_file, data_list):
     drive_name = mft_file.split('_')[0]
-    mft_file = './NTFS/'+mft_file
+    mft_file = './COPY/NTFS/'+mft_file
     input_file = open(mft_file, 'rb')
 
     mft = MFT.MasterFileTableParser(input_file)
@@ -250,5 +254,3 @@ def mft_parse(mft_file, data_list):
                     drive_name, Format.format_source('Slack', source_tag), '?', '?', '?', '', file_path, '', '', '', '', '', '?', '?', '?',
                     '?', '', '?', '', '', '', '')
                     data_list.append(t)
-
-parsing()
