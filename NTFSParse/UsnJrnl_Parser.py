@@ -2,11 +2,11 @@ from NTFSParse.ntfs import MFT, USN, Format
 import Database
 
 def usn_parse():
-    usn_path = "../COPY/NTFS/$UsnJrnl"
-    mft_path = "../COPY/NTFS/C_mft"
+    usn_path = "./COPY/NTFS/$UsnJrnl"
+    mft_path = "./COPY/NTFS/C_mft"
 
     input_file = open(usn_path, 'rb')
-    input_mft = open(mft_path,' rb')
+    input_mft = open(mft_path, 'rb')
 
     usn_journal = USN.ChangeJournalParser(input_file)
     mft_file = MFT.MasterFileTableParser(input_mft)

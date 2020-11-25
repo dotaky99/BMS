@@ -127,7 +127,8 @@ def allfile(path):
 
 def files_parse():
     path_dir = 'COPY/LNK/'
-    lnk_lists = allfile(path_dir)
+    files_list = allfile(path_dir)
+    lnk_lists = lnk_parse(files_list)
     return lnk_lists
 
 def main():
@@ -138,7 +139,7 @@ def main():
     data_list = []
 
     for a in lnk_lists:
-        print(a)
+
         indata = open(a, 'rb')
         x = LnkParse.lnk_file(indata)
         #shell_link_header

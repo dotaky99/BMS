@@ -3,8 +3,12 @@ import Database
 from NTFSParse.ntfs import MFT, Attributes, WSL, Format
 
 def parsing(): ## MAIN ##
-    mft_path = "../COPY/NTFS/"
-    mft_list = os.listdir(mft_path)
+    mft_path = "./COPY/NTFS/"
+    mft_list = []
+
+    for f in os.listdir(mft_path):
+        if f.endswith("mft"):
+            mft_list.append(f)
     mft_list.sort()
 
     data_list = []
@@ -16,7 +20,7 @@ def parsing(): ## MAIN ##
 
 def mft_parse(mft_file, data_list):
     drive_name = mft_file.split('_')[0]
-    mft_file = './NTFS/'+mft_file
+    mft_file = './COPY/NTFS/'+mft_file
     input_file = open(mft_file, 'rb')
 
     mft = MFT.MasterFileTableParser(input_file)
@@ -94,13 +98,13 @@ def mft_parse(mft_file, data_list):
         if objid_time is None:
             objid_time = ''
         else:
-            objid_time = format_timestamp(objid_time)
+            objid_time = Format.format_timestamp(objid_time)
 
         if attr_standard_information is not None:
-            si_mtime = format_timestamp(attr_standard_information.get_mtime())
-            si_atime = format_timestamp(attr_standard_information.get_atime())
-            si_ctime = format_timestamp(attr_standard_information.get_ctime())
-            si_etime = format_timestamp(attr_standard_information.get_etime())
+            si_mtime = Format.format_timestamp(attr_standard_information.get_mtime())
+            si_atime = Format.format_timestamp(attr_standard_information.get_atime())
+            si_ctime = Format.format_timestamp(attr_standard_information.get_ctime())
+            si_etime = Format.format_timestamp(attr_standard_information.get_etime())
             si_usn = attr_standard_information.get_usn()
         else:
             si_mtime = ''
@@ -250,5 +254,3 @@ def mft_parse(mft_file, data_list):
                     drive_name, Format.format_source('Slack', source_tag), '?', '?', '?', '', file_path, '', '', '', '', '', '?', '?', '?',
                     '?', '', '?', '', '', '', '')
                     data_list.append(t)
-
-parsing()
