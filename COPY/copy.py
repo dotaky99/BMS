@@ -19,8 +19,6 @@ def file_copy():
     # path
     cur_path = os.getcwd()
     prefetch_path = "C:/Windows/Prefetch"
-    eventlog_path = "C:\windows\sysnative\winevt\logs" #https://nroses-taek.tistory.com/337
-    eventlog_path2 = "C:\Windows\System32\winevt\Logs"
 
     reg_path = "C:\Windows\System32\config"
     reg = ['SAM', 'SECURITY', 'SOFTWARE', 'SYSTEM']
@@ -30,7 +28,7 @@ def file_copy():
     reg_dir = "./COPY/REGHIVE"
 
     # prefetch BMS/COPY/PREFETCH
-    os.system('robocopy {} ./PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
+    os.system('robocopy {} ./COPY/PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
 
     # registry BMS/COPY/REGHIVE
     if not os.path.isdir(reg_dir):
