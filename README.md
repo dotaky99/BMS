@@ -30,7 +30,11 @@
 ### 프로그램 실행순서
 
 1. copy.py 실행
+- python COPY\copy.py
+
 2. Parse.py 실행
+- python Parse.py
+
 3. DB생성
 
 

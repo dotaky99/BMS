@@ -111,7 +111,7 @@ def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5
     dest.close()
 
 def cache_db_insert(data_list):
-    dest = sqlite3.connect("Believe_Me_Sister_Browser.db")
+    dest = sqlite3.connect("Believe_Me_Sister.db")
     d_cur = dest.cursor()
 
     sql="INSERT INTO cache (type, timestamp, url, status, value, etag, last_modified, server_name, data_location, all_http_headers) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"

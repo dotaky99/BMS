@@ -392,12 +392,12 @@ class CacheEntry():
                      self.last_modified, self.server_name, self.location,
                      self.http_headers_str]
                 cache_data_list_2.append(cache_data_list)
+
             else:
                 cache_data_list=[row_type, change_form(str(self.timestamp)), self.url, self.name, self.value, self.etag,
                      change_last_modified_time(self.last_modified), self.server_name, self.location,
                      self.http_headers_str]
                 cache_data_list_2.append(cache_data_list)
-
 
     def keyToStr(self):
         """
@@ -444,7 +444,7 @@ def get_cache(self, dir_name, row_type=None):
 
     if dir_name == 'Cache':
         path = os.path.join('COPY\\BROWSER', dir_name)
-    elif dir_name =='GPUCache':
+    elif dir_name == 'GPUCache':
         path = os.path.join('COPY\\BROWSER', dir_name)
 
     cacheBlock = CacheBlock(os.path.join(path, 'index'))
@@ -467,7 +467,6 @@ def get_cache(self, dir_name, row_type=None):
             while entry.next != 0:
                 entry = CacheEntry(CacheAddress(entry.next, path=path),
                                    'Cache', pytz.timezone('UTC'))
-
 
     Database.cache_db_insert(cache_data_list_2)
 
