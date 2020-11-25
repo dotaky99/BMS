@@ -431,7 +431,6 @@ class CacheEntry():
 
 
 def get_cache(self, dir_name, row_type=None):
-    print("hello cache")
     """
     read the index file to walk whole cache // from cacheParse.py
 
