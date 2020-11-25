@@ -6,17 +6,17 @@ from NTFSParse import MFT_Parser, UsnJrnl_Parser
 import os
 
 if __name__ == "__main__":
-    # print("[*] Parsing Event Log")
-    # Save_Event.Save_Event()
-    #
-    # print("[*] Parsing Lnk")
-    # Lnk_Parse.main()
-    #
-    # print("[*] Parsing Browser")
-    # BrowserParser.Browser_parser()
-    #
-    # print("[*] Parsing Prefetch")
-    # Prefetch_Parse.main()
+    print("[*] Parsing Event Log")
+    Save_Event.Save_Event()
+
+    print("[*] Parsing Lnk")
+    Lnk_Parse.main()
+
+    print("[*] Parsing Browser")
+    BrowserParser.Browser_parser()
+
+    print("[*] Parsing Prefetch")
+    Prefetch_Parse.main()
 
     print("[*] Parsing $MFT")
     MFT_Parser.parsing()
