@@ -13,7 +13,7 @@ import codecs
 second_data_list1 = []
 second_data_list2 = []
 
-path_dir = 'PREFETCH/'
+path_dir = 'COPY/PREFETCH/'
 file_list = os.listdir(path_dir)
 
 class Prefetch(object):
