@@ -22,4 +22,4 @@ if __name__ == "__main__":
     # MFT_Parser.parsing()
 
     print("[*] Parsing Registry")
-    os.system('python RegistryParse\REGParse.py REGHIVE\SYSTEM REGHIVE\SOFTWARE REGHIVE\SAM REGHIVE\\NTUSER.DAT REGHIVE\\USRCLASS.DAT')
+    os.system('python RegistryParse\REGParse.py COPY\REGHIVE\SYSTEM COPY\REGHIVE\SOFTWARE COPY\REGHIVE\SAM COPY\REGHIVE\\NTUSER.DAT COPY\REGHIVE\\USRCLASS.DAT')
