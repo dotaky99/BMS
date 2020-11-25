@@ -319,7 +319,7 @@ class DecompressWin10(object):
 
         return bytearray(ntDecompressed)
 
-
+#Execute
 def main():
     for i in file_list:
         if i.endswith(".pf"):

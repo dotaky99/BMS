@@ -18,7 +18,7 @@ def Browser_parser():
     s_cur2 = source2.cursor() #autofill 파싱
     s_cur3 = source3.cursor() #쿠키 파싱
     s_cur4 = source4.cursor() #login 파싱
-    s_cur5 = source1.cursor() #download 파싱
+    s_cur5 = source1.cursor() #download Parsing
 
     url_data_list=[]
     url_data_list_2=[]

@@ -109,9 +109,25 @@ def link_info_parse(x):
 
     return link_info_data
 
+def allfile(path):
+   res = []
+
+   for root, dirs, files in os.walk(path):
+
+      roots = root.split("LNK/")
+      root = roots[1]
+      rootpath = os.path.join(os.path.abspath(path), root)
+      # rootpath = os.path.abspath(path)
+      for file in files:
+         filepath = os.path.join(rootpath, file)
+
+         res.append(filepath)
+
+   return res
+
 def files_parse():
     path_dir = 'LNK/'
-    lnk_lists = os.listdir(path_dir)
+    lnk_lists = allfile(path_dir)
     return lnk_lists
 
 def main():
@@ -123,7 +139,7 @@ def main():
 
     for a in lnk_lists:
         print(a)
-        indata = open('LNK/' + a, 'rb')
+        indata = open(a, 'rb')
         x = LnkParse.lnk_file(indata)
         #shell_link_header
         shell_link_header = shell_link_header_parse(x)
