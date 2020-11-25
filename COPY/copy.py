@@ -37,22 +37,22 @@ def file_copy():
     if not os.path.isdir(reg_dir):
         os.mkdir(reg_dir)
     for r in reg:
-        os.system(r'RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}\REGHIVE'.format(reg_path,r,cur_path))
-    os.system(r'RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
-    os.system(r'RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
+        os.system(r'COPY\RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}\REGHIVE'.format(reg_path,r,cur_path))
+    os.system(r'COPY\RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
+    os.system(r'COPY\RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\REGHIVE'.format(cur_user_dir, cur_path))
 
-
+    #Hello world
     # mft ./NTFS
     drive_list = get_drives()
 
     if not os.path.isdir(nt_dir):
         os.mkdir(nt_dir)
     for drive in drive_list:
-        os.system(r'RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
-    os.system(r'ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\NTFS /OutputName:$UsnJrnl'.format(cur_path))
+        os.system(r'COPY\RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
+    os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
     # Event Log
-    os.system(r'forecopy_handy.exe -e {}'.format(cur_path)) # ./eventlogs/Logs
+    os.system(r'COPY\forecopy_handy.exe -e {}'.format(cur_path)) # ./eventlogs/Logs
 
     # 브라우저 ./BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" ./BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))

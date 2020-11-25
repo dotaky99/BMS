@@ -102,7 +102,6 @@ def PC_Processing(file_et):
                                             reason = 'System time adjusted to the new time zone.'
                         except:
                             pass
-                        # evt num = 1
                         try:
                             if soup.version.string == '3':
                                 detailed = file_et[each_et][eventid]

@@ -148,6 +148,15 @@ def MFT_Databases(data_list):
     conn.commit()
     conn.close()
 
+def Usn_Databases(data_list):
+    conn = sqlite3.connect('Believe_Me_Sister.db')
+    cur = conn.cursor()
+    cur.execute(
+        "CREATE TABLE IF NOT EXISTS parsed_usn(USN, src, reason, MFT_refer_num, parent_MFT_refer_num, time_stamp, file_name, file_path);")
+    cur.executemany('INSERT INTO parsed_usn VALUES (?, ?, ?, ?, ?, ?, ?, ?);', data_list)
+    conn.commit()
+    conn.close()
+
 def make_regDB():
     conn = sqlite3.connect("Believe_Me_Sister_registry.db")
     cur = conn.cursor()
