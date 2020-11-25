@@ -94,13 +94,13 @@ def mft_parse(mft_file, data_list):
         if objid_time is None:
             objid_time = ''
         else:
-            objid_time = format_timestamp(objid_time)
+            objid_time = Format.format_timestamp(objid_time)
 
         if attr_standard_information is not None:
-            si_mtime = format_timestamp(attr_standard_information.get_mtime())
-            si_atime = format_timestamp(attr_standard_information.get_atime())
-            si_ctime = format_timestamp(attr_standard_information.get_ctime())
-            si_etime = format_timestamp(attr_standard_information.get_etime())
+            si_mtime = Format.format_timestamp(attr_standard_information.get_mtime())
+            si_atime = Format.format_timestamp(attr_standard_information.get_atime())
+            si_ctime = Format.format_timestamp(attr_standard_information.get_ctime())
+            si_etime = Format.format_timestamp(attr_standard_information.get_etime())
             si_usn = attr_standard_information.get_usn()
         else:
             si_mtime = ''
