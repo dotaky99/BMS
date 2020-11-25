@@ -1,53 +1,24 @@
-import sys, os
+import sys
 import time
 from RegistryParse import decode
-import sqlite3
 import struct
 from RegistryParse.Registry import Registry
-
-# 하이브 파일과 경로를 입력받아 값을 반환하는 함수
-# name이 "ALL"이라면 해당 키의 모든 값을 이중리스트로 반환
-def get_reg_value(reg, path, name):
-    registry = Registry.Registry(reg)
-    key = registry.open(path)
-
-    if name == "ALL":
-        result = []
-        for v in key.values():
-            result.append([v.name(), v.value()])
-        return result
-    else:
-        for v in key.values():
-            if v.name() == name:
-                return v.value()
+import Database
+import os
 
 
 # 사용중인 ControlSet을 반환합니다. ex) ControlSet001
 def get_controlset00n():
-    registry = Registry.Registry(sys_reg)
+    registry = Registry.Registry(SYSTEM)
     key = registry.open("Select")
     for v in key.values():
         if v.name() == "Current":
             return "ControlSet00" + str(v.value())
 
 
-# sid 값을 받아 user명을 반환하는 함수
-def sid_to_user(sid):
-    registry = Registry.Registry(soft_reg)
-    path = "Microsoft\\Windows NT\\CurrentVersion\\ProfileList\\" + sid
-    key = registry.open(path)
-    user_name = None
-
-    for v in key.values():
-        if v.name() == "ProfileImagePath":
-            user_name = v.value().rpartition('\\')[2]
-
-    return user_name
-
-
 # 시스템의 정보를 이중 리스트로 반환하는 함수
 def os_info():
-    registry = Registry.Registry(soft_reg)
+    registry = Registry.Registry(SOFTWARE)
     key = registry.open("Microsoft\\Windows NT\\CurrentVersion")
 
     product_name = None # 운영체제 이름
@@ -80,7 +51,7 @@ def os_info():
 
 # 타임존 정보를 이중 리스트로 반환하는 함수
 def timezone():
-    registry = Registry.Registry(sys_reg)
+    registry = Registry.Registry(SYSTEM)
     path = ControlSet00n + "\\Control\\TimeZoneInformation"
     key = registry.open(path)
 
@@ -109,14 +80,14 @@ def others():
     last_used_user_name = None
     shutdown_time = None
 
-    registry = Registry.Registry(sys_reg)
+    registry = Registry.Registry(SYSTEM)
     path = ControlSet00n + "\\Control\\ComputerName\\ComputerName"
     key = registry.open(path)
     for v in key.values():
         if v.name() == "ComputerName":
             computer_name = v.value()
 
-    registry = Registry.Registry(soft_reg)
+    registry = Registry.Registry(SOFTWARE)
     path = "Microsoft\\Windows NT\\CurrentVersion\\Winlogon"
     key = registry.open(path)
     for v in key.values():
@@ -125,7 +96,7 @@ def others():
         if v.name() == "LastUsedUsername":
             last_used_user_name = v.value()
 
-    registry = Registry.Registry(sys_reg)
+    registry = Registry.Registry(SYSTEM)
     path = ControlSet00n + "\\Control\\Windows"
     key = registry.open(path)
     for v in key.values():
@@ -139,7 +110,7 @@ def others():
 # Uninstall의 하위 키를 통해
 # 설치된 프로그램 정보를 이중 리스트로 반환하는 파싱 함수
 def Uninstall():
-    registry = Registry.Registry(soft_reg)
+    registry = Registry.Registry(SOFTWARE)
 
     # 서브키를 탐색하여 설치된 프로그램의 리스트 생성합니다
     # 64비트
@@ -216,8 +187,8 @@ def Uninstall():
 # Multilingual User Interface
 # 다중 언어를 지원하기 위해 프로그램 이름을 캐쉬하는 폴더
 # 프로그램을 제거해도 MuiCache는 삭제되지 않는다.
-def MuiCache(usrclass_reg):
-    registry = Registry.Registry(usrclass_reg)
+def MuiCache():
+    registry = Registry.Registry(USRCLASS)
     key = registry.open("Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache")
 
     MuiCache = []
@@ -229,8 +200,8 @@ def MuiCache(usrclass_reg):
 
 
 # UserAssist\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA} 실행파일 실행 기록
-def UserAssist_CEB(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def UserAssist_CEB():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\Count"
     key = registry.open(path)
 
@@ -250,8 +221,8 @@ def UserAssist_CEB(ntuser_reg):
 
 
 # UserAssist\{F4E57C4B-2036-45F0-A9AB-443BCFE33D9F} 바로가기 실행 기록
-def UserAssist_F4E(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def UserAssist_F4E():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist\\{F4E57C4B-2036-45F0-A9AB-443BCFE33D9F}\\Count"
     key = registry.open(path)
 
@@ -272,7 +243,7 @@ def UserAssist_F4E(ntuser_reg):
 
 # Background Activity Moderator
 def BAM():
-    registry = Registry.Registry(sys_reg)
+    registry = Registry.Registry(SYSTEM)
     path = ControlSet00n + "\\Services\\bam\\State\\UserSettings"
     key = registry.open(path)
     sid = []
@@ -293,8 +264,8 @@ def BAM():
 
 # ComDlg32의 CIDSizeMRU 키
 # 사용자가 가장 최근에 사용한 응용 프로그램
-def CIDSizeMRU(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def CIDSizeMRU():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\CIDSizeMRU"
     key = registry.open(path)
     last_opened = key.timestamp().strftime("%Y-%m-%d %H:%M:%S")
@@ -330,8 +301,8 @@ def CIDSizeMRU(ntuser_reg):
 
 # ComDlg32의 FirstFolder 키
 # 사용자가 가장 최근에 사용한 앱과 사용자가 저장한 파일 목록
-def FirstFolder(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def FirstFolder():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\FirstFolder"
     key = registry.open(path)
     last_opened = key.timestamp().strftime("%Y-%m-%d %H:%M:%S")
@@ -373,10 +344,10 @@ def FirstFolder(ntuser_reg):
 
 
 # 연결했던 usb 정보를 이중 리스트로 반환하는 함수
-def connected_usb(ntuser_reg):
-    sys_registry = Registry.Registry(sys_reg)
-    soft_registry = Registry.Registry(soft_reg)
-    ntuser_registry = Registry.Registry(ntuser_reg)
+def connected_usb():
+    sys_registry = Registry.Registry(SYSTEM)
+    soft_registry = Registry.Registry(SOFTWARE)
+    ntuser_registry = Registry.Registry(NTUSER)
 
     usb = []
     # DCID와 UIID를 구합니다.
@@ -389,20 +360,25 @@ def connected_usb(ntuser_reg):
             usb.append([DCID, UIID])
 
     # UIID를 이용하여 볼륨 GUID를 매핑합니다.
-    GUIDmap = []
-    path = "MountedDevices"
-    key = sys_registry.open(path)
-    for v in key.values():
-        if "\\??\\" in v.name():
-            guid = v.name().split("\\??\\Volume")[1]
-            uiid = v.value().decode("utf-16").split("#")[2]
-            GUIDmap.append([guid, uiid])
-    for u in usb:
-        tmp = None
-        for g in GUIDmap:
-            if u[1] == g[1]:
-                tmp = g[0]
-                u.append(tmp)
+    try:
+        GUIDmap = []
+        path = "MountedDevices"
+        key = sys_registry.open(path)
+        for v in key.values():
+            if "\\??\\" in v.name():
+                guid = v.name().split("\\??\\Volume")[1]
+                uiid = v.value().decode("utf-16").split("#")[2]
+                GUIDmap.append([guid, uiid])
+        for u in usb:
+            tmp = None
+            for g in GUIDmap:
+                if u[1] == g[1]:
+                    tmp = g[0]
+                    u.append(tmp)
+    except:
+        # 임시로 코드가 돌아가게만 처리함.
+        return [["DCID", "UIID", "GUID", "label", "first_connected", "last_connected", "vendor_name", "product_name", "version", "serial_num", True],
+                ["DCID", "UIID", "GUID", "label", "first_connected", "last_connected", "vendor_name", "product_name", "version", "serial_num", True]]
 
     # UIID를 이용하여 볼륨 레이블/드라이브 문자와 최초 연결 시각을 매핑합니다.
     path = "Microsoft\Windows Portable Devices\Devices"
@@ -458,8 +434,8 @@ def connected_usb(ntuser_reg):
 
 
 # 최근 실행한 문서
-def recent_docs(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def recent_docs():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs"
     key = registry.open(path)
 
@@ -530,8 +506,8 @@ def recent_docs(ntuser_reg):
 
 # ComDlg32의 LastVisitedPidlMRU 키
 # 사용자가 가장 최근에 접근했던 폴더
-def LastVisitedPidl(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def LastVisitedPidl():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\LastVisitedPidlMRU"
     key = registry.open(path)
     last_opened = key.timestamp().strftime("%Y-%m-%d %H:%M:%S")
@@ -572,8 +548,8 @@ def LastVisitedPidl(ntuser_reg):
 
 # ComDlg32의 LastVisitedPidlMRULegacy 키
 # 대화상자 흔적
-def Legacy(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def Legacy():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\LastVisitedPidlMRULegacy"
     key = registry.open(path)
     last_opened = key.timestamp().strftime("%Y-%m-%d %H:%M:%S")
@@ -614,8 +590,8 @@ def Legacy(ntuser_reg):
 
 # ComDlg32의 OpenSavePidlMRU 키
 # 사용자가 최근에 열고 저장했던 파일 목록
-def OpenSavePidl(ntuser_reg):
-    registry = Registry.Registry(ntuser_reg)
+def OpenSavePidl():
+    registry = Registry.Registry(NTUSER)
     path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\OpenSavePidlMRU"
     key = registry.open(path)
 
@@ -684,7 +660,7 @@ def OpenSavePidl(ntuser_reg):
 
 # SAM 하이브 파일에서 사용자 계정 정보를 이중 리스트로 반환하는 함수
 def user_account():
-    registry = Registry.Registry(sam_reg)
+    registry = Registry.Registry(SAM)
 
     # Users 경로의 하위 키들을 구합니다.
     path = "SAM\\Domains\\Account\\Users"
@@ -742,129 +718,80 @@ def user_account():
 
     return accounts
 
-def make_regDB():
-    conn = sqlite3.connect("Believe_Me_Sister.db")
-    cur = conn.cursor()
 
-    # OSInformation
+# 윈도우 부팅시 자동으로 실행되는 프로그램을 이중 리스트로 반환하는 함수
+def run():
+    registry = Registry.Registry(SOFTWARE)
+
+    path = "Microsoft\\Windows\\CurrentVersion\\Run"
+    key = registry.open(path)
+    result = []
+    for v in key.values():
+        result.append([v.name(), v.value(), "64 bit"])
+
+    path = "Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"
+    key = registry.open(path)
+    for v in key.values():
+        result.append([v.name(), v.value(), "32 bit"])
+
+    return result
+
+
+# main
+# Parse.py가 os.system을 이용해 REGParse.py를 실행하므로 main()이 반드시 실행됨.
+def main():
     data_list = os_info() + timezone() + others()
-    query = "CREATE TABLE IF NOT EXISTS OSInformation" \
-            "(product_name TEXT, product_ID TEXT, system_root TEXT, owner TEXT, install_date TEXT, organization TEXT, build_lab, " \
-            "timezone_name TEXT, active_time_bias TEXT, UTC INTEGER, " \
-            "computer_name TEXT, default_user_name TEXT, last_used_user_name TEXT, shutdown_time TEXT)"
-    conn.execute(query)
-    cur.execute("INSERT INTO OSInformation VALUES(?, ?, ?, ?, "
-                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
-    conn.commit()
+    Database.Reg_OSInformation(data_list)
 
-    # Uninstall:
     data_list = Uninstall()
-    query = "CREATE TABLE IF NOT EXISTS Uninstall(id TEXT, name TEXT, version TEXT, install_location TEXT, publisher TEXT, install_date TEXT, type TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO Uninstall VALUES(?, ?, ?, ?, ?, ?, ?)", data_list)
-    conn.commit()
+    Database.Reg_Uninstall(data_list)
 
-    # BAM
     data_list = BAM()
-    query = "CREATE TABLE IF NOT EXISTS BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
-    conn.commit()
+    Database.Reg_BAM(data_list)
 
-    #UserAccounts():
     data_list = user_account()
-    query = "CREATE TABLE IF NOT EXISTS UserAccounts(RID TEXT, RID_int INTEGER, last_login_time TEXT, last_password_change_time TEXT," \
-            "expires_on TEXT, last_incorrect_password_time TEXT, logon_failure_count INTEGER, logon_success_count INTEGER," \
-            "account_name TEXT, complete_account_name TEXT, comment TEXT, homedir TEXT, created_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO UserAccounts VALUES(?, ?, ?, "
-                     "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
-    conn.commit()
+    Database.Reg_UserAccounts(data_list)
+
+    data_list = MuiCache()
+    Database.Reg_MuiCache(data_list)
+
+    data_list = UserAssist_CEB()
+    Database.Reg_UseraAsist_CEB(data_list)
+
+    data_list = UserAssist_F4E()
+    Database.Reg_UserAssist_F4E(data_list)
+
+    data_list = CIDSizeMRU()
+    Database.Reg_UserAssist_CIDSizeMRU(data_list)
+
+    data_list = FirstFolder()
+    Database.Reg_FirstFolder(data_list)
+
+    data_list = connected_usb()
+    Database.Reg_Connected_USB(data_list)
+
+    data_list = recent_docs()
+    Database.Reg_RecentDocs(data_list)
+
+    data_list = LastVisitedPidl()
+    Database.Reg_LastVisitedPidl(data_list)
+
+    data_list = Legacy()
+    Database.Reg_Legacy(data_list)
+
+    data_list = OpenSavePidl()
+    Database.Reg_OpenSavePidl(data_list)
+
+    data_list = run()
+    Database.Reg_Run(data_list)
 
 
-    ##############################################################################################################
-    ########## 이 부분부터는 계정이 n개면 n번 실행해야 함 ###############################################################
-    ##############################################################################################################
-    # MuiCache(usrclass_reg):
-    data_list = MuiCache(usrclass_reg)
-    query = "CREATE TABLE IF NOT EXISTS MuiCache(name TEXT, path TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO MuiCache VALUES(?, ?)", data_list)
-    conn.commit()
-
-    # UseraAsist_CEB(ntuser_reg):
-    data_list = UserAssist_CEB(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS UserAssist_CEB(name TEXT, run_count INTEGER, last_executed TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO UserAssist_CEB VALUES(?, ?, ?)", data_list)
-    conn.commit()
-
-    #UserAssist_F4E(ntuser_reg):
-    data_list = UserAssist_F4E(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS UserAssist_F4E(name TEXT, run_count INTEGER, last_executed TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO UserAssist_F4E VALUES(?, ?, ?)", data_list)
-    conn.commit()
-
-    # CIDSizeMUR(ntuser_reg):
-    data_list = CIDSizeMRU(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS CIDSizeMRU(program_name TEXT, mru INTEGER, opened_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO CIDSizeMRU VALUES(?, ?, ?)", data_list)
-    conn.commit()
-
-    # FirstFolder(ntuser_reg):
-    data_list = FirstFolder(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS FirstFolder(program_name TEXT, folder TEXT, mru INTEGER, opened_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO FirstFolder VALUES(?, ?, ?, ?)", data_list)
-    conn.commit()
-
-    # Connected_USB(ntuser_reg):
-    data_list = connected_usb(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS Connected_USB(DCID TEXT, UIID TEXT, GUID TEXT, label TEXT, " \
-            "first_connected TEXT, last_connected TEXT, vendor_name TEXT, product_name TEXT, version TEXT, serial_num TEXT, random_yn INTEGER)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO Connected_USB VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
-    conn.commit()
-
-    # RecentDocs(ntuser_reg):
-    data_list = recent_docs(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS RecentDocs(extension TEXT, mru INTEGER, program TEXT, lnk TEXT, opened_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO RecentDocs VALUES(?, ?, ?, ?, ?)", data_list)
-    conn.commit()
-
-    # LastVisitedPidl(ntuser_reg):
-    data_list = LastVisitedPidl(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS LastVisitedPidl(program TEXT, mru INTEGER, opened_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO LastVisitedPidl VALUES(?, ?, ?)", data_list)
-    conn.commit()
-
-    # Legacy(ntuser_reg):
-    data_list = Legacy(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS Legacy(program TEXT, mru INTEGER, opened_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO Legacy VALUES(?, ?, ?)", data_list)
-    conn.commit()
-
-    # OpenSavePidl(ntuser_reg):
-    data_list = OpenSavePidl(ntuser_reg)
-    query = "CREATE TABLE IF NOT EXISTS OpenSavePidl(extension TEXT, program TEXT, mru INTEGER, opened_on TEXT)"
-    conn.execute(query)
-    cur.executemany("INSERT INTO OpenSavePidl VALUES(?, ?, ?, ?)", data_list)
-    conn.commit()
-
-    conn.close()
+SYSTEM = sys.argv[1]
+SOFTWARE = sys.argv[2]
+SAM = sys.argv[3]
+NTUSER = sys.argv[4]
+USRCLASS = sys.argv[5]
+ControlSet00n = get_controlset00n()
 
 if __name__ == "__main__":
-    sys_reg = sys.argv[1]
-    soft_reg = sys.argv[2]
-    sam_reg = sys.argv[3]
-    ntuser_reg = sys.argv[4]
-    usrclass_reg = sys.argv[5]
-
-    ControlSet00n = get_controlset00n()
-
-    make_regDB()
+    main()

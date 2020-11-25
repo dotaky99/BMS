@@ -1,5 +1,5 @@
 import sqlite3
-from RegistryParse import REGParse
+
 
 def Event_Log_Database(data_list):
     conn = sqlite3.connect('Believe_Me_Sister.db')
@@ -110,7 +110,6 @@ def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5
     dest.commit()
     dest.close()
 
-
 def cache_db_insert(data_list):
     dest = sqlite3.connect("Believe_Me_Sister.db")
     d_cur = dest.cursor()
@@ -138,7 +137,6 @@ def Lnk_Databases(data_list):
     conn.commit()
     conn.close()
 
-
 def MFT_Databases(data_list):
     conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
@@ -157,13 +155,12 @@ def Usn_Databases(data_list):
     conn.commit()
     conn.close()
 
-def make_regDB():
-    conn = sqlite3.connect("Believe_Me_Sister_registry.db")
-    cur = conn.cursor()
 
-    # OSInformation
+# REGParse.py가 호출
+def Reg_OSInformation(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.os_info() + REGParse.timezone() + REGParse.others()
         query = "CREATE TABLE IF NOT EXISTS OSInformation" \
             "(product_name TEXT, product_ID TEXT, system_root TEXT, owner TEXT, install_date TEXT, organization TEXT, build_lab, " \
             "timezone_name TEXT, active_time_bias TEXT, UTC INTEGER, " \
@@ -174,30 +171,36 @@ def make_regDB():
         conn.commit()
     except:
         print("OSInformation table parsing error")
+    conn.close()
 
-    # Uninstall:
+def Reg_Uninstall(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.Uninstall()
         query = "CREATE TABLE IF NOT EXISTS Uninstall(id TEXT, name TEXT, version TEXT, install_location TEXT, publisher TEXT, install_date TEXT, type TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO Uninstall VALUES(?, ?, ?, ?, ?, ?, ?)", data_list)
         conn.commit()
     except:
         print("Uninstall table parsing error")
+    conn.close()
 
-    # BAM
+def Reg_BAM(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.BAM()
         query = "CREATE TABLE IF NOT EXISTS BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("BAM table parsing error")
+    conn.close()
 
-    #UserAccounts():
+def Reg_UserAccounts(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.user_account()
         query = "CREATE TABLE IF NOT EXISTS UserAccounts(RID TEXT, RID_int INTEGER, last_login_time TEXT, last_password_change_time TEXT," \
             "expires_on TEXT, last_incorrect_password_time TEXT, logon_failure_count INTEGER, logon_success_count INTEGER," \
             "account_name TEXT, complete_account_name TEXT, comment TEXT, homedir TEXT, created_on TEXT)"
@@ -207,60 +210,72 @@ def make_regDB():
         conn.commit()
     except:
         print("UserAccounts table parsing error")
+    conn.close()
 
-    # MuiCache():
+def Reg_MuiCache(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.MuiCache()
         query = "CREATE TABLE IF NOT EXISTS MuiCache(name TEXT, path TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO MuiCache VALUES(?, ?)", data_list)
         conn.commit()
     except:
         print("MuiCache table parsing error")
+    conn.close()
 
-    # UseraAsist_CEB():
+def Reg_UseraAsist_CEB(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.UserAssist_CEB()
         query = "CREATE TABLE IF NOT EXISTS UserAssist_CEB(name TEXT, run_count INTEGER, last_executed TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO UserAssist_CEB VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("UserAssist_CEB table parsing error")
+    conn.close()
 
-    #UserAssist_F4E():
+def Reg_UserAssist_F4E(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.UserAssist_F4E()
         query = "CREATE TABLE IF NOT EXISTS UserAssist_F4E(name TEXT, run_count INTEGER, last_executed TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO UserAssist_F4E VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("UserAssist_F4E table parsing error")
+    conn.close()
 
-    # CIDSizeMRU():
+def Reg_UserAssist_CIDSizeMRU(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.CIDSizeMRU()
         query = "CREATE TABLE IF NOT EXISTS CIDSizeMRU(program_name TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO CIDSizeMRU VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("CIDSizeMRU table parsing error")
+    conn.close()
 
-    # FirstFolder():
+def Reg_FirstFolder(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.FirstFolder()
         query = "CREATE TABLE IF NOT EXISTS FirstFolder(program_name TEXT, folder TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO FirstFolder VALUES(?, ?, ?, ?)", data_list)
         conn.commit()
     except:
         print("FirstFolder table parsing error")
+    conn.close()
 
-    # Connected_USB():
+def Reg_Connected_USB(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.connected_usb()
         query = "CREATE TABLE IF NOT EXISTS Connected_USB(DCID TEXT, UIID TEXT, GUID TEXT, label TEXT, " \
                 "first_connected TEXT, last_connected TEXT, vendor_name TEXT, product_name TEXT, version TEXT, serial_num TEXT, random_yn INTEGER)"
         conn.execute(query)
@@ -268,55 +283,64 @@ def make_regDB():
         conn.commit()
     except:
         print("Connectd_USB table parsing error")
+    conn.close()
 
-    # RecentDocs():
+def Reg_RecentDocs(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.recent_docs()
         query = "CREATE TABLE IF NOT EXISTS RecentDocs(extension TEXT, mru INTEGER, program TEXT, lnk TEXT, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO RecentDocs VALUES(?, ?, ?, ?, ?)", data_list)
         conn.commit()
     except:
         print("RecentDocs table parsing error")
+    conn.close()
 
-    # LastVisitedPidl():
+def Reg_LastVisitedPidl(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.LastVisitedPidl()
         query = "CREATE TABLE IF NOT EXISTS LastVisitedPidl(program TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO LastVisitedPidl VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("LastVisitedPidl table parsing error")
+    conn.close()
 
-    # Legacy():
+def Reg_Legacy(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.Legacy()
         query = "CREATE TABLE IF NOT EXISTS Legacy(program TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO Legacy VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("Legacy table parsing error")
+    conn.close()
 
-    # OpenSavePidl():
+def Reg_OpenSavePidl(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.OpenSavePidl()
         query = "CREATE TABLE IF NOT EXISTS OpenSavePidl(extension TEXT, program TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO OpenSavePidl VALUES(?, ?, ?, ?)", data_list)
         conn.commit()
     except:
         print("OpenSavePidl table parsing error")
+    conn.close()
 
-    # run()
+def Reg_Run(data_list):
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
     try:
-        data_list = REGParse.run()
         query = "CREATE TABLE IF NOT EXISTS Run(program TEXT, path TEXT, type TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO Run VALUES(?, ?, ?)", data_list)
         conn.commit()
     except:
         print("Run table parsing error")
-
     conn.close()
