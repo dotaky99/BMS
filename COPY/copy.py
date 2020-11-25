@@ -27,10 +27,10 @@ def file_copy():
     nt_dir = "./COPY/NTFS"
     reg_dir = "./COPY/REGHIVE"
 
-    # prefetch BMS/COPY/PREFETCH
+    #prefetch BMS/COPY/PREFETCH
     os.system('robocopy {} ./COPY/PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
 
-    # registry BMS/COPY/REGHIVE
+    #registry BMS/COPY/REGHIVE
     if not os.path.isdir(reg_dir):
         os.mkdir(reg_dir)
     for r in reg:
@@ -38,7 +38,7 @@ def file_copy():
     os.system(r'COPY\RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}\COPY\REGHIVE'.format(cur_user_dir, cur_path))
     os.system(r'COPY\RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\COPY\REGHIVE'.format(cur_user_dir, cur_path))
 
-    # mft BMS/COPY/NTFS
+    #mft BMS/COPY/NTFS
     drive_list = get_drives()
 
     if not os.path.isdir(nt_dir):
@@ -48,14 +48,14 @@ def file_copy():
     os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\COPY\NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
     # Event Log BMS/COPY/eventlogs/Logs
-    os.system(r'COPY\forecopy_handy.exe -e {}\COPY'.format(cur_path))
+    os.system(r'COPY\forecopy_handy.exe -e .\COPY')
 
-    # Browser BMS/COPY/BROWSER
+    #Browser BMS/COPY/BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" ./COPY/BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default\Cache" ./COPY/BROWSER/Cache'.format(cur_user_dir))
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default\GPUCache" ./COPY/BROWSER/GPUCache'.format(cur_user_dir))
 
-    # LNK BMS/COPY/LNK
+    #LNK BMS/COPY/LNK
     lnk_list = ['C:\\Users\\Default','%UserProfile%']
     for l in lnk_list:
         os.system(r'robocopy "{}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs" ./COPY/LNK *.lnk /e'.format(l))
