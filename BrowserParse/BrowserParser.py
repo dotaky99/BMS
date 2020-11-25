@@ -10,10 +10,10 @@ from BrowserParse import CacheParser
 
 
 def Browser_parser():
-    source1=sqlite3.connect(".\\BROWSER\\History")
-    source2 = sqlite3.connect(".\\BROWSER\\Web Data")
-    source3 = sqlite3.connect(".\\BROWSER\\Cookies")
-    source4 = sqlite3.connect(".\\BROWSER\\Login Data")
+    source1=sqlite3.connect("COPY\\BROWSER\\History")
+    source2 = sqlite3.connect("COPY\\BROWSER\\Web Data")
+    source3 = sqlite3.connect("COPY\\BROWSER\\Cookies")
+    source4 = sqlite3.connect("COPY\\BROWSER\\Login Data")
     s_cur1 = source1.cursor() #url, keyword
     s_cur2 = source2.cursor() #autofill 파싱
     s_cur3 = source3.cursor() #쿠키 파싱
@@ -458,7 +458,7 @@ def Browser_parser():
         autofill_data_list_2.append(autofill_data_list)
 
     ################################ bookmark 파싱 시작 #################################
-    bookmarks_path = os.path.join('.\\BROWSER', 'Bookmarks')
+    bookmarks_path = os.path.join('COPY\\BROWSER', 'Bookmarks')
 
     with open(bookmarks_path, encoding='utf-8', errors='replace') as f:
         decoded_json = json.loads(f.read())
@@ -724,7 +724,7 @@ def Browser_parser():
     results = []
     timestamped_preference_items = []
 
-    preferences_file = '.\\BROWSER\\Preferences'
+    preferences_file = 'COPY\\BROWSER\\Preferences'
     # Open 'Preferences' file
 
     with open(preferences_file, encoding='utf-8', errors='replace') as f:
