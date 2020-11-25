@@ -7,6 +7,7 @@
 ### 주의사항
 
 - 프로그램 실행할 때 관리자권한으로 실행할 것
+- Commit 할때 BMS.imi, misc.imi 등 환경설정 파일 절대 금지
 - copy.py는 BMS위치에서 실행할 것 (python COPY\copy.py)
 - 수정된 소스코드 외에 commit 하지 말 것
 - 폴더 이름에 Parse라고 붙어 있으면 소스코드
