@@ -5,6 +5,7 @@ import binascii
 import Database
 
  # 파일 리스트 중 lnk 파일을 가져오는 함수
+
 def lnk_parse(files):
    lnk_list = []
    lnk_list_temp = [i for i in files if (i[-4:] == ".lnk")]
