@@ -1,6 +1,5 @@
 import sys
 import time
-import os
 from RegistryParse import decode
 import struct
 from RegistryParse.Registry import Registry
