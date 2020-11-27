@@ -456,7 +456,7 @@ class MyWidget(QWidget):
         item3_8 = QTreeWidgetItem(item3)
         item3_8.setText(0, "북마크")
         item3_9 = QTreeWidgetItem(item3)
-        item3_9.setText(0, "Autofill")
+        item3_9.setText(0, "자동완성")
 
         item4 = QTreeWidgetItem(tree)
         item4.setText(0, "프리패치")
