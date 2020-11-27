@@ -56,6 +56,33 @@ class MemoryDialog(QDialog):
             self.yn = 0
         self.close()
 
+####추가####
+class FileCopy(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUI()
+
+    def setupUI(self):
+        self.setWindowTitle("파일 복사")
+        self.explanation1_ = QLabel("분석에 필요한 파일을 복사중입니다.")
+        self.blank_ = QLabel()
+        self.explanation2_ = QLabel("아래 버튼을 누른 후, 조금만 기다려 주세요.")
+
+        self.pushButton_ = QPushButton("시작")
+        self.pushButton_.clicked.connect(self.pushButtonCopy)
+
+
+        layout = QGridLayout()
+        layout.addWidget(self.explanation1_, 0, 0)
+        layout.addWidget(self.blank_, 1, 0)
+        layout.addWidget(self.explanation2_, 2, 0)
+        layout.addWidget(self.pushButton_, 3, 0)
+        self.setLayout(layout)
+
+    def pushButtonCopy(self):
+        os.system("python COPY/copy.py")
+        self.close()
+
 form_class = uic.loadUiType("Initial Window.ui")[0]
 class InitWindow(QMainWindow, form_class) :
     def __init__(self) :
@@ -74,6 +101,8 @@ class InitWindow(QMainWindow, form_class) :
     def buttonFunction(self) :
         dlg = MemoryDialog()
         dlg.exec_()
+        file = FileCopy()
+        file.exec_()
         self.window2.show()
         self.hide()
 
