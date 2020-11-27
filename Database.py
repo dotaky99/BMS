@@ -40,11 +40,11 @@ def Prefetch_Database(data_list1, data_list2):
     cur1 = conn.cursor()
     cur2 = conn.cursor()
 
-    conn.execute('CREATE TABLE prefetch1(Executable_Name TEXT, Full_Path TEXT, '
+    conn.execute('CREATE TABLE IF NOT EXISTS prefetch1(Executable_Name TEXT, Full_Path TEXT, '
                  'Run_Count INTEGER, Last_Executed1 DATETIME, Last_Executed2 DATETIME, Last_Executed3 DATETIME,'
                  ' Last_Executed4 DATETIME, Last_Executed5 DATETIME, Last_Executed6 DATETIME, Last_Executed7 DATETIME,'
                  'Last_Executed8 DATETIME)')
-    conn.execute('CREATE TABLE prefetch2(FILENAME TEXT, PATH TEXT)')
+    conn.execute('CREATE TABLE IF NOT EXISTS prefetch2(FILENAME TEXT, PATH TEXT)')
 
     cur1.executemany('INSERT INTO prefetch1 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data_list1)
     cur2.executemany('INSERT INTO prefetch2 VALUES(?, ?)', data_list2)
