@@ -28,8 +28,8 @@ class MyWidget(QWidget):
         self.setLayout(total_layout)
         #self.UTC = "+9"     # 수정할 것.
 
+####tab2 구성####
     def set_tab2(self):
-        # tab2 구성
         self.tab2.layout = QVBoxLayout()
 
 
@@ -44,7 +44,7 @@ class MyWidget(QWidget):
         text1_6 = QLabel("<b> * 안티포렌식  <b>  :  ", self)
         text1_7 = QLabel("<b> * 볼륨 섀도우  :  <b>")
 
-        conn = sqlite3.connect("test.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         text1_4_n = [] # DRM 정보
         query = "SELECT name, version, install_location, publisher, install_date FROM Uninstall " \
@@ -55,7 +55,7 @@ class MyWidget(QWidget):
             text1_4_n.append(QLabel("이름 : " + list[l][0] + ", 버전: " + list[l][1] + ", 경로: " + list[l][2] + ", 제조사: " + list[l][3] + ", 최초 실행 시각: " + list[l][4] + ", 삭제 여부 : ", self))
 
 ####추가####
-        conn1 = sqlite3.connect("Believe_Me_Sister_prefetch.db")
+        conn1 = sqlite3.connect("Believe_Me_Sister.db")
         cur1 = conn1.cursor()
         text1_6_n = [] # 안티포렌식 정보
         query1 = "SELECT Executable_Name, Last_Executed1 from prefetch1 " \
@@ -139,10 +139,10 @@ class MyWidget(QWidget):
         vbox2.addWidget(text2_3_1, 2, 1)
         vbox2.addWidget(text2_5_1, 4, 1)
         vbox2.addWidget(text2_6_n[0], 5, 1)
-        vbox2.addWidget(text2_6_n[1], 6, 1)
-        vbox2.addWidget(text2_6_n[2], 7, 1)
-        vbox2.addWidget(text2_6_n[3], 8, 1)
-        vbox2.addWidget(text2_6_n[4], 9, 1)
+        # vbox2.addWidget(text2_6_n[1], 6, 1)
+        # vbox2.addWidget(text2_6_n[2], 7, 1)
+        # vbox2.addWidget(text2_6_n[3], 8, 1)
+        # vbox2.addWidget(text2_6_n[4], 9, 1)
         vbox2.addWidget(text2_8_n[0], 11, 1)
         vbox2.addWidget(text2_8_n[1], 12, 1)
         vbox2.addWidget(text2_8_n[2], 13, 1)
@@ -246,7 +246,7 @@ class MyWidget(QWidget):
 
     # 계정 생성
     def timeline_data1_2(self):
-        conn = sqlite3.connect("test.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT created_on, last_password_change_time, account_name, RID_int FROM UserAccounts"
         cur.execute(query)
@@ -277,7 +277,7 @@ class MyWidget(QWidget):
 
     # Windows 설치
     def timeline_data1_3(self):
-        conn = sqlite3.connect("test.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT install_date, product_name, product_ID FROM OSInformation"
         cur.execute(query)
@@ -293,7 +293,7 @@ class MyWidget(QWidget):
 
     # Windows 업데이트
     def timeline_data1_4(self):
-        conn = sqlite3.connect("Believe_Me_Sister_eventlog.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT detailed, computer, time_created, package FROM event_log where event_id='2' AND package IS NOT '';"
         cur.execute(query)
@@ -311,7 +311,7 @@ class MyWidget(QWidget):
 
     # 시스템 On/Off
     def timeline_data1_5(self):
-        conn = sqlite3.connect("Believe_Me_Sister_eventlog.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, computer, time_created FROM event_log WHERE event_id = '12' OR event_id = '13'"
         cur.execute(query)
@@ -332,7 +332,7 @@ class MyWidget(QWidget):
 
     # 안티포렌식 도구 실행
     def timeline_data2_2(self):
-        conn = sqlite3.connect("Believe_Me_Sister_prefetch.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         # query = 'SELECT Executable_Name, Full_Path, Last_Executed1, Last_Executed2, Last_Executed3, Last_Executed4, Last_Executed5, Last_Executed6, Last_Executed7, Last_Executed8 from prefetch1 WHERE (Executable_Name LIKE "CCleaner%" OR Executable_Name LIKE "Cipher%" OR Executable_Name LIKE "CipherShed%" OR Executable_Name LIKE "Eraser%" OR Executable_Name LIKE "SDelete%" OR Executable_Name LIKE "SetMACE%"  OR Executable_Name LIKE "TrueCrypt%"  OR Executable_Name LIKE "TimeStomp%"  OR Executable_Name LIKE "VeraCrypt%"  OR Executable_Name LIKE "Wise Folder Hider%")'
         query = 'SELECT Executable_Name, Full_Path, Last_Executed1 from prefetch1 WHERE (Executable_Name LIKE "CCleaner%" OR Executable_Name LIKE "Cipher%" OR Executable_Name LIKE "CipherShed%" OR Executable_Name LIKE "Eraser%" OR Executable_Name LIKE "SDelete%" OR Executable_Name LIKE "SetMACE%"  OR Executable_Name LIKE "TrueCrypt%"  OR Executable_Name LIKE "TimeStomp%"  OR Executable_Name LIKE "VeraCrypt%"  OR Executable_Name LIKE "Wise Folder Hider%")'
@@ -351,7 +351,7 @@ class MyWidget(QWidget):
 
     # 클라우드 접근
     def timeline_data2_3(self):
-        conn = sqlite3.connect("Believe_Me_Sister_browser.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT timestamp, Title, URL FROM cloud"
         cur.execute(query)
@@ -369,7 +369,7 @@ class MyWidget(QWidget):
 
     # 저장장치 연결 및 해제
     def timeline_data2_4(self):
-        conn = sqlite3.connect("Believe_Me_Sister_eventlog.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT detailed, time_created, bus_type, drive_manufac, drive_model FROM event_log WHERE event_id = '1006';"
         cur.execute(query)
@@ -393,7 +393,7 @@ class MyWidget(QWidget):
 
     # 이벤트로그 삭제
     def timeline_data2_5(self):
-        conn = sqlite3.connect("Believe_Me_Sister_eventlog.db")
+        conn = sqlite3.connect("BBelieve_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, time_created, sbt_usr_name, channel FROM event_log WHERE event_id = '104' or event_id = '1102' AND sbt_usr_name IS NOT '';"
         cur.execute(query)
@@ -489,7 +489,7 @@ class MyWidget(QWidget):
         self.tab4.setLayout(self.tab4.layout)
 
     def set_prefetch_data(self):
-        conn = sqlite3.connect("Believe_Me_Sister_prefetch.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
 
         query = "SELECT Executable_Name, Run_Count FROM prefetch1"
