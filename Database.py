@@ -57,8 +57,8 @@ def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5
 
     d_cur.execute(
         'CREATE TABLE IF NOT EXISTS url(type TEXT, timestamp DATETIME, url TEXT, title TEXT, '
-        'source TEXT, visit_duration TEXT, visit_count INT, '
-        'typed_count INT, url_hidden INT, transition TEXT)')
+        'source TEXT, visit_duration TEXT, visit_count INTEGER, '
+        'typed_count INTEGER, url_hidden INTEGER, transition TEXT)')
     d_cur.execute(
         'CREATE TABLE IF NOT EXISTS download(type TEXT, timestamp DATETIME, URL TEXT, '
         'Status TEXT, Path TEXT, Interrupt_Reason TEXT, '
