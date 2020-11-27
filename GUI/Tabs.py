@@ -58,12 +58,20 @@ class MyWidget(QWidget):
         conn1 = sqlite3.connect("Believe_Me_Sister.db")
         cur1 = conn1.cursor()
         text1_6_n = [] # 안티포렌식 정보
+
+        ## 설치o, 실행o
         query1 = "SELECT Executable_Name, Last_Executed1 from prefetch1 " \
                  "WHERE (Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' " \
                  "OR Executable_Name LIKE 'CipherShed%' OR Executable_Name LIKE 'Eraser%' " \
                  "OR Executable_Name LIKE 'SDelete%' OR Executable_Name LIKE 'SetMACE%'" \
                  "OR Executable_Name LIKE 'TrueCrypt%'  OR Executable_Name LIKE 'TimeStomp%'" \
                  "OR Executable_Name LIKE 'VeraCrypt%'  OR Executable_Name LIKE 'Wise Folder Hider%')"
+
+
+        ## 설치x, 실행o
+
+        ## 설치o, 실행o
+
         cur1.execute(query1)
         list1 = cur1.fetchall()
         for l in range(len(list1)):
