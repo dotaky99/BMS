@@ -435,15 +435,20 @@ def Browser_parser():
 
     downloads = s_cur5.fetchall()
 
+    def filename(path):
+        list = path.split("\\")
+        return list[-1]
+
+
     for row in downloads:
         if row[12] == '':
-            download_data_list = ['download', friendly_date(row[6]), row[1],
+            download_data_list = ['download', filename(str(row[5])), friendly_date(row[6]), row[1],
                                   decode_download_state(row[4], row[2], row[3]), row[5],
                                   decode_interrupt_reason(row[10]), decode_danger_type(row[9]), decode_opened(row[8]),
                                   row[11], 'null']
             download_data_list_2.append(download_data_list)
         else:
-            download_data_list = ['download', friendly_date(row[6]), row[1],
+            download_data_list = ['download', filename(str(row[5])), friendly_date(row[6]), row[1],
                                   decode_download_state(row[4], row[2], row[3]), row[5],
                                   decode_interrupt_reason(row[10]), decode_danger_type(row[9]), decode_opened(row[8]),
                                   row[11], change_last_modified_time(str(row[12]))]
@@ -929,22 +934,6 @@ def Browser_parser():
             pref_data_list_2.append(pref_data_list)
 
 
-
-    for row in downloads:
-        if row[12] == '':
-            download_data_list = ['download', friendly_date(row[6]), row[1],
-                                  decode_download_state(row[4], row[2], row[3]), row[5],
-                                  decode_interrupt_reason(row[10]), decode_danger_type(row[9]),
-                                  decode_opened(row[8]),
-                                  row[11], 'null']
-            download_data_list_2.append(download_data_list)
-        else:
-            download_data_list = ['download', friendly_date(row[6]), row[1],
-                                  decode_download_state(row[4], row[2], row[3]), row[5],
-                                  decode_interrupt_reason(row[10]), decode_danger_type(row[9]),
-                                  decode_opened(row[8]),
-                                  row[11], change_last_modified_time(str(row[12]))]
-            download_data_list_2.append(download_data_list)
 
     Database.browser_db_insert(url_data_list_2, autofill_data_list_2, bookmark_data_list_2, cookie_data_list_2,
                                 login_data_list_2, pref_data_list_2, keyword_data_list_2, download_data_list_2, cloud_data_list_2)

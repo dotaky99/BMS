@@ -60,7 +60,7 @@ def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5
         'source TEXT, visit_duration TEXT, visit_count INTEGER, '
         'typed_count INTEGER, url_hidden INTEGER, transition TEXT)')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS download(type TEXT, timestamp DATETIME, URL TEXT, '
+        'CREATE TABLE IF NOT EXISTS download(type TEXT, filename TEXT, timestamp DATETIME, URL TEXT, '
         'Status TEXT, Path TEXT, Interrupt_Reason TEXT, '
         'Danger_Type TEXT, Opened TEXT, ETag TEXT, Last_Modified DATETIME)')
     d_cur.execute(
@@ -94,7 +94,7 @@ def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5
     sql5 = "INSERT INTO login (type, timestamp, URL, Name, Data, Password_element, Password_value) VALUES (?, ?, ?, ?, ?, ?, ?)"
     sql6 = "INSERT INTO preference (type, timestamp, url, status, data) VALUES (?, ?, ?, ?, ?)"
     sql7 = "INSERT INTO keyword (type, timestamp, keyword) VALUES (?, ?, ?)"
-    sql8 = "INSERT INTO download (type, timestamp, url, Status, Path, Interrupt_Reason, Danger_Type, Opened, Etag, Last_Modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    sql8 = "INSERT INTO download (type, filename, timestamp, url, Status, Path, Interrupt_Reason, Danger_Type, Opened, Etag, Last_Modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     sql9 = "INSERT INTO cloud(timestamp, url, title) VALUES(?, ?, ?)"
 
     d_cur.executemany(sql1, data_list1)
