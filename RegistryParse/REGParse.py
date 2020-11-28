@@ -760,27 +760,59 @@ def main():
 
     data_list = UserAssist_F4E()
     Database.Reg_UserAssist_F4E(data_list)
-
-    data_list = CIDSizeMRU()
-    Database.Reg_UserAssist_CIDSizeMRU(data_list)
-
-    data_list = FirstFolder()
-    Database.Reg_FirstFolder(data_list)
-
-    data_list = connected_usb()
-    Database.Reg_Connected_USB(data_list)
+    try:
+        registry = Registry.Registry(NTUSER)
+        path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\CIDSizeMRU"
+        registry.open(path)
+        data_list = CIDSizeMRU()
+        Database.Reg_UserAssist_CIDSizeMRU(data_list)
+    except:
+        pass
+    try:
+        registry = Registry.Registry(NTUSER)
+        path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\FirstFolder"
+        registry.open(path)
+        data_list = FirstFolder()
+        Database.Reg_FirstFolder(data_list)
+    except:
+        pass
+    try:
+        path = ControlSet00n + "\\Control\\TimeZoneInformation"
+        registry.open(path)
+        data_list = connected_usb()
+        Database.Reg_Connected_USB(data_list)
+    except:
+        pass
 
     data_list = recent_docs()
     Database.Reg_RecentDocs(data_list)
 
-    data_list = LastVisitedPidl()
-    Database.Reg_LastVisitedPidl(data_list)
+    try:
+        registry = Registry.Registry(NTUSER)
+        path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\LastVisitedPidlMRU"
+        registry.open(path)
+        data_list = LastVisitedPidl()
+        Database.Reg_LastVisitedPidl(data_list)
+    except:
+        pass
 
-    data_list = Legacy()
-    Database.Reg_Legacy(data_list)
+    try:
+        registry = Registry.Registry(NTUSER)
+        path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\LastVisitedPidlMRULegacy"
+        registry.open(path)
+        data_list = Legacy()
+        Database.Reg_Legacy(data_list)
+    except:
+        pass
 
-    data_list = OpenSavePidl()
-    Database.Reg_OpenSavePidl(data_list)
+    try:
+        registry = Registry.Registry(NTUSER)
+        path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\ComDlg32\\OpenSavePidlMRU"
+        registry.open(path)
+        data_list = OpenSavePidl()
+        Database.Reg_OpenSavePidl(data_list)
+    except:
+        pass
 
     data_list = run()
     Database.Reg_Run(data_list)

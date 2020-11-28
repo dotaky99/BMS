@@ -8,7 +8,6 @@ import struct
 import sys
 import tempfile
 import Database
-import codecs
 
 second_data_list1 = []
 second_data_list2 = []
@@ -216,8 +215,6 @@ class Prefetch(object):
         infile.seek(self.filenameStringsOffset+self.filenameStringsSize)
         size = self.volumesInformationOffset-self.filenameStringsOffset-self.filenameStringsSize
         self.path = infile.read(size).decode('utf-16').split("\x00")[0]
-
-
 
     def output(self):
         data_list1_1 = [self.executableName, self.path, self.NumLaunches]
