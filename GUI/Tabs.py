@@ -777,7 +777,6 @@ class MyWidget(QWidget):
     #         self.pc_system_table.setItem(i, 12, QTableWidgetItem(created_on))
 
 #### PC 정보 중 사용자 정보 테이블####
-#### event_id가 안 나옴ㅠㅠ
     # def PC_User(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -801,7 +800,7 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, time_created, computer, sbt_usr_name, trg_usr_name, display_name, mem_sid, source = rows[i]
     #
-    #         self.pc_user_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.pc_user_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.pc_user_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.pc_user_table.setItem(i, 2, QTableWidgetItem(time_created))
     #         self.pc_user_table.setItem(i, 3, QTableWidgetItem(computer))
@@ -812,7 +811,6 @@ class MyWidget(QWidget):
     #         self.pc_user_table.setItem(i, 8, QTableWidgetItem(source))
 
 #### PC 정보 중 네트워크 정보 테이블####
-#### event_id가 안 나옴ㅠㅠ
     # def PC_Network(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -834,7 +832,7 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, computer, time_created, net_name, guid, conn_mode, reason, source = rows[i]
     #
-    #         self.pc_network_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.pc_network_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.pc_network_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.pc_network_table.setItem(i, 2, QTableWidgetItem(computer))
     #         self.pc_network_table.setItem(i, 3, QTableWidgetItem(time_created))
@@ -845,7 +843,6 @@ class MyWidget(QWidget):
     #         self.pc_network_table.setItem(i, 8, QTableWidgetItem(source))
 
 #### PC 정보 중 윈도우 업데이트 정보 테이블####
-#### event_id가 안 나옴ㅠㅠ
     # def PC_Window_Update(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -865,7 +862,7 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, time_created, computer, package, source = rows[i]
     #
-    #         self.pc_window_update_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.pc_window_update_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.pc_window_update_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.pc_window_update_table.setItem(i, 2, QTableWidgetItem(time_created))
     #         self.pc_window_update_table.setItem(i, 3, QTableWidgetItem(computer))
@@ -904,7 +901,6 @@ class MyWidget(QWidget):
     #         self.external_registry_table.setItem(i, 8, QTableWidgetItem(random_yn))
 
 #### 외부저장장치 중 이벤트 로그 테이블####
-#### event_id가 안 나옴ㅠㅠ
     # def External_Event_Log(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -927,7 +923,7 @@ class MyWidget(QWidget):
     #         event_id, detailed, computer, time_created, bus_type, drive_manufac, drive_serial, drive_model, \
     #         drive_location, source = rows[i]
     #
-    #         self.external_event_log_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.external_event_log_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.external_event_log_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.external_event_log_table.setItem(i, 2, QTableWidgetItem(computer))
     #         self.external_event_log_table.setItem(i, 3, QTableWidgetItem(time_created))
@@ -993,7 +989,7 @@ class MyWidget(QWidget):
     #         self.browser_download_table.setItem(i, 8, QTableWidgetItem(last_modified))
 
 #### 브라우저 중 히스토리 테이블####
-#### visit_count, type_count, url_hidden 안 나옴ㅠㅠ
+#### type_count, url_hidden가 0이다. 의미가 있을까?
     # def Browser_History(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -1019,7 +1015,7 @@ class MyWidget(QWidget):
     #         self.browser_history_table.setItem(i, 2, QTableWidgetItem(url))
     #         self.browser_history_table.setItem(i, 3, QTableWidgetItem(source))
     #         self.browser_history_table.setItem(i, 4, QTableWidgetItem(visit_duration))
-    #         self.browser_history_table.setItem(i, 5, QTableWidgetItem(visit_count))
+    #         self.browser_history_table.setItem(i, 5, QTableWidgetItem(str(visit_count)))
     #         self.browser_history_table.setItem(i, 6, QTableWidgetItem(typed_count))
     #         self.browser_history_table.setItem(i, 7, QTableWidgetItem(url_hidden))
     #         self.browser_history_table.setItem(i, 8, QTableWidgetItem(transition))
@@ -1509,7 +1505,6 @@ class MyWidget(QWidget):
     #         self.etc_prefetch_table.setItem(i, 1, QTableWidgetItem(path))
 
 #### 이벤트 로그 흔적 중 이벤트 로그 삭제 테이블####
-#### event_id 안 보임ㅠㅠ
     # def Event_Eventdel(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -1530,7 +1525,7 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, computer, time_created, sbt_usr_name, channel, source = rows[i]
     #
-    #         self.event_eventdel_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.event_eventdel_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.event_eventdel_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.event_eventdel_table.setItem(i, 2, QTableWidgetItem(computer))
     #         self.event_eventdel_table.setItem(i, 3, QTableWidgetItem(time_created))
@@ -1539,7 +1534,6 @@ class MyWidget(QWidget):
     #         self.event_eventdel_table.setItem(i, 6, QTableWidgetItem(source))
 
 #### 이벤트 로그 흔적 중 프로세스 강제 종료 테이블####
-#### event_id 안 보임ㅠㅠ
     # def Event_Process(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -1560,7 +1554,7 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, computer, time_created, app_name, app_version, app_path = rows[i]
     #
-    #         self.event_process_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.event_process_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.event_process_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.event_process_table.setItem(i, 2, QTableWidgetItem(computer))
     #         self.event_process_table.setItem(i, 3, QTableWidgetItem(time_created))
@@ -1569,7 +1563,6 @@ class MyWidget(QWidget):
     #         self.event_process_table.setItem(i, 6, QTableWidgetItem(app_path))
 
 #### 이벤트 로그 흔적 PC ON/OFF 종료 테이블####
-#### event_id 안 보임ㅠㅠ
     # def Event_PC(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -1590,13 +1583,12 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, computer, time_created = rows[i]
     #
-    #         self.event_pc_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.event_pc_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.event_pc_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.event_pc_table.setItem(i, 2, QTableWidgetItem(computer))
     #         self.event_pc_table.setItem(i, 3, QTableWidgetItem(time_created))
 
 #### 이벤트 로그 흔적 절전모드 종료 테이블####
-#### event_id 안 보임ㅠㅠ
     # def Event_Powersave(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
@@ -1617,7 +1609,7 @@ class MyWidget(QWidget):
     #     for i in range(count):
     #         event_id, detailed, computer, time_created, sleep_time, wake_time = rows[i]
     #
-    #         self.event_powersave_table.setItem(i, 0, QTableWidgetItem(event_id))
+    #         self.event_powersave_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
     #         self.event_powersave_table.setItem(i, 1, QTableWidgetItem(detailed))
     #         self.event_powersave_table.setItem(i, 2, QTableWidgetItem(computer))
     #         self.event_powersave_table.setItem(i, 3, QTableWidgetItem(time_created))
@@ -1625,7 +1617,6 @@ class MyWidget(QWidget):
     #         self.event_powersave_table.setItem(i, 5, QTableWidgetItem(wake_time))
 
 #### 이벤트 로그 흔적 원격 접속 테이블####
-#### event_id 안 보임ㅠㅠ
 #### 일단 원격 접속 당한 것만 해놨음!
     def Event_Remote(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
@@ -1650,7 +1641,7 @@ class MyWidget(QWidget):
             event_id, detailed, computer, time_created, remo_conn_user, remo_conn_addr, remo_conn_local,\
             local_manager_sess_id = rows[i]
 
-            self.event_remote_table.setItem(i, 0, QTableWidgetItem(event_id))
+            self.event_remote_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
             self.event_remote_table.setItem(i, 1, QTableWidgetItem(detailed))
             self.event_remote_table.setItem(i, 2, QTableWidgetItem(computer))
             self.event_remote_table.setItem(i, 3, QTableWidgetItem(time_created))
