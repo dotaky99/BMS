@@ -1,4 +1,4 @@
-import Evtx.Evtx as evtx
+from EventLogParse.Evtx import Evtx as evtx
 from bs4 import BeautifulSoup
 
 '''
