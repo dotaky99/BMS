@@ -114,7 +114,6 @@ def allfile(path):
    res = []
 
    for root, dirs, files in os.walk(path):
-
       roots = root.split("COPY/LNK/")
       root = roots[1]
       rootpath = os.path.join(os.path.abspath(path), root)

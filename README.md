@@ -22,6 +22,7 @@
 - pypiwin32
 - pytz
 - lxml
+- olefile
 - pycryptodomex
 - 등등 더 있음
 

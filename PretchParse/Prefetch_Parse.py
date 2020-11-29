@@ -214,7 +214,11 @@ class Prefetch(object):
     def filepath(self, infile):
         infile.seek(self.filenameStringsOffset+self.filenameStringsSize)
         size = self.volumesInformationOffset-self.filenameStringsOffset-self.filenameStringsSize
-        self.path = infile.read(size).decode('utf-16').split("\x00")[0]
+        try:
+            self.path = infile.read(size).decode('utf-16').split("\x00")[0]
+        except:
+            pass
+
 
     def output(self):
         data_list1_1 = [self.executableName, self.path, self.NumLaunches]

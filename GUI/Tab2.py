@@ -82,7 +82,7 @@ def set_tab2(self):
     text2_4 = QLabel("<b> * 작업 그룹  <b>  :  ", self)
     text2_5 = QLabel("<b> * 표준 시간대  <b>  :  ", self)
     text2_6 = QLabel("<b> * usb  <b>  :  ", self)
-    text2_7 = QLabel("<b> * 네트워크  <b>  :  ", self)
+    #text2_7 = QLabel("<b> * 네트워크  <b>  :  ", self) #필요 없을 것 같아
     text2_8 = QLabel("<b> * 계정  <b>  :  ", self)
     text2_1_1 = QLabel(list[0] + " (" + list[6] + ")", self)
     text2_2_1 = QLabel(list[4] + " (UTC +00)", self)
@@ -113,7 +113,7 @@ def set_tab2(self):
     vbox2.addWidget(text2_4, 3, 0)  # 작업 그룹
     vbox2.addWidget(text2_5, 4, 0)  # 표준 시간대
     vbox2.addWidget(text2_6, 5, 0)  # USB
-    vbox2.addWidget(text2_7, 10, 0)  # 네트워크
+    #vbox2.addWidget(text2_7, 10, 0)  # 네트워크
     vbox2.addWidget(text2_8, 11, 0)  # 계정
     vbox2.addWidget(text2_1_1, 0, 1)
     vbox2.addWidget(text2_2_1, 1, 1)
