@@ -245,12 +245,12 @@ class Tab4():
         # self.tab4.setLayout(self.tab4.layout)
 
     #### 문서 실행 흔적 중 점프 목록####
-        # self.document_jumplist_table = QTableWidget(self)
-        # self.Document_Jumplist()
-        #
-        # self.tab4.layout.addWidget(tree)
-        # self.tab4.layout.addWidget(self.document_jumplist_table)
-        # self.tab4.setLayout(self.tab4.layout)
+        self.document_jumplist_table = QTableWidget(self)
+        Tab4.Document_Jumplist(self)
+
+        self.tab4.layout.addWidget(tree)
+        self.tab4.layout.addWidget(self.document_jumplist_table)
+        self.tab4.setLayout(self.tab4.layout)
 
     #### 문서 실행 흔적 중 프리패치####
         # self.document_prefetch_table = QTableWidget(self)
@@ -309,12 +309,12 @@ class Tab4():
         # self.tab4.setLayout(self.tab4.layout)
 
     #### 이벤트 로그 흔적 중 절전 모드####
-        self.event_powersave_table = QTableWidget(self)
-        Tab4.Event_Powersave(self)
-
-        self.tab4.layout.addWidget(tree)
-        self.tab4.layout.addWidget(self.event_powersave_table)
-        self.tab4.setLayout(self.tab4.layout)
+        # self.event_powersave_table = QTableWidget(self)
+        # Tab4.Event_Powersave(self)
+        #
+        # self.tab4.layout.addWidget(tree)
+        # self.tab4.layout.addWidget(self.event_powersave_table)
+        # self.tab4.setLayout(self.tab4.layout)
 
     #### 이벤트 로그 흔적 중 원격 접속 기록####
         # self.event_remote_table = QTableWidget(self)
@@ -907,41 +907,47 @@ class Tab4():
     #         self.document_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
     #         self.document_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
 
-    # #### 문서 실행 흔적 중 점프 목록 테이블####
-    # #### DB에 없는듯?
-    # def Document_Jumplist(self):
-    #     conn = sqlite3.connect("Believe_Me_Sister.db")
-    #     cur = conn.cursor()
-    #     query = ""
-    #
-    #     cur.execute(query)
-    #     rows = cur.fetchall()
-    #
-    #     conn.close()
-    #
-    #     count = len(rows)
-    #     self.document_jumplist_table.setRowCount(count)
-    #     self.document_jumplist_table.setColumnCount(14)
-    #     column_headers = []
-    #     self.document_jumplist_table.setHorizontalHeaderLabels(column_headers)
-    #
-    #     for i in range(count):
-    #         = rows[i]
-    #
-    #         self.document_jumplist_table.setItem(i, 0, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 1, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 2, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 3, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 4, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 5, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 6, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 7, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 8, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 9, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 10, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 11, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 12, QTableWidgetItem())
-    #         self.document_jumplist_table.setItem(i, 13, QTableWidgetItem())
+#### 문서 실행 흔적 중 점프 목록 테이블####
+#### 수정 필요!
+    def Document_Jumplist(self):
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        query = "SELECT file_name, lnk_counter, local_base_path, file_size, file_flags, target_creation_time, target_modified_time," \
+                "target_accessed_time, show_command, icon, description, volume_label, drive_type FROM jumplist " \
+                "WHERE (local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx' " \
+                "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv' OR local_base_path LIKE '%.pptx' " \
+                "OR local_base_path LIKE '%.ppt' OR local_base_path LIKE '%.txt')"
+
+        cur.execute(query)
+        rows = cur.fetchall()
+
+        conn.close()
+
+        count = len(rows)
+        self.document_jumplist_table.setRowCount(count)
+        self.document_jumplist_table.setColumnCount(13)
+        column_headers = ["file_name", "lnk_counter", "local_base_path", "file_size", "file_flags", "target_created_time",
+                          "target_modified_time", "target_accessed_time", "show_command", "icon", "description",
+                          "volume_label", "drive_type"]
+        self.document_jumplist_table.setHorizontalHeaderLabels(column_headers)
+
+        for i in range(count):
+            file_name, lnk_counter, local_base_path, file_size, file_flags, target_creation_time, target_modified_time, \
+            target_accessed_time, show_command, icon, description, volume_label, drive_type = rows[i]
+
+            self.document_jumplist_table.setItem(i, 0, QTableWidgetItem(file_name))
+            self.document_jumplist_table.setItem(i, 1, QTableWidgetItem(lnk_counter))
+            self.document_jumplist_table.setItem(i, 2, QTableWidgetItem(local_base_path))
+            self.document_jumplist_table.setItem(i, 3, QTableWidgetItem(file_size))
+            self.document_jumplist_table.setItem(i, 4, QTableWidgetItem(file_flags))
+            self.document_jumplist_table.setItem(i, 5, QTableWidgetItem(target_creation_time))
+            self.document_jumplist_table.setItem(i, 6, QTableWidgetItem(target_modified_time))
+            self.document_jumplist_table.setItem(i, 7, QTableWidgetItem(target_accessed_time))
+            self.document_jumplist_table.setItem(i, 8, QTableWidgetItem(show_command))
+            self.document_jumplist_table.setItem(i, 9, QTableWidgetItem(icon))
+            self.document_jumplist_table.setItem(i, 10, QTableWidgetItem(description))
+            self.document_jumplist_table.setItem(i, 11, QTableWidgetItem(volume_label))
+            self.document_jumplist_table.setItem(i, 12, QTableWidgetItem(drive_type))
 
     ####문서 실행 흔적 중 프리패치 테이블####
     # def Document_Prefetch(self):
@@ -1176,32 +1182,32 @@ class Tab4():
     #         self.event_pc_table.setItem(i, 3, QTableWidgetItem(time_created))
 
     #### 이벤트 로그 흔적 절전모드 종료 테이블####
-    def Event_Powersave(self):
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        query = "SELECT event_id, detailed, computer, time_created, sleep_time, wake_time " \
-                "FROM event_log WHERE (event_id LIKE '1' OR (event_id LIKE '42' AND source IS 'System.evtx'))"
-
-        cur.execute(query)
-        rows = cur.fetchall()
-
-        conn.close()
-
-        count = len(rows)
-        self.event_powersave_table.setRowCount(count)
-        self.event_powersave_table.setColumnCount(6)
-        column_headers = ["Event_ID", "Detailed", "Computer", "Created_Time", "Sleep_Time", "Wake_Time"]
-        self.event_powersave_table.setHorizontalHeaderLabels(column_headers)
-
-        for i in range(count):
-            event_id, detailed, computer, time_created, sleep_time, wake_time = rows[i]
-
-            self.event_powersave_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.event_powersave_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.event_powersave_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.event_powersave_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.event_powersave_table.setItem(i, 4, QTableWidgetItem(sleep_time))
-            self.event_powersave_table.setItem(i, 5, QTableWidgetItem(wake_time))
+    # def Event_Powersave(self):
+    #     conn = sqlite3.connect("Believe_Me_Sister.db")
+    #     cur = conn.cursor()
+    #     query = "SELECT event_id, detailed, computer, time_created, sleep_time, wake_time " \
+    #             "FROM event_log WHERE (event_id LIKE '1' OR (event_id LIKE '42' AND source IS 'System.evtx'))"
+    #
+    #     cur.execute(query)
+    #     rows = cur.fetchall()
+    #
+    #     conn.close()
+    #
+    #     count = len(rows)
+    #     self.event_powersave_table.setRowCount(count)
+    #     self.event_powersave_table.setColumnCount(6)
+    #     column_headers = ["Event_ID", "Detailed", "Computer", "Created_Time", "Sleep_Time", "Wake_Time"]
+    #     self.event_powersave_table.setHorizontalHeaderLabels(column_headers)
+    #
+    #     for i in range(count):
+    #         event_id, detailed, computer, time_created, sleep_time, wake_time = rows[i]
+    #
+    #         self.event_powersave_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+    #         self.event_powersave_table.setItem(i, 1, QTableWidgetItem(detailed))
+    #         self.event_powersave_table.setItem(i, 2, QTableWidgetItem(computer))
+    #         self.event_powersave_table.setItem(i, 3, QTableWidgetItem(time_created))
+    #         self.event_powersave_table.setItem(i, 4, QTableWidgetItem(sleep_time))
+    #         self.event_powersave_table.setItem(i, 5, QTableWidgetItem(wake_time))
 
 
     #### 이벤트 로그 흔적 원격 접속 테이블####
