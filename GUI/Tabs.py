@@ -33,9 +33,6 @@ class MyWidget(QWidget):
         Tab3.timeline_data2_5(self)
         Tab4.set_tab4(self)
         Tab4.Event_Remote(self)
-        #self.set_tab2()
-        #self.set_tab3()
-        #self.set_tab4()
 
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
