@@ -324,7 +324,10 @@ class DecompressWin10(object):
 def main():
     for i in file_list:
         if i.endswith(".pf"):
-            Prefetch(path_dir + i)
+            try:
+                Prefetch(path_dir + i)
+            except:
+                pass
         else:
             pass
 
