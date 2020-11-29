@@ -374,7 +374,7 @@ def connected_usb():
             for g in GUIDmap:
                 if u[1] == g[1]:
                     tmp = g[0]
-                    u.append(tmp)
+            u.append(tmp)
     except:
         # 임시로 코드가 돌아가게만 처리함.
         return [["DCID", "UIID", "GUID", "label", "first_connected", "last_connected", "vendor_name", "product_name", "version", "serial_num", True],
@@ -405,7 +405,7 @@ def connected_usb():
         for l in last_connected:
             if u[2] == l[0]:
                 tmp = l[1]
-                u.append(tmp)
+        u.append(tmp)
 
     # DCID에서 제조사명, 제품명, 버전을 분리하여 리스트에 추가한 후, 결과를 반환합니다.
     for u in usb:
@@ -777,8 +777,8 @@ def main():
     except:
         pass
     try:
-        path = ControlSet00n + "\\Control\\TimeZoneInformation"
-        registry.open(path)
+        # path = ControlSet00n + "\\Control\\TimeZoneInformation"
+        # registry.open(path)
         data_list = connected_usb()
         Database.Reg_Connected_USB(data_list)
     except:
