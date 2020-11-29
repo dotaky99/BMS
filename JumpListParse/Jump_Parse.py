@@ -104,20 +104,6 @@ def read_auto(filename):
             pass
     return datalist
 
-def db_insert(data_list):
-
-    conn = sqlite3.connect("Believe_Me_Sister.db")
-    cur = conn.cursor()
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS jumplist(Type TEXT, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
-        "file_flags TEXT, target_creation_time DATETIME, target_modified_time DATETIME, target_accessed_time DATETIME, "
-        "show_command TEXT, icon TEXT, description TEXT, local_base_path TEXT, volume_label TEXT, "
-        "drive_type TEXT)")
-    cur.executemany("INSERT INTO jumplist VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
-
-    conn.commit()
-    conn.close()
-
 def main():
 
     path = 'COPY\\JUMPLIST'
