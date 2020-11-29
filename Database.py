@@ -4,7 +4,8 @@ import sqlite3
 def Event_Log_Database(data_list):
     conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
-    conn.execute('CREATE TABLE IF NOT EXISTS event_log('
+    conn.execute('DROP TABLE IF EXISTS event_log')
+    conn.execute('CREATE TABLE event_log('
                  'event_id INTEGER,            detailed TEXT,              time_created DATETIME,  source TEXT,'
                  'computer TEXT,               new_bias TEXT,              old_bias TEXT, '
                  'sleep_time DATETIME,         wake_time DATETIME,         svc_name TEXT, '
@@ -40,11 +41,13 @@ def Prefetch_Database(data_list1, data_list2):
     cur1 = conn.cursor()
     cur2 = conn.cursor()
 
-    conn.execute('CREATE TABLE IF NOT EXISTS prefetch1(Executable_Name TEXT, Full_Path TEXT, '
+    conn.execute('DROP TABLE IF EXISTS prefetch1')
+    conn.execute('CREATE TABLE prefetch1(Executable_Name TEXT, Full_Path TEXT, '
                  'Run_Count INTEGER, Last_Executed1 DATETIME, Last_Executed2 DATETIME, Last_Executed3 DATETIME,'
                  ' Last_Executed4 DATETIME, Last_Executed5 DATETIME, Last_Executed6 DATETIME, Last_Executed7 DATETIME,'
                  'Last_Executed8 DATETIME)')
-    conn.execute('CREATE TABLE IF NOT EXISTS prefetch2(FILENAME TEXT, PATH TEXT)')
+    conn.execute('DROP TABLE IF EXISTS prefetch2')
+    conn.execute('CREATE TABLE prefetch2(FILENAME TEXT, PATH TEXT)')
 
     cur1.executemany('INSERT INTO prefetch1 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', data_list1)
     cur2.executemany('INSERT INTO prefetch2 VALUES(?, ?)', data_list2)
@@ -54,38 +57,47 @@ def Prefetch_Database(data_list1, data_list2):
 def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5, data_list6, data_list7, data_list8, data_list9):
     dest = sqlite3.connect("Believe_Me_Sister.db")
     d_cur = dest.cursor()
-
+    d_cur.execute('DROP TABLE IF EXISTS url')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS url(type TEXT, timestamp DATETIME, url TEXT, title TEXT, '
+        'CREATE TABLE url(type TEXT, timestamp DATETIME, url TEXT, title TEXT, '
         'source TEXT, visit_duration TEXT, visit_count INTEGER, '
         'typed_count INTEGER, url_hidden INTEGER, transition TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS download')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS download(type TEXT, filename TEXT, timestamp DATETIME, URL TEXT, '
+        'CREATE TABLE download(type TEXT, filename TEXT, timestamp DATETIME, URL TEXT, '
         'Status TEXT, Path TEXT, Interrupt_Reason TEXT, '
         'Danger_Type TEXT, Opened TEXT, ETag TEXT, Last_Modified DATETIME)')
+    d_cur.execute('DROP TABLE IF EXISTS autofill')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS autofill(type TEXT, timestamp DATETIME, '
+        'CREATE TABLE autofill(type TEXT, timestamp DATETIME, '
         'Status TEXT, Value TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS bookmark')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS bookmark(type TEXT, timestamp DATETIME, '
+        'CREATE TABLE bookmark(type TEXT, timestamp DATETIME, '
         'URL TEXT, Title TEXT, Value TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS cookies')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS cookies(type TEXT, timestamp DATETIME, URL TEXT, '
+        'CREATE TABLE cookies(type TEXT, timestamp DATETIME, URL TEXT, '
         'Title TEXT, Value TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS login')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS login(type TEXT, timestamp DATETIME, URL TEXT, Name TEXT, '
+        'CREATE TABLE login(type TEXT, timestamp DATETIME, URL TEXT, Name TEXT, '
         'Data TEXT, Password_element, Password_value)')
+    d_cur.execute('DROP TABLE IF EXISTS preference')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS preference(type TEXT, timestamp DATETIME, URL TEXT, '
+        'CREATE TABLE preference(type TEXT, timestamp DATETIME, URL TEXT, '
         'Status TEXT, Data TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS keyword')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS keyword(type TEXT, timestamp DATETIME, keyword TEXT)')
+        'CREATE TABLE keyword(type TEXT, timestamp DATETIME, keyword TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS cache')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS cache(type TEXT, timestamp DATETIME, URL TEXT, '
+        'CREATE TABLE cache(type TEXT, timestamp DATETIME, URL TEXT, '
         'Status TEXT, Value TEXT, '
         'ETag TEXT, Last_Modified DATETIME, Server_Name TEXT, Data_Location TEXT, All_HTTP_Headers TEXT)')
+    d_cur.execute('DROP TABLE IF EXISTS cloud')
     d_cur.execute(
-        'CREATE TABLE IF NOT EXISTS cloud(timestamp DATETIME, URL TEXT, Title TEXT)')
+        'CREATE TABLE cloud(timestamp DATETIME, URL TEXT, Title TEXT)')
 
     sql1 = "INSERT INTO url(type, timestamp, url, title, source, visit_duration, visit_count, typed_count, url_hidden, transition) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     sql2 = "INSERT INTO autofill (type, timestamp, Status, Value) VALUES (?, ?, ?, ?)"
@@ -124,8 +136,9 @@ def cache_db_insert(data_list):
 def Lnk_Databases(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
+    conn.execute('DROP TABLE IF EXISTS lnk_files')
     conn.execute(
-        "CREATE TABLE IF NOT EXISTS lnk_files("
+        "CREATE TABLE lnk_files("
         "lnk_file_full_path TEXT,       file_name TEXT,                file_flags TEXT, "
         "file_size TEXT,                show_command TEXT,             target_creation_time DATETIME, "
         "target_modified_time DATETIME, target_accessed_time DATETIME, local_base_path TEXT,"
@@ -141,8 +154,9 @@ def JumpList_Databases(data_list):
 
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
+    conn.execute('DROP TABLE IF EXISTS jumplist')
     conn.execute(
-        "CREATE TABLE IF NOT EXISTS jumplist(Type TEXT, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
+        "CREATE TABLE jumplist(Type TEXT, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
         "file_flags TEXT, target_creation_time DATETIME, target_modified_time DATETIME, target_accessed_time DATETIME, "
         "show_command TEXT, icon TEXT, description TEXT, local_base_path TEXT, volume_label TEXT, "
         "drive_type TEXT)")
@@ -154,8 +168,9 @@ def JumpList_Databases(data_list):
 def MFT_Databases(data_list):
     conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
+    conn.execute('DROP TABLE IF EXISTS parsed_MFT')
     cur.execute(
-        "CREATE TABLE IF NOT EXISTS parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, log_file_seq_num, file_path, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN_value, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
+        "CREATE TABLE parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, log_file_seq_num, file_path, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN_value, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
     cur.executemany('INSERT INTO parsed_MFT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', data_list)
     conn.commit()
     conn.close()
@@ -163,8 +178,9 @@ def MFT_Databases(data_list):
 def Usn_Databases(data_list):
     conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
+    conn.execute('DROP TABLE IF EXISTS parsed_usn')
     cur.execute(
-        "CREATE TABLE IF NOT EXISTS parsed_usn(USN, src, reason, MFT_refer_num, parent_MFT_refer_num, time_stamp, file_name, file_path);")
+        "CREATE TABLE parsed_usn(USN, src, reason, MFT_refer_num, parent_MFT_refer_num, time_stamp, file_name, file_path);")
     cur.executemany('INSERT INTO parsed_usn VALUES (?, ?, ?, ?, ?, ?, ?, ?);', data_list)
     conn.commit()
     conn.close()
@@ -175,7 +191,8 @@ def Reg_OSInformation(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS OSInformation" \
+        conn.execute('DROP TABLE IF EXISTS OSInformation')
+        query = "CREATE TABLE OSInformation" \
             "(product_name TEXT, product_ID TEXT, system_root TEXT, owner TEXT, install_date TEXT, organization TEXT, build_lab, " \
             "timezone_name TEXT, active_time_bias TEXT, UTC INTEGER, " \
             "computer_name TEXT, default_user_name TEXT, last_used_user_name TEXT, shutdown_time TEXT)"
@@ -191,7 +208,8 @@ def Reg_Uninstall(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS Uninstall(id TEXT, name TEXT, version TEXT, install_location TEXT, publisher TEXT, install_date TEXT, type TEXT)"
+        conn.execute('DROP TABLE IF EXISTS Uninstall')
+        query = "CREATE TABLE Uninstall(id TEXT, name TEXT, version TEXT, install_location TEXT, publisher TEXT, install_date TEXT, type TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO Uninstall VALUES(?, ?, ?, ?, ?, ?, ?)", data_list)
         conn.commit()
@@ -203,7 +221,8 @@ def Reg_BAM(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
+        conn.execute('DROP TABLE IF EXISTS BAM')
+        query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
         conn.commit()
@@ -215,7 +234,8 @@ def Reg_UserAccounts(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS UserAccounts(RID TEXT, RID_int INTEGER, last_login_time TEXT, last_password_change_time TEXT," \
+        conn.execute('DROP TABLE IF EXISTS UserAccounts')
+        query = "CREATE TABLE UserAccounts(RID TEXT, RID_int INTEGER, last_login_time TEXT, last_password_change_time TEXT," \
             "expires_on TEXT, last_incorrect_password_time TEXT, logon_failure_count INTEGER, logon_success_count INTEGER," \
             "account_name TEXT, complete_account_name TEXT, comment TEXT, homedir TEXT, created_on TEXT)"
         conn.execute(query)
@@ -230,7 +250,8 @@ def Reg_MuiCache(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS MuiCache(name TEXT, path TEXT)"
+        conn.execute('DROP TABLE IF EXISTS MuiCache')
+        query = "CREATE TABLE MuiCache(name TEXT, path TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO MuiCache VALUES(?, ?)", data_list)
         conn.commit()
@@ -242,7 +263,8 @@ def Reg_UseraAsist_CEB(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS UserAssist_CEB(name TEXT, run_count INTEGER, last_executed TEXT)"
+        conn.execute('DROP TABLE IF EXISTS UserAssist_CEB')
+        query = "CREATE TABLE UserAssist_CEB(name TEXT, run_count INTEGER, last_executed TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO UserAssist_CEB VALUES(?, ?, ?)", data_list)
         conn.commit()
@@ -254,7 +276,8 @@ def Reg_UserAssist_F4E(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS UserAssist_F4E(name TEXT, run_count INTEGER, last_executed TEXT)"
+        conn.execute('DROP TABLE IF EXISTS UserAssist_F4E')
+        query = "CREATE TABLE UserAssist_F4E(name TEXT, run_count INTEGER, last_executed TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO UserAssist_F4E VALUES(?, ?, ?)", data_list)
         conn.commit()
@@ -266,7 +289,8 @@ def Reg_UserAssist_CIDSizeMRU(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS CIDSizeMRU(program_name TEXT, mru INTEGER, opened_on TEXT)"
+        conn.execute('DROP TABLE IF EXISTS CIDSizeMRU')
+        query = "CREATE TABLE CIDSizeMRU(program_name TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO CIDSizeMRU VALUES(?, ?, ?)", data_list)
         conn.commit()
@@ -278,7 +302,8 @@ def Reg_FirstFolder(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS FirstFolder(program_name TEXT, folder TEXT, mru INTEGER, opened_on TEXT)"
+        conn.execute('DROP TABLE IF EXISTS FirstFolder')
+        query = "CREATE TABLE FirstFolder(program_name TEXT, folder TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO FirstFolder VALUES(?, ?, ?, ?)", data_list)
         conn.commit()
@@ -290,7 +315,8 @@ def Reg_Connected_USB(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS Connected_USB(DCID TEXT, UIID TEXT, GUID TEXT, label TEXT, " \
+        conn.execute('DROP TABLE IF EXISTS Connected_USB')
+        query = "CREATE TABLE Connected_USB(DCID TEXT, UIID TEXT, GUID TEXT, label TEXT, " \
                 "first_connected TEXT, last_connected TEXT, vendor_name TEXT, product_name TEXT, version TEXT, serial_num TEXT, random_yn INTEGER)"
         conn.execute(query)
         cur.executemany("INSERT INTO Connected_USB VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
@@ -303,7 +329,8 @@ def Reg_RecentDocs(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS RecentDocs(extension TEXT, mru INTEGER, program TEXT, lnk TEXT, opened_on TEXT)"
+        conn.execute('DROP TABLE IF EXISTS RecentDocs')
+        query = "CREATE TABLE RecentDocs(extension TEXT, mru INTEGER, program TEXT, lnk TEXT, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO RecentDocs VALUES(?, ?, ?, ?, ?)", data_list)
         conn.commit()
@@ -315,7 +342,8 @@ def Reg_LastVisitedPidl(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS LastVisitedPidl(program TEXT, mru INTEGER, opened_on TEXT)"
+        conn.execute('DROP TABLE IF EXISTS LastVisitedPidl')
+        query = "CREATE TABLE LastVisitedPidl(program TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO LastVisitedPidl VALUES(?, ?, ?)", data_list)
         conn.commit()
@@ -327,7 +355,8 @@ def Reg_Legacy(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS Legacy(program TEXT, mru INTEGER, opened_on TEXT)"
+        conn.execute('DROP TABLE IF EXISTS Legacy')
+        query = "CREATE TABLE Legacy(program TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO Legacy VALUES(?, ?, ?)", data_list)
         conn.commit()
@@ -339,7 +368,8 @@ def Reg_OpenSavePidl(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS OpenSavePidl(extension TEXT, program TEXT, mru INTEGER, opened_on TEXT)"
+        conn.execute('DROP TABLE IF EXISTS OpenSavePidl')
+        query = "CREATE TABLE OpenSavePidl(extension TEXT, program TEXT, mru INTEGER, opened_on TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO OpenSavePidl VALUES(?, ?, ?, ?)", data_list)
         conn.commit()
@@ -351,7 +381,8 @@ def Reg_Run(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
-        query = "CREATE TABLE IF NOT EXISTS Run(program TEXT, path TEXT, type TEXT)"
+        conn.execute('DROP TABLE IF EXISTS Run')
+        query = "CREATE TABLE Run(program TEXT, path TEXT, type TEXT)"
         conn.execute(query)
         cur.executemany("INSERT INTO Run VALUES(?, ?, ?)", data_list)
         conn.commit()
