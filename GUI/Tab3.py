@@ -108,7 +108,6 @@ class Tab3():
 
     # 계정 생성
     def timeline_data1_2(self):
-        print("a")
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT created_on, last_password_change_time, account_name, RID_int FROM UserAccounts"
@@ -123,24 +122,27 @@ class Tab3():
             timeline.setItem(timeline_count + i, 0, QTableWidgetItem(created_on))
             timeline.setItem(timeline_count + i, 1, QTableWidgetItem("계정 생성"))
             timeline.setItem(timeline_count + i, 2, QTableWidgetItem(account_name + ", SID: " + str(RID_int)))
-
+            print(timeline_count+i)
             if last_password_change_time != None:
                 password_exists.append(i)
+            print("a")
 
 
-        timeline.setRowCount(len(password_exists) + timeline_count*2)
-        cnt = 0
+
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        query = "SELECT last_password_change_time, account_name, RID_int FROM UserAccounts"
+        cur.execute(query)
+        rows = cur.fetchall()
+        conn.close()
+
+        timeline.setRowCount(len(rows) + len(password_exists))
         for p in password_exists:
-            created_on, last_password, name, rid = rows[p]
-
-            timeline.setItem(7, 0, QTableWidgetItem(last_password_change_time))
-            timeline.setItem(8, 1, QTableWidgetItem("계정 패스워드 변경"))
-            timeline.setItem(9, 2, QTableWidgetItem(name + ", SID: " + str(rid)))
-
-            timeline.setItem(timeline_count + cnt, 0, QTableWidgetItem(last_password_change_time))
-            timeline.setItem(timeline_count + cnt, 1, QTableWidgetItem("계정 패스워드 변경"))
-            timeline.setItem(timeline_count + cnt, 2, QTableWidgetItem(name + ", SID: " + str(rid)))
-            cnt = cnt + 1
+            last_password_change_time, account_name, RID_int = rows[p]
+            timeline.setItem(p+3, 0, QTableWidgetItem(last_password_change_time))
+            timeline.setItem(p+3, 1, QTableWidgetItem("계정 패스워드 변경"))
+            timeline.setItem(p+3, 2, QTableWidgetItem(account_name + ", SID: " + str(RID_int)))
+            print(p)
 
     # Windows 설치
     # def timeline_data1_3(self):
