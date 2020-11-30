@@ -125,7 +125,6 @@ class Tab3():
             print(timeline_count+i)
             if last_password_change_time != None:
                 password_exists.append(i)
-            print("a")
 
 
 
@@ -137,12 +136,12 @@ class Tab3():
         conn.close()
 
         timeline.setRowCount(len(rows) + len(password_exists))
-        for p in password_exists:
+        for p in range(len(password_exists)):
             last_password_change_time, account_name, RID_int = rows[p]
-            timeline.setItem(p+3, 0, QTableWidgetItem(last_password_change_time))
-            timeline.setItem(p+3, 1, QTableWidgetItem("계정 패스워드 변경"))
-            timeline.setItem(p+3, 2, QTableWidgetItem(account_name + ", SID: " + str(RID_int)))
-            print(p)
+            timeline.setItem(len(rows) + p, 0, QTableWidgetItem(last_password_change_time))
+            timeline.setItem(len(rows) + p, 1, QTableWidgetItem("계정 패스워드 변경"))
+            timeline.setItem(len(rows) + p, 2, QTableWidgetItem(account_name + ", SID: " + str(RID_int)))
+            print(len(rows)+p)
 
     # Windows 설치
     # def timeline_data1_3(self):
