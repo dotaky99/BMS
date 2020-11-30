@@ -21,7 +21,7 @@ class MyWidget(QWidget):
         self.tabs.addTab(self.tab4, "데이터")
 
         Tab2.Tab2.set_tab2(self)
-        #Tab3.Tab3.set_tab3(self)
+        Tab3.Tab3.set_tab3(self)
         Tab4.Tab4.set_tab4(self)
 
         total_layout = QVBoxLayout()
