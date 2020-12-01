@@ -8,13 +8,13 @@ import struct
 import sqlite3
 import Database
 
-def read_custom(filename):
+def read_custom(jump_filename):
     datalist = []
     link_header = b'\x4C\x00\x00\x00\x01\x14\x02\x00\x00\x00\x00\x00\xC0\x00\x00\x00\x00\x00\x00\x46'
     prefix = b'\x01\x14\x02\x00\x00\x00\x00\x00\xC0\x00\x00\x00\x00\x00\x00\x46'
     fileend = b'\xAB\xFB\xBF\xBA'
 
-    with open(filename, 'rb') as f:
+    with open(jump_filename, 'rb') as f:
         custom = f.read()
     try:
         header = struct.unpack('<IIIII', custom[:20])
@@ -53,8 +53,8 @@ def read_custom(filename):
                         file_flags += flags[seq] + ', '
 
                     seq += 1
-
-                data = ["CustDest", filename, lnk_counter, link.path, link.file_size, file_flags, link.creation_time, link.modification_time, link.access_time, link.show_command, link.icon,
+                file_name = link.link_info.local_base_path.split["\\"][-1]
+                data = ["CustDest", jump_filename, file_name, lnk_counter, link.path, link.file_size, file_flags, link.creation_time, link.modification_time, link.access_time, link.show_command, link.icon,
                 link.description, link.link_info.local_base_path, link.link_info.volume_label, link.link_info.drive_type]
                 lnk_counter += 1
 
@@ -68,9 +68,9 @@ def read_custom(filename):
 
     return datalist
 
-def read_auto(filename):
+def read_auto(jump_filename):
     datalist = []
-    ole = OleFileIO(filename)
+    ole = OleFileIO(jump_filename)
     lnk_counter = 0
     for ole_stream in ole.listdir():
         ole_stream = ole_stream[0]
@@ -93,8 +93,9 @@ def read_auto(filename):
                     file_flags += flags[seq] + ', '
 
                 seq += 1
+            file_name = link.link_info.local_base_path.split("\\")[-1]
 
-            data = ["AutoDest", filename, lnk_counter, link.path, link.file_size, file_flags, link.creation_time, link.modification_time,
+            data = ["AutoDest", jump_filename, file_name, lnk_counter, link.path, link.file_size, file_flags, link.creation_time, link.modification_time,
                     link.access_time, link.show_command, link.icon,
                     link.description, link.link_info.local_base_path, link.link_info.volume_label, link.link_info.drive_type]
             lnk_counter += 1
