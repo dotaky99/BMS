@@ -90,7 +90,9 @@ class Tab4():
         item7_4 = QTreeWidgetItem(item7)
         item7_4.setText(0, "절전 모드")
         item7_5 = QTreeWidgetItem(item7)
-        item7_5.setText(0, "원격 접속 기록")
+        item7_5.setText(0, "원격 접속 기록 (1)")
+        item7_6 = QTreeWidgetItem(item7)
+        item7_6.setText(0, "원격 접속 기록 (2)")
 
     #### PC 정보 중 시스템 정보####
         # self.pc_system_table = QTableWidget(self)
@@ -245,12 +247,12 @@ class Tab4():
         # self.tab4.setLayout(self.tab4.layout)
 
     #### 문서 실행 흔적 중 점프 목록####
-        self.document_jumplist_table = QTableWidget(self)
-        Tab4.Document_Jumplist(self)
-
-        self.tab4.layout.addWidget(tree)
-        self.tab4.layout.addWidget(self.document_jumplist_table)
-        self.tab4.setLayout(self.tab4.layout)
+        # self.document_jumplist_table = QTableWidget(self)
+        # Tab4.Document_Jumplist(self)
+        #
+        # self.tab4.layout.addWidget(tree)
+        # self.tab4.layout.addWidget(self.document_jumplist_table)
+        # self.tab4.setLayout(self.tab4.layout)
 
     #### 문서 실행 흔적 중 프리패치####
         # self.document_prefetch_table = QTableWidget(self)
@@ -316,13 +318,21 @@ class Tab4():
         # self.tab4.layout.addWidget(self.event_powersave_table)
         # self.tab4.setLayout(self.tab4.layout)
 
-    #### 이벤트 로그 흔적 중 원격 접속 기록####
-        # self.event_remote_table = QTableWidget(self)
-        # Tab4.Event_Remote(self)
+    #### 이벤트 로그 흔적 중 원격 접속 기록 (1)####
+        # self.event_remote_1_table = QTableWidget(self)
+        # Tab4.Event_Remote_1(self)
         #
         # self.tab4.layout.addWidget(tree)
-        # self.tab4.layout.addWidget(self.event_remote_table)
+        # self.tab4.layout.addWidget(self.event_remote_table_1)
         # self.tab4.setLayout(self.tab4.layout)
+
+    #### 이벤트 로그 흔적 중 원격 접속 기록 (2) ####
+        self.event_remote_table_2 = QTableWidget(self)
+        Tab4.Event_Remote_2(self)
+
+        self.tab4.layout.addWidget(tree)
+        self.tab4.layout.addWidget(self.event_remote_table_2)
+        self.tab4.setLayout(self.tab4.layout)
 
     #### PC 정보 중 시스템 정보 테이블####
     # def PC_System(self):
@@ -908,46 +918,45 @@ class Tab4():
     #         self.document_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
 
 #### 문서 실행 흔적 중 점프 목록 테이블####
-#### 수정 필요!
-    def Document_Jumplist(self):
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        query = "SELECT file_name, lnk_counter, local_base_path, file_size, file_flags, target_creation_time, target_modified_time," \
-                "target_accessed_time, show_command, icon, description, volume_label, drive_type FROM jumplist " \
-                "WHERE (local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx' " \
-                "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv' OR local_base_path LIKE '%.pptx' " \
-                "OR local_base_path LIKE '%.ppt' OR local_base_path LIKE '%.txt')"
-
-        cur.execute(query)
-        rows = cur.fetchall()
-
-        conn.close()
-
-        count = len(rows)
-        self.document_jumplist_table.setRowCount(count)
-        self.document_jumplist_table.setColumnCount(13)
-        column_headers = ["file_name", "lnk_counter", "local_base_path", "file_size", "file_flags", "target_created_time",
-                          "target_modified_time", "target_accessed_time", "show_command", "icon", "description",
-                          "volume_label", "drive_type"]
-        self.document_jumplist_table.setHorizontalHeaderLabels(column_headers)
-
-        for i in range(count):
-            file_name, lnk_counter, local_base_path, file_size, file_flags, target_creation_time, target_modified_time, \
-            target_accessed_time, show_command, icon, description, volume_label, drive_type = rows[i]
-
-            self.document_jumplist_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.document_jumplist_table.setItem(i, 1, QTableWidgetItem(lnk_counter))
-            self.document_jumplist_table.setItem(i, 2, QTableWidgetItem(local_base_path))
-            self.document_jumplist_table.setItem(i, 3, QTableWidgetItem(file_size))
-            self.document_jumplist_table.setItem(i, 4, QTableWidgetItem(file_flags))
-            self.document_jumplist_table.setItem(i, 5, QTableWidgetItem(target_creation_time))
-            self.document_jumplist_table.setItem(i, 6, QTableWidgetItem(target_modified_time))
-            self.document_jumplist_table.setItem(i, 7, QTableWidgetItem(target_accessed_time))
-            self.document_jumplist_table.setItem(i, 8, QTableWidgetItem(show_command))
-            self.document_jumplist_table.setItem(i, 9, QTableWidgetItem(icon))
-            self.document_jumplist_table.setItem(i, 10, QTableWidgetItem(description))
-            self.document_jumplist_table.setItem(i, 11, QTableWidgetItem(volume_label))
-            self.document_jumplist_table.setItem(i, 12, QTableWidgetItem(drive_type))
+    # def Document_Jumplist(self):
+    #     conn = sqlite3.connect("Believe_Me_Sister.db")
+    #     cur = conn.cursor()
+    #     query = "SELECT file_name, lnk_counter, local_base_path, file_size, file_flags, target_creation_time, target_modified_time," \
+    #             "target_accessed_time, show_command, icon, description, volume_label, drive_type FROM jumplist " \
+    #             "WHERE (local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx' " \
+    #             "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv' OR local_base_path LIKE '%.pptx' " \
+    #             "OR local_base_path LIKE '%.ppt' OR local_base_path LIKE '%.txt')"
+    #
+    #     cur.execute(query)
+    #     rows = cur.fetchall()
+    #
+    #     conn.close()
+    #
+    #     count = len(rows)
+    #     self.document_jumplist_table.setRowCount(count)
+    #     self.document_jumplist_table.setColumnCount(13)
+    #     column_headers = ["file_name", "lnk_counter", "local_base_path", "file_size", "file_flags", "target_created_time",
+    #                       "target_modified_time", "target_accessed_time", "show_command", "icon", "description",
+    #                       "volume_label", "drive_type"]
+    #     self.document_jumplist_table.setHorizontalHeaderLabels(column_headers)
+    #
+    #     for i in range(count):
+    #         file_name, lnk_counter, local_base_path, file_size, file_flags, target_creation_time, target_modified_time, \
+    #         target_accessed_time, show_command, icon, description, volume_label, drive_type = rows[i]
+    #
+    #         self.document_jumplist_table.setItem(i, 0, QTableWidgetItem(file_name))
+    #         self.document_jumplist_table.setItem(i, 1, QTableWidgetItem(lnk_counter))
+    #         self.document_jumplist_table.setItem(i, 2, QTableWidgetItem(local_base_path))
+    #         self.document_jumplist_table.setItem(i, 3, QTableWidgetItem(file_size))
+    #         self.document_jumplist_table.setItem(i, 4, QTableWidgetItem(file_flags))
+    #         self.document_jumplist_table.setItem(i, 5, QTableWidgetItem(target_creation_time))
+    #         self.document_jumplist_table.setItem(i, 6, QTableWidgetItem(target_modified_time))
+    #         self.document_jumplist_table.setItem(i, 7, QTableWidgetItem(target_accessed_time))
+    #         self.document_jumplist_table.setItem(i, 8, QTableWidgetItem(show_command))
+    #         self.document_jumplist_table.setItem(i, 9, QTableWidgetItem(icon))
+    #         self.document_jumplist_table.setItem(i, 10, QTableWidgetItem(description))
+    #         self.document_jumplist_table.setItem(i, 11, QTableWidgetItem(volume_label))
+    #         self.document_jumplist_table.setItem(i, 12, QTableWidgetItem(drive_type))
 
     ####문서 실행 흔적 중 프리패치 테이블####
     # def Document_Prefetch(self):
@@ -1212,7 +1221,7 @@ class Tab4():
 
     #### 이벤트 로그 흔적 원격 접속 테이블####
     #### 일단 원격 접속 당한 것만 해놨음!
-    # def Event_Remote(self):
+    # def Event_Remote_1(self):
     #     conn = sqlite3.connect("Believe_Me_Sister.db")
     #     cur = conn.cursor()
     #     query = "SELECT event_id, detailed, computer, time_created, remo_conn_user, remo_conn_addr, remo_conn_local," \
@@ -1225,21 +1234,58 @@ class Tab4():
     #     conn.close()
     #
     #     count = len(rows)
-    #     self.event_remote_table.setRowCount(count)
-    #     self.event_remote_table.setColumnCount(8)
+    #     self.event_remote_table_1.setRowCount(count)
+    #     self.event_remote_table_1.setColumnCount(8)
     #     column_headers = ["Event_ID", "Detailed", "Computer", "Created_Time", "Remote_Conn_User", "Remote_Conn_Addr",
     #                       "Remote_Conn_Local", "Local_Manager_Sess_ID"]
-    #     self.event_remote_table.setHorizontalHeaderLabels(column_headers)
+    #     self.event_remote_table_1.setHorizontalHeaderLabels(column_headers)
     #
     #     for i in range(count):
     #         event_id, detailed, computer, time_created, remo_conn_user, remo_conn_addr, remo_conn_local, \
     #         local_manager_sess_id = rows[i]
     #
-    #         self.event_remote_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-    #         self.event_remote_table.setItem(i, 1, QTableWidgetItem(detailed))
-    #         self.event_remote_table.setItem(i, 2, QTableWidgetItem(computer))
-    #         self.event_remote_table.setItem(i, 3, QTableWidgetItem(time_created))
-    #         self.event_remote_table.setItem(i, 4, QTableWidgetItem(remo_conn_user))
-    #         self.event_remote_table.setItem(i, 5, QTableWidgetItem(remo_conn_addr))
-    #         self.event_remote_table.setItem(i, 6, QTableWidgetItem(remo_conn_local))
-    #         self.event_remote_table.setItem(i, 7, QTableWidgetItem(local_manager_sess_id))
+    #         self.event_remote_table_1.setItem(i, 0, QTableWidgetItem(str(event_id)))
+    #         self.event_remote_table_1.setItem(i, 1, QTableWidgetItem(detailed))
+    #         self.event_remote_table_1.setItem(i, 2, QTableWidgetItem(computer))
+    #         self.event_remote_table_1.setItem(i, 3, QTableWidgetItem(time_created))
+    #         self.event_remote_table_1.setItem(i, 4, QTableWidgetItem(remo_conn_user))
+    #         self.event_remote_table_1.setItem(i, 5, QTableWidgetItem(remo_conn_addr))
+    #         self.event_remote_table_1.setItem(i, 6, QTableWidgetItem(remo_conn_local))
+    #         self.event_remote_table_1.setItem(i, 7, QTableWidgetItem(local_manager_sess_id))
+
+#### 이벤트 로그 흔적 원격 접속 테이블####
+#### 일단 원격 접속 한 것만 해놨음!
+    def Event_Remote_2(self):
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        query = "SELECT event_id, detailed, computer, time_created, rdp_name, rdp_value, rdp_custom_level, rdp_domain, " \
+                "rdp_session, sec_id, source FROM event_log WHERE (event_id LIKE '1024' AND rdp_value IS NOT  '') " \
+                "OR (event_id LIKE '1026' AND rdp_value IS NOT '') OR event_id LIKE '1025' OR event_id LIKE '1027' " \
+                "OR event_id LIKE '1028' or event_id LIKE '1102'"
+
+        cur.execute(query)
+        rows = cur.fetchall()
+
+        conn.close()
+
+        count = len(rows)
+        self.event_remote_table_2.setRowCount(count)
+        self.event_remote_table_2.setColumnCount(10)
+        column_headers = ["Event_ID", "Detailed", "Computer", "Created_Time", "Rdp_Name", "Rdp_Custom_Level", "Rdp_Domain",
+                          "Rdp_Session", "Sec_ID", "Source"]
+        self.event_remote_table_2.setHorizontalHeaderLabels(column_headers)
+
+        for i in range(count):
+            event_id, detailed, computer, time_created, rdp_name, rdp_value, rdp_custom_level, rdp_domain, rdp_session, \
+            sec_id, source = rows[i]
+
+            self.event_remote_table_2.setItem(i, 0, QTableWidgetItem(str(event_id)))
+            self.event_remote_table_2.setItem(i, 1, QTableWidgetItem(detailed))
+            self.event_remote_table_2.setItem(i, 2, QTableWidgetItem(computer))
+            self.event_remote_table_2.setItem(i, 3, QTableWidgetItem(time_created))
+            self.event_remote_table_2.setItem(i, 4, QTableWidgetItem(rdp_name))
+            self.event_remote_table_2.setItem(i, 5, QTableWidgetItem(rdp_value))
+            self.event_remote_table_2.setItem(i, 6, QTableWidgetItem(rdp_custom_level))
+            self.event_remote_table_2.setItem(i, 7, QTableWidgetItem(rdp_domain))
+            self.event_remote_table_2.setItem(i, 8, QTableWidgetItem(sec_id))
+            self.event_remote_table_2.setItem(i, 9, QTableWidgetItem(source))
