@@ -170,7 +170,7 @@ def MFT_Databases(data_list):
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS parsed_MFT')
     cur.execute(
-        "CREATE TABLE parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, log_file_seq_num, file_path, SI_FLAG, FN_FLAG, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN_value, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
+        "CREATE TABLE parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, LSN, file_path, SI_flag, FN_flag, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
     cur.executemany('INSERT INTO parsed_MFT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', data_list)
     conn.commit()
     conn.close()
