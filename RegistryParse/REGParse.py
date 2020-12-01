@@ -243,23 +243,26 @@ def UserAssist_F4E():
 
 # Background Activity Moderator
 def BAM():
-    registry = Registry.Registry(SYSTEM)
-    path = ControlSet00n + "\\Services\\bam\\State\\UserSettings"
-    key = registry.open(path)
-    sid = []
-    for v in key.subkeys():
-        sid.append(v.name())
+    try:
+        registry = Registry.Registry(SYSTEM)
+        path = ControlSet00n + "\\Services\\bam\\State\\UserSettings"
+        key = registry.open(path)
+        sid = []
+        for v in key.subkeys():
+            sid.append(v.name())
 
-    result = []
-    for s in sid:
-        sub_path = path + "\\" + s
-        sub_key = registry.open(sub_path)
-        for v in sub_key.values():
-            if v.name() != "Version" and v.name() != "SequenceNumber":
-                last_executed = decode.convert_time(v.value()[0:8])
-                result.append([s, v.name(), last_executed])
+        result = []
+        for s in sid:
+            sub_path = path + "\\" + s
+            sub_key = registry.open(sub_path)
+            for v in sub_key.values():
+                if v.name() != "Version" and v.name() != "SequenceNumber":
+                    last_executed = decode.convert_time(v.value()[0:8])
+                    result.append([s, v.name(), last_executed])
 
-    return result
+        return result
+    except:
+        return None
 
 
 # ComDlg32의 CIDSizeMRU 키

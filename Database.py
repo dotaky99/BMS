@@ -218,17 +218,18 @@ def Reg_Uninstall(data_list):
     conn.close()
 
 def Reg_BAM(data_list):
-    conn = sqlite3.connect("Believe_Me_Sister.db")
-    cur = conn.cursor()
-    try:
-        conn.execute('DROP TABLE IF EXISTS BAM')
-        query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
-        conn.execute(query)
-        cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
-        conn.commit()
-    except:
-        print("BAM table parsing error")
-    conn.close()
+    if data_list != None:
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        try:
+            conn.execute('DROP TABLE IF EXISTS BAM')
+            query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
+            conn.execute(query)
+            cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
+            conn.commit()
+        except:
+            print("BAM table parsing error")
+        conn.close()
 
 def Reg_UserAccounts(data_list):
     conn = sqlite3.connect("Believe_Me_Sister.db")
