@@ -156,11 +156,11 @@ def JumpList_Databases(data_list):
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS jumplist')
     conn.execute(
-        "CREATE TABLE jumplist(Type TEXT, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
+        "CREATE TABLE jumplist(Type TEXT, jump_file_name, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
         "file_flags TEXT, target_creation_time DATETIME, target_modified_time DATETIME, target_accessed_time DATETIME, "
         "show_command TEXT, icon TEXT, description TEXT, local_base_path TEXT, volume_label TEXT, "
         "drive_type TEXT)")
-    cur.executemany("INSERT INTO jumplist VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
+    cur.executemany("INSERT INTO jumplist VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
 
     conn.commit()
     conn.close()
