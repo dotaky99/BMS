@@ -229,8 +229,6 @@ class MyWidget(QWidget):
         self.timeline.clearContents()
         self.timeline_count = 0
 
-        print(self.datetime1)
-        print(type(self.datetime1))
         if self.checkbox1_1.isChecked():
             self.timeline_data1_1()
         if self.checkbox1_2.isChecked():
@@ -428,11 +426,11 @@ class MyWidget(QWidget):
     def timeline_data1_2(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT created_on, last_password_change_time, account_name, RID_int FROM UserAccounts " \
+        query_1 = "SELECT created_on, account_name, RID_int FROM UserAccounts " \
                 " WHERE (created_on >= '" + self.datetime1 + "' AND created_on <= '" + self.datetime2 + "')"
-        cur.execute(query)
+        cur.execute(query_1)
         rows = cur.fetchall()
-        conn.close()
+
         accum = self.timeline_count
         self.timeline_count = accum + len(rows)
         self.timeline.setRowCount(self.timeline_count)
@@ -442,26 +440,37 @@ class MyWidget(QWidget):
 
         password_exists = []
         for i in range(len(rows)):
-            created_on, last_password_change_time, name, rid = rows[i]
+            created_on, name, rid = rows[i]
             # if (self.datetime1 <= created_on) and (self.datetime2 >= created_on):
             self.timeline.setItem(accum + i, 0, QTableWidgetItem(created_on))
             self.timeline.setItem(accum + i, 1, QTableWidgetItem("계정 생성"))
             self.timeline.setItem(accum + i, 2, QTableWidgetItem(name + ", SID: " + str(rid)))
-            if last_password_change_time != None:
-                password_exists.append(i)
         self.timeline.setSortingEnabled(sortingEnabled)
+        self.set_color()
 
-        # accum = self.timeline_count
-        # self.timeline_count = accum + len(password_exists)
-        # self.timeline.setRowCount(self.timeline_count)
-        # cnt = 0
-        # for p in password_exists:
-        #     last_password_change_time, name, rid = rows[p]
-        #     #if (self.datetime1 <= last_password_change_time) and (self.datetime2 >= last_password_change_time):
-        #     self.timeline.setItem(accum + cnt, 0, QTableWidgetItem(last_password_change_time))
-        #     self.timeline.setItem(accum + cnt, 1, QTableWidgetItem("계정 패스워드 변경"))
-        #     self.timeline.setItem(accum + cnt, 2, QTableWidgetItem(name + ", SID: " + str(rid)))
-        #     cnt = cnt + 1
+        query_2 = "SELECT last_password_change_time, account_name, RID_int FROM UserAccounts " \
+                  " WHERE (last_password_change_time >= '" + self.datetime1 + "' AND last_password_change_time <= '" + self.datetime2 + "')"
+        cur.execute(query_2)
+        rows = cur.fetchall()
+
+        accum = self.timeline_count
+        self.timeline_count = accum + len(rows)
+        self.timeline.setRowCount(self.timeline_count)
+
+        sortingEnabled = self.timeline.isSortingEnabled()
+        self.timeline.setSortingEnabled(False)
+
+        for i in range(len(rows)):
+            last_password_change_time, account_name, RID_int = rows[i]
+            if last_password_change_time != None:
+                self.timeline.setItem(accum + i, 0, QTableWidgetItem(last_password_change_time))
+                self.timeline.setItem(accum + i, 1, QTableWidgetItem("계정 패스워드 변경"))
+                self.timeline.setItem(accum + i, 2, QTableWidgetItem(account_name + ", SID: " + str(RID_int)))
+            else:
+                pass
+        self.timeline.setSortingEnabled(sortingEnabled)
+        self.set_color()
+
 
     # Windows 설치
     def timeline_data1_3(self):
@@ -638,10 +647,8 @@ class MyWidget(QWidget):
             self.timeline.setItem(i + accum, 1, QTableWidgetItem("안티포렌식 도구 실행"))
             self.timeline.setItem(i + accum, 2, QTableWidgetItem(Executable_Name))
             self.timeline.setItem(i + accum, 3, QTableWidgetItem(Full_Path))
-        for i in range(self.timeline_count):
-            if self.timeline.item(i, 1) == "안티포렌식 도구 실행":
-                self.timeline.item(i, 1).setBackground(QtGui.QColor(100, 125, 125))
         self.timeline.setSortingEnabled(sortingEnabled)
+        self.set_color()
 
     # 클라우드 접근
     def timeline_data2_3(self):
@@ -666,6 +673,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(i + accum, 2, QTableWidgetItem(Title))
             self.timeline.setItem(i + accum, 3, QTableWidgetItem(URL))
         self.timeline.setSortingEnabled(sortingEnabled)
+        self.set_color()
 
     # 저장장치 연결 및 해제
     def timeline_data2_4(self):
@@ -721,6 +729,17 @@ class MyWidget(QWidget):
             string = "detailed: " + detailed + ", computer: " + computer + ", user name: " + sbt_usr_name + ", channel: " + channel
             self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
         self.timeline.setSortingEnabled(sortingEnabled)
+        self.set_color()
+
+    def set_color(self):
+        for i in range(self.timeline_count):
+            for i in range(self.timeline_count):
+                if self.timeline.item(i, 1).text() == "안티포렌식 도구 실행":
+                    self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 51, 51))
+                elif self.timeline.item(i, 1).text()=="클라우드 접근":
+                    self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 255, 102))
+                elif self.timeline.item(i, 1).text() == "이벤트로그 삭제":
+                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(51, 102, 225))
 
 #################################################
 #   tab4                                        #
@@ -2265,17 +2284,6 @@ class MyWidget(QWidget):
             self.folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
             self.folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
             self.folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
-
-    # def set_color(self):
-    #     for i in range(self.timeline_count):
-    #         if self.timeline.item(i, 1) == "안티포렌식 도구 실행":
-    #
-    #             self.timeline.item(i, 1).setBackground(QtGui.QColor(100, 125, 125))
-    #
-    #             #self.timeline.item(1, i).setBackground(QtGui.QColor(125, 0, 0))
-    #         #self.timeline.item(1, i).setBackground(Qt.red)
-    #         # self.timeline.item(1, i).setBackground(QtGui.QColor(125, 0, 0))
-    #     print(self.timeline_count)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
