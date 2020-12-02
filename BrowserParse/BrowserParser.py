@@ -10,35 +10,30 @@ from BrowserParse import CacheParser
 
 
 def Browser_parser():
+    url_data_list = []
+    url_data_list_2 = []
+    download_data_list = []
+    download_data_list_2 = []
+    keyword_data_list = []
+    keyword_data_list_2 = []
+    autofill_data_list = []
+    autofill_data_list_2 = []
+    bookmark_data_list = []
+    bookmark_data_list_2 = []
+    cookie_data_list = []
+    cookie_data_list_2 = []
+    login_data_list = []
+    login_data_list_2 = []
+    pref_data_list = []
+    pref_data_list_2 = []
+    cloud_data_list = []
+    cloud_data_list_2 = []
     try:
         source1 = sqlite3.connect("COPY\\BROWSER\\History")
-        source2 = sqlite3.connect("COPY\\BROWSER\\Web Data")
-        source3 = sqlite3.connect("COPY\\BROWSER\\Cookies")
-        source4 = sqlite3.connect("COPY\\BROWSER\\Login Data")
-        s_cur1 = source1.cursor()  # url, keyword
-        s_cur2 = source2.cursor()  # autofill 파싱
-        s_cur3 = source3.cursor()  # 쿠키 파싱
-        s_cur4 = source4.cursor()  # login 파싱
+        s_cur1 = source1.cursor()  # url, keyword, cloud
         s_cur5 = source1.cursor()  # download Parsing
 
-        url_data_list = []
-        url_data_list_2 = []
-        download_data_list = []
-        download_data_list_2 = []
-        keyword_data_list = []
-        keyword_data_list_2 = []
-        autofill_data_list = []
-        autofill_data_list_2 = []
-        bookmark_data_list = []
-        bookmark_data_list_2 = []
-        cookie_data_list = []
-        cookie_data_list_2 = []
-        login_data_list = []
-        login_data_list_2 = []
-        pref_data_list = []
-        pref_data_list_2 = []
-        cloud_data_list = []
-        cloud_data_list_2 = []
+
 
         def change_last_modified_time(str):
             before_change = str.split(' ', maxsplit=6)
@@ -452,16 +447,24 @@ def Browser_parser():
                                       decode_opened(row[8]),
                                       row[11], change_last_modified_time(str(row[12]))]
                 download_data_list_2.append(download_data_list)
+    except:
+        pass
 
         ########################### autofill 파싱 시작 ###########################
+    try:
+        source2 = sqlite3.connect("COPY\\BROWSER\\Web Data")
+        s_cur2 = source2.cursor()  # autofill 파싱
         s_cur2.execute('SELECT autofill.date_last_used, autofill.name, autofill.value, autofill.count FROM autofill')
         autofill = s_cur2.fetchall()
 
         for row in autofill:
             autofill_data_list = ['autofill', friendly_date(row[0]), row[1], row[2]]
             autofill_data_list_2.append(autofill_data_list)
+    except:
+        pass
 
         ################################ bookmark 파싱 시작 #################################
+    try:
         bookmarks_path = os.path.join('COPY\\BROWSER', 'Bookmarks')
 
         with open(bookmarks_path, encoding='utf-8', errors='replace') as f:
@@ -482,8 +485,13 @@ def Browser_parser():
                 if decoded_json["roots"][top_level_folder]["children"] is not None:
                     process_bookmark_children(decoded_json["roots"][top_level_folder]["name"],
                                               decoded_json["roots"][top_level_folder]["children"])
+    except:
+        pass
 
         ########################## Cookies 파싱 시작 #############################
+    try:
+        source3 = sqlite3.connect("COPY\\BROWSER\\Cookies")
+        s_cur3 = source3.cursor()  # 쿠키 파싱
         def decrypt_cookie(encrypted_value):
             """Decryption based on work by Nathan Henrie and Jordan Wright as well as Chromium source:
              - Mac/Linux: http://n8henrie.com/2014/05/decrypt-chrome-cookies-with-python/
@@ -534,8 +542,13 @@ def Browser_parser():
                     cookie_data_list = ['cookies_accessed', friendly_date(row[5]), str(row[0]) + str(row[1]), row[2],
                                         decrypt_cookie(row[12])]
                     cookie_data_list_2.append(cookie_data_list)
+    except:
+        pass
 
         ###############################login data parsing###############################333
+    try:
+        source4 = sqlite3.connect("COPY\\BROWSER\\Login Data")
+        s_cur4 = source4.cursor()  # login 파싱
         s_cur4.execute(
             'SELECT origin_url, action_url, username_element, username_value, password_element, password_value, date_created, date_last_used, blacklisted_by_user FROM logins')
         logindata = s_cur4.fetchall()
@@ -554,8 +567,11 @@ def Browser_parser():
                     login_data_list = ['login_username', friendly_date(row[6]), row[1], row[2], row[3], row[4],
                                        row[5]]
                     login_data_list_2.append(login_data_list)
+    except:
+        pass
 
         ###################################### preference 파싱 시작 ########################################
+    try:
         def check_and_append_pref(parent, pref, value=None, description=None):
             # If the preference exists, continue
             if parent.get(pref):
@@ -931,12 +947,18 @@ def Browser_parser():
                                   f'translate_last_denied_time_for_lauguage [in {preferences_file}]',
                                   f'{lang_code} : {timestamp}']
                 pref_data_list_2.append(pref_data_list)
+    except:
+        pass
 
-        Database.browser_db_insert(url_data_list_2, autofill_data_list_2, bookmark_data_list_2, cookie_data_list_2,
-                                   login_data_list_2, pref_data_list_2, keyword_data_list_2, download_data_list_2,
-                                   cloud_data_list_2)
-
+    Database.browser_db_insert(url_data_list_2, autofill_data_list_2, bookmark_data_list_2, cookie_data_list_2,
+                               login_data_list_2, pref_data_list_2, keyword_data_list_2, download_data_list_2,
+                               cloud_data_list_2)
+    try:
         CacheParser.get_cache('Cache', 'Cache')
+    except:
+        pass
+
+    try:
         CacheParser.get_cache('cache', 'GPUCache')
     except:
         pass
