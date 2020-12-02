@@ -733,128 +733,206 @@ class MyWidget(QWidget):
         # item1_1 시스템 정보
         self.PC_system_table = QTableWidget(self)
         self.set_PC_system()
+        self.tab4.layout.addWidget(self.PC_system_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item1_2_1 계정정보 - 레지스트리
         self.PC_user_reg_table = QTableWidget(self)
         self.set_PC_user_reg()
+        self.tab4.layout.addWidget(self.PC_user_reg_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item1_2_2 계정정보 - 이벤트로그
         self.PC_user_evt_table = QTableWidget(self)
         self.set_PC_user_evt()
+        self.tab4.layout.addWidget(self.PC_user_evt_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item1_3 윈도우 업데이트
         self.PC_update_table = QTableWidget(self)
         self.set_PC_update()
+        self.tab4.layout.addWidget(self.PC_update_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item2_2 네트워크 - 이벤트로그
         self.network_evt_table = QTableWidget(self)
         self.set_network_evt()
+        self.tab4.layout.addWidget(self.network_evt_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item3_1 외부저장장치 - 레지스트리
         self.storage_reg_table = QTableWidget(self)
         self.set_storage_reg()
+        self.tab4.layout.addWidget(self.storage_reg_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item3_2 외부저장장치 - 이벤트로그
         self.storage_evt_table = QTableWidget(self)
         self.set_storage_evt()
+        self.tab4.layout.addWidget(self.storage_evt_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item4_1 검색 기록
         self.browser_search_table = QTableWidget(self)
         self.set_browser_search()
+        self.tab4.layout.addWidget(self.browser_search_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_2 다운로드 기록
         self.browser_dowload_table = QTableWidget(self)
         self.set_browser_download()
+        self.tab4.layout.addWidget(self.browser_dowload_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_3 URL 히스토리
         self.browser_url_table = QTableWidget(self)
         self.set_browser_url()
+        self.tab4.layout.addWidget(self.browser_url_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_4 로그인 기록
         self.browser_login_table = QTableWidget(self)
         self.set_browser_login()
+        self.tab4.layout.addWidget(self.browser_login_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_5 쿠키
         self.browser_cookies_table = QTableWidget(self)
         self.set_browser_cookies()
+        self.tab4.layout.addWidget(self.browser_cookies_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_6 캐시
         self.browser_cache_table = QTableWidget(self)
         self.set_browser_cache()
+        self.tab4.layout.addWidget(self.browser_cache_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_7 북마크
         self.browser_bookmark_table = QTableWidget(self)
         self.set_browser_bookmark()
+        self.tab4.layout.addWidget(self.browser_bookmark_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_8 자동완성
         self.browser_autofill_table = QTableWidget(self)
         self.set_browser_autofill()
+        self.tab4.layout.addWidget(self.browser_autofill_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_9 환경설정
         self.browser_preference_table = QTableWidget(self)
         self.set_browser_preference()
+        self.tab4.layout.addWidget(self.browser_preference_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item4_10 클라우드 접속기록
         self.browser_cloud_table = QTableWidget(self)
         self.set_browser_cloud()
+        self.tab4.layout.addWidget(self.browser_cloud_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item5_1_1 프로그램 실행 흔적 - 레지스트리 - BAM
         self.program_bam = QTableWidget(self)
         self.set_program_bam()
+        self.tab4.layout.addWidget(self.program_bam)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_1_2 프로그램 실행 흔적 - 레지스트리 - UserAssist
         self.program_userassist = QTableWidget(self)
         self.set_program_userassist()
+        self.tab4.layout.addWidget(self.program_userassist)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_1_3 프로그램 실행 흔적 - 레지스트리 - Uninstall
         self.program_uninstall = QTableWidget(self)
         self.set_program_uninstall()
+        self.tab4.layout.addWidget(self.program_uninstall)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_1_4 프로그램 실행 흔적 - 레지스트리 - MuiCache
         self.program_muicache = QTableWidget(self)
         self.set_program_muicache()
+        self.tab4.layout.addWidget(self.program_muicache)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_1_5 프로그램 실행 흔적 - 레지스트리 - FirstFolder
         self.program_firstfolder = QTableWidget(self)
         self.set_program_firstfolder()
+        self.tab4.layout.addWidget(self.program_firstfolder)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_1_5 프로그램 실행 흔적 - 레지스트리 - CIDSizeMRU
         self.program_cidsizemru = QTableWidget(self)
         self.set_program_cidsizemru()
+        self.tab4.layout.addWidget(self.program_cidsizemru)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_2 프로그램 실행 흔적 - 프리패치
         self.program_pre = QTableWidget(self)
         self.set_program_pre()
+        self.tab4.layout.addWidget(self.program_pre)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item6_1 문서실행 흔적 - 레지스트리
         self.doc_reg_table = QTableWidget(self)
         self.set_doc_reg()
+        self.tab4.layout.addWidget(self.doc_reg_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_2 문서실행 흔적 - 링크 파일
         self.doc_lnk_table = QTableWidget(self)
         self.set_doc_lnk()
+        self.tab4.layout.addWidget(self.doc_lnk_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_3 문서실행 흔적 - 점프목록
         self.doc_jmp_table = QTableWidget(self)
         self.set_doc_jmp()
+        self.tab4.layout.addWidget(self.doc_jmp_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_4 문서실행 흔적 - 프리패치
         self.doc_pre_table = QTableWidget(self)
         self.set_doc_pre()
+        self.tab4.layout.addWidget(self.doc_pre_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item7_1 기타실행 흔적 - 링크 파일
         self.etc_lnk_table = QTableWidget(self)
         self.set_etc_lnk()
+        self.tab4.layout.addWidget(self.etc_lnk_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item7_2 기타실행 흔적 - 프리패치
         self.etc_pre_table = QTableWidget(self)
         self.set_etc_pre()
+        self.tab4.layout.addWidget(self.etc_pre_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item7_3 기타실행 흔적 - 대화상자
         self.etc_dialog_table = QTableWidget(self)
         self.set_etc_dialog()
+        self.tab4.layout.addWidget(self.etc_dialog_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item8_1 이벤트 로그 삭제
         self.eventlog_delete_table = QTableWidget(self)
         self.set_eventlog_delete()
+        self.tab4.layout.addWidget(self.eventlog_delete_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item8_2 프로세스 강제 종료
         self.eventlog_terminate_table = QTableWidget(self)
         self.set_eventlog_terminate()
+        self.tab4.layout.addWidget(self.eventlog_terminate_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item8_3_1 PC 전원 기록 - 운영체제 시작 및 종료
         self.eventlog_onoff_table = QTableWidget(self)
         self.set_eventlog_onoff()
+        self.tab4.layout.addWidget(self.eventlog_onoff_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item8_3_2 PC 전원 기록 - 절전모드 전환 및 해제
         self.eventlog_powersaving_table = QTableWidget(self)
         self.set_eventlog_powersaving()
+        self.tab4.layout.addWidget(self.eventlog_powersaving_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item8_4_1 원격 - 원격 접속 기록
         self.eventlog_access1_table = QTableWidget(self)
         self.set_eventlog_access1()
+        self.tab4.layout.addWidget(self.eventlog_access1_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item8_4_2 원격 - 원격 실행 기록
         self.eventlog_access2_table = QTableWidget(self)
         self.set_eventlog_access2()
+        self.tab4.layout.addWidget(self.eventlog_access2_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item8_5 시스템 시간 변경 기록
         self.eventlog_time_table = QTableWidget(self)
         self.set_eventlog_time()
+        self.tab4.layout.addWidget(self.eventlog_time_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item9 폴더 열람 흔적
         self.folder_table = QTableWidget(self)
         self.set_folder()
+        self.tab4.layout.addWidget(self.folder_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
 
         self.tab4_table = QTableWidget(self)
         self.tab4.layout.addWidget(self.tab4_table)
@@ -1239,7 +1317,7 @@ class MyWidget(QWidget):
             self.PC_update_table.setItem(i, 3, QTableWidgetItem(package))
             self.PC_update_table.setItem(i, 4, QTableWidgetItem("eventlog: id == 2"))
 
-    # item2_1 네트워크 - 이벤트로그
+    # item2_2 네트워크 - 이벤트로그
     def set_network_evt(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -2018,7 +2096,7 @@ class MyWidget(QWidget):
 
         count = len(rows)
         self.eventlog_onoff_table.setRowCount(count)
-        self.eventlog_onoff_table.setColumnCount(5)
+        self.eventlog_onoff_table.setColumnCount(4)
         column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜"]
         self.eventlog_onoff_table.setHorizontalHeaderLabels(column_headers)
 
