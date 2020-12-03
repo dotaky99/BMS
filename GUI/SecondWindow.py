@@ -17,8 +17,7 @@ class MainWindow(QMainWindow):
         # UTC 변환
         self.UTC = None
         self.init_UTC()
-        self.widget = Tabs.MyWidget(self)
-        # self.widget = Tabs.MyWidget(self, self.UTC)
+        self.widget = Tabs.MyWidget(self, self.UTC)
         self.setCentralWidget(self.widget)
 
     def initUI(self):
