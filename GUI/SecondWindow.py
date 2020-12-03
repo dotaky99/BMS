@@ -63,9 +63,14 @@ class MainWindow(QMainWindow):
             self.Helpmenu.addAction(i)
 
     def View1Action_open(self):
-        dlg = Dialogs.UTCDialog(self)
-        dlg.exec()
-        self.UTC = dlg.UTC
+        try:
+            dlg = Dialogs.UTCDialog(self)
+            dlg.exec()
+            self.UTC = dlg.UTC
+            self.widget = Tabs.MyWidget(self, self.UTC)
+            self.setCentralWidget(self.widget)
+        except:
+            pass
 
     def HelpAction_open(self):
         Dialogs.HelpDialog(self)
