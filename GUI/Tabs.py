@@ -46,7 +46,11 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         # DRM
-        query1 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int < 503"
+        query1 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
+                 "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE (a.name like '%fasoo%' " \
+                 "and b.Executable_Name like '%fasoo%') or ((a.name like 'SDSLaunc%' or a.name like 'SoftcampDS%') " \
+                 "and (b.Executable_Name like 'SDSLaunc%' or b.Executable_Name like 'SoftcampDS%')) or (a.name like 'DocumentSAFER%' " \
+                 "and b.Executable_Name like 'DocumentSAFER%')"
         cur.execute(query1)
         rows1 = cur.fetchall()
         # 매체제어
@@ -54,23 +58,26 @@ class MyWidget(QWidget):
         cur.execute(query2)
         rows2 = cur.fetchall()
         # 디스크 암호화
-        query3 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
+        query3 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date," + self.UTC + "), " \
+                 "datetime(b.Last_Executed1, "+ self.UTC + ") FROM Uninstall a,  prefetch1 b WHERE (a.name like 'CipherShed%' " \
+                 "AND b.Executable_Name like 'CipherShed%') OR (a.name like 'TrueCrypt%' AND b.Executable_Name like 'TrueCrypt%') " \
+                 "OR (a.name like 'VeraCrypt%' and b.Executable_Name like 'VeraCrypt%')"
         cur.execute(query3)
         rows3 = cur.fetchall()
         # 안티포렌식
-        # query4 = "SELECT Executable_Name, Last_Executed1 from prefetch1 " \
-        #          "WHERE (Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' " \
-        #          "OR Executable_Name LIKE 'CipherShed%' OR Executable_Name LIKE 'Eraser%' " \
-        #          "OR Executable_Name LIKE 'SDelete%' OR Executable_Name LIKE 'SetMACE%'" \
-        #          "OR Executable_Name LIKE 'TrueCrypt%'  OR Executable_Name LIKE 'TimeStomp%'" \
-        #          "OR Executable_Name LIKE 'VeraCrypt%'  OR Executable_Name LIKE 'Wise Folder Hider%')"
-        query4 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
+        query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
+                 "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
+                 "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
+                 "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
+                 "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
+                 "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
         cur.execute(query4)
         rows4 = cur.fetchall()
         # VM
-        # query5 = "SELECT name, version, install_location, publisher, install_date FROM Uninstall " \
-        #         "WHERE name LIKE 'Oracle VM VirtualBox%' OR name LIKE 'VMware Workstation';"
-        query5 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
+        query5 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + "), " \
+                 "datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, prefetch1 b " \
+                 "WHERE (a.name like '%vmware%' and b.Executable_Name like '%vmware%') " \
+                 "or (a.name like '%virtualbox%' and b.Executable_Name like '%virtualbox%')"
         cur.execute(query5)
         rows5 = cur.fetchall()
         conn.close()
@@ -78,59 +85,78 @@ class MyWidget(QWidget):
         self.tab2_table = QTableWidget(self)
         count = len(rows1) + len(rows2) + len(rows3) + len(rows4) + len(rows5) + 5
         self.tab2_table.setRowCount(count)
-        self.tab2_table.setColumnCount(6)
-        column_headers = ["", "프로그램", "설치 시간", "마지막 실행 시간", "삭제 여부", "설치 경로"]
+        self.tab2_table.setColumnCount(8)
+        column_headers = ["", "프로그램", "버전", "설치 경로", "제조사", "설치 시각", "실행 시각", "삭제 여부"]
         self.tab2_table.setHorizontalHeaderLabels(column_headers)
         tab2_accum = 0
 
         # DRM
         self.color_tab2_table("DRM", tab2_accum)
-        for i in range(len(rows1)):
-            program, install, execute, delete = rows1[i]
-            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        try:
+            for i in range(len(rows1)):
+                program, install, execute, delete = rows1[i]
+                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        except:
+            pass
         tab2_accum = tab2_accum + len(rows1) + 1
 
         # 매체제어
         self.color_tab2_table("매체제어", tab2_accum)
-        for i in range(len(rows2)):
-            program, install, execute, delete = rows2[i]
-            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        try:
+            for i in range(len(rows2)):
+                program, install, execute, delete = rows2[i]
+                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        except:
+            pass
         tab2_accum = tab2_accum + len(rows2) + 1
 
         # 디스크 암호화
         self.color_tab2_table("디스크 암호화", tab2_accum)
-        for i in range(len(rows3)):
-            program, install, execute, delete = rows3[i]
-            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        try:
+            for i in range(len(rows3)):
+                program, install, execute, delete = rows3[i]
+                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        except:
+            pass
         tab2_accum = tab2_accum + len(rows3) + 1
 
         # 안티포렌식
         self.color_tab2_table("안티포렌식", tab2_accum)
-        for i in range(len(rows4)):
-            program, install, execute, delete = rows4[i]
-            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        try:
+            for i in range(len(rows4)):
+                name, version, Full_Path, publisher, install_date, Last_Executed1 = rows4[i]
+                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(name))
+                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(version))
+                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
+                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
+                self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+        except:
+            pass
         tab2_accum = tab2_accum + len(rows4) + 1
 
         # VM
         self.color_tab2_table("VM", tab2_accum)
-        for i in range(len(rows5)):
-            program, install, execute, delete = rows5[i]
-            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        try:
+            for i in range(len(rows5)):
+                name, version, Full_Path, publisher, install_date, Last_Executed1 = rows5[i]
+                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(name))
+                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(version))
+                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
+                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
+                self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+        except:
+            pass
 
         self.tab2_table.verticalHeader().hide()
         self.tab2_table.resizeColumnsToContents()
@@ -146,12 +172,16 @@ class MyWidget(QWidget):
         self.tab2_table.setItem(accum, 3, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 4, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 5, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 6, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 7, QTableWidgetItem(""))
         self.tab2_table.item(accum, 0).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 1).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 2).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 3).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(217, 217, 217))
 
     # tab2 PC 정보
     def set_PCinfo(self):
@@ -218,20 +248,23 @@ class MyWidget(QWidget):
             self.text6_content[i].setText(0, string)
 
         # USB
-        # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
-        #         "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
-        query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
+        query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
+                "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
+        # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
         cur.execute(query)
         rows = cur.fetchall()
         self.text7_content = []
-        for i in range(len(rows)):
-            serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
-            self.text7_content.append(QTreeWidgetItem(self.text7))
-            if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
-                string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + serial_num + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
-            elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
-                string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
-            self.text7_content[i].setText(0, string)
+        try:
+            for i in range(len(rows)):
+                serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
+                self.text7_content.append(QTreeWidgetItem(self.text7))
+                if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
+                    string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + serial_num + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+                elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
+                    string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+                self.text7_content[i].setText(0, string)
+        except:
+            self.text7_content[i].setText(0, "")
         #
         # # 네트워크
         # # query =
@@ -344,7 +377,7 @@ class MyWidget(QWidget):
     def timeline_data1_1(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query_1 = "SELECT file_path, drive, SI_M_timestamp from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
+        query_1 = "SELECT file_path, drive, datetime(SI_M_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
                 "(SI_M_timestamp >= '" + self.datetime1 + "' AND SI_M_timestamp <= '" + self.datetime2 + "'))"
         cur.execute(query_1)
         rows = cur.fetchall()
@@ -514,7 +547,7 @@ class MyWidget(QWidget):
     def timeline_data1_2(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query_1 = "SELECT created_on, account_name, RID_int FROM UserAccounts " \
+        query_1 = "SELECT datetime(created_on," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
                 " WHERE (created_on >= '" + self.datetime1 + "' AND created_on <= '" + self.datetime2 + "')"
         cur.execute(query_1)
         rows = cur.fetchall()
@@ -563,7 +596,7 @@ class MyWidget(QWidget):
     def timeline_data1_3(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT install_date, product_name, product_ID FROM OSInformation " \
+        query = "SELECT datetime(install_date," + self.UTC + "), product_name, product_ID FROM OSInformation " \
                 " WHERE (install_date >= '" + self.datetime1 + "' AND install_date <= '" + self.datetime2 + "')"
         cur.execute(query)
         rows = cur.fetchall()
@@ -586,7 +619,7 @@ class MyWidget(QWidget):
     def timeline_data1_4(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT detailed, computer, time_created, package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
+        query = "SELECT detailed, computer, datetime(time_created," + self.UCT + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
                 " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
         cur.execute(query)
         rows = cur.fetchall()
@@ -610,7 +643,7 @@ class MyWidget(QWidget):
     def timeline_data1_5(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT event_id, computer, time_created FROM event_log WHERE ((event_id = '12' OR event_id = '13') AND " \
+        query = "SELECT event_id, computer, datetime(time_created," + self.UTC + ") FROM event_log WHERE ((event_id = '12' OR event_id = '13') AND " \
                 "(time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
         cur.execute(query)
         rows = cur.fetchall()
@@ -638,7 +671,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
 
-        query_1 = "SELECT file_name, local_base_path, target_creation_time From jumplist " \
+        query_1 = "SELECT file_name, local_base_path, datetime(target_creation_time, " + self.UTC + ") From jumplist " \
                 " WHERE ((file_name LIKE '%.pdf' OR file_name LIKE '%.hwp' OR file_name LIKE '%.docx' OR file_name LIKE '%.doc' " \
                 " OR file_name LIKE '%.xlsx' OR file_name LIKE '%.csv' OR file_name LIKE '%.pptx' OR file_name LIKE '%.ppt' " \
                 " OR file_name LIKE '%.txt') " \
@@ -712,7 +745,7 @@ class MyWidget(QWidget):
     def timeline_data2_2(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT Executable_Name, Full_Path, Last_Executed1 from prefetch1 " \
+        query = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") from prefetch1 " \
                 " WHERE ((Executable_Name LIKE '%CCleaner%' OR Executable_Name LIKE 'Cipher%' " \
                 " OR Executable_Name LIKE 'Eraser%' OR Executable_Name LIKE 'SDelete%' " \
                 " OR Executable_Name LIKE 'SetMACE%' OR Executable_Name LIKE 'TimeStomp%'  " \
@@ -741,7 +774,7 @@ class MyWidget(QWidget):
     def timeline_data2_3(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT timestamp, Title, URL FROM cloud " \
+        query = "SELECT datetime(timestamp," + self.UTC+ "), Title, URL FROM cloud " \
                 " WHERE (timestamp >= '" + self.datetime1 + "' AND timestamp <= '" + self.datetime2 + "')"
         cur.execute(query)
         rows = cur.fetchall()
@@ -766,7 +799,7 @@ class MyWidget(QWidget):
     def timeline_data2_4(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT detailed, time_created, bus_type, drive_manufac, drive_model FROM event_log WHERE ((event_id = '1006')" \
+        query = "SELECT detailed, datetime(time_created," + self.UTC + "), bus_type, drive_manufac, drive_model FROM event_log WHERE ((event_id = '1006')" \
                 " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
         cur.execute(query)
         rows = cur.fetchall()
@@ -796,7 +829,7 @@ class MyWidget(QWidget):
     def timeline_data2_5(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT event_id, detailed, computer, time_created, sbt_usr_name, channel FROM event_log " \
+        query = "SELECT event_id, detailed, computer, datetime(time_created," + self.UTC + "), sbt_usr_name, channel FROM event_log " \
                 " WHERE ((event_id = '104' or event_id = '1102' AND sbt_usr_name IS NOT '' )" \
                 " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
         cur.execute(query)
@@ -974,7 +1007,7 @@ class MyWidget(QWidget):
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_3 문서실행 흔적 - 점프목록
         self.doc_jmp_table = QTableWidget(self)
-        # self.set_doc_jmp()
+        self.set_doc_jmp()
         self.tab4.layout.addWidget(self.doc_jmp_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_4 문서실행 흔적 - 프리패치
@@ -2123,7 +2156,7 @@ class MyWidget(QWidget):
     def set_etc_dialog(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT program, mru, datetime(opened_on, " + self.UTC + ") FROM Legacy;"
+        query = "SELECT program, mru, datetime(opened_on, " + self.UTC + ") FROM Legacy"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2145,7 +2178,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, sbt_usr_name, channel, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id == '104' or event_id == '1102';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id == '104' or event_id == '1102'"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
