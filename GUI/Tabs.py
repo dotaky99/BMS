@@ -78,8 +78,8 @@ class MyWidget(QWidget):
         self.tab2_table = QTableWidget(self)
         count = len(rows1) + len(rows2) + len(rows3) + len(rows4) + len(rows5) + 5
         self.tab2_table.setRowCount(count)
-        self.tab2_table.setColumnCount(5)
-        column_headers = ["", "프로그램", "설치 시간", "마지막 실행 시간", "삭제 여부"]
+        self.tab2_table.setColumnCount(6)
+        column_headers = ["", "프로그램", "설치 시간", "마지막 실행 시간", "삭제 여부", "설치 경로"]
         self.tab2_table.setHorizontalHeaderLabels(column_headers)
         tab2_accum = 0
 
@@ -145,11 +145,13 @@ class MyWidget(QWidget):
         self.tab2_table.setItem(accum, 2, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 3, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 4, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 5, QTableWidgetItem(""))
         self.tab2_table.item(accum, 0).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 1).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 2).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 3).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(217, 217, 217))
 
     # tab2 PC 정보
     def set_PCinfo(self):
