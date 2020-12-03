@@ -5,9 +5,10 @@ from PyQt5.QtCore import *
 import sqlite3
 
 class MyWidget(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, UTC):
         super(MyWidget, self).__init__(parent)
         self.setGeometry(100, 100, 1500, 700)
+        self.UTC = "'" + UTC + " hours'"
         self.initUI()
 
     def initUI(self):
@@ -26,7 +27,6 @@ class MyWidget(QWidget):
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
         self.setLayout(total_layout)
-        #self.UTC = "+9"     ############### UTC Dialog 불러와서 UTC를 받도록 수정할 것.
 
 #################################################
 #   tab2                                        #
@@ -46,15 +46,15 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         # DRM
-        query1 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int < 503"
+        query1 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int < 503"
         cur.execute(query1)
         rows1 = cur.fetchall()
         # 매체제어
-        query2 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        query2 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
         cur.execute(query2)
         rows2 = cur.fetchall()
         # 디스크 암호화
-        query3 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        query3 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
         cur.execute(query3)
         rows3 = cur.fetchall()
         # 안티포렌식
@@ -64,13 +64,13 @@ class MyWidget(QWidget):
         #          "OR Executable_Name LIKE 'SDelete%' OR Executable_Name LIKE 'SetMACE%'" \
         #          "OR Executable_Name LIKE 'TrueCrypt%'  OR Executable_Name LIKE 'TimeStomp%'" \
         #          "OR Executable_Name LIKE 'VeraCrypt%'  OR Executable_Name LIKE 'Wise Folder Hider%')"
-        query4 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        query4 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
         cur.execute(query4)
         rows4 = cur.fetchall()
         # VM
         # query5 = "SELECT name, version, install_location, publisher, install_date FROM Uninstall " \
         #         "WHERE name LIKE 'Oracle VM VirtualBox%' OR name LIKE 'VMware Workstation';"
-        query5 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        query5 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
         cur.execute(query5)
         rows5 = cur.fetchall()
         conn.close()
@@ -78,8 +78,8 @@ class MyWidget(QWidget):
         self.tab2_table = QTableWidget(self)
         count = len(rows1) + len(rows2) + len(rows3) + len(rows4) + len(rows5) + 5
         self.tab2_table.setRowCount(count)
-        self.tab2_table.setColumnCount(5)
-        column_headers = ["", "프로그램", "설치 시간", "마지막 실행 시간", "삭제 여부"]
+        self.tab2_table.setColumnCount(6)
+        column_headers = ["", "프로그램", "설치 시간", "마지막 실행 시간", "삭제 여부", "설치 경로"]
         self.tab2_table.setHorizontalHeaderLabels(column_headers)
         tab2_accum = 0
 
@@ -145,11 +145,13 @@ class MyWidget(QWidget):
         self.tab2_table.setItem(accum, 2, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 3, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 4, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 5, QTableWidgetItem(""))
         self.tab2_table.item(accum, 0).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 1).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 2).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 3).setBackground(QtGui.QColor(217, 217, 217))
         self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(217, 217, 217))
 
     # tab2 PC 정보
     def set_PCinfo(self):
@@ -164,7 +166,7 @@ class MyWidget(QWidget):
         # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대
         query = "SELECT product_name, product_ID, build_lab, computer_name, " \
                 "timezone_name, UTC, " \
-                "datetime(install_date, '+9 hours') FROM OSInformation;"
+                "datetime(install_date, " + self.UTC + ") FROM OSInformation;"
         cur.execute(query)
         rows = cur.fetchall()[0]
         string1 = "윈도우 버전:\t" + rows[0] + ", " + rows[1] + ", " + rows[2]
@@ -190,7 +192,7 @@ class MyWidget(QWidget):
         # self.text8.setText(0, "네트워크")                 ################# 네트워크 파싱하고 주석 해제하기!!
 
         # MFT 생성 시간
-        query = "SELECT drive, datetime(SI_M_timestamp, '+9 hours') " \
+        query = "SELECT drive, datetime(SI_M_timestamp, " + self.UTC + ") " \
                 "from parsed_MFT WHERE file_path Like '/$MFT'"
         cur.execute(query)
         rows = cur.fetchall()
@@ -201,8 +203,8 @@ class MyWidget(QWidget):
             self.text3_content[i].setText(0, drive + "드라이브: " + m_time)
 
         # 계정
-        query = "SELECT account_name, RID_int, datetime(created_on, '+9 hours'), " \
-                "datetime(last_login_time, '+9 hours') FROM UserAccounts"
+        query = "SELECT account_name, RID_int, datetime(created_on, " + self.UTC + "), " \
+                "datetime(last_login_time, " + self.UTC + ") FROM UserAccounts"
         cur.execute(query)
         rows = cur.fetchall()
         self.text6_content = []
@@ -217,7 +219,7 @@ class MyWidget(QWidget):
 
         # USB
         # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
-        #         "datetime(first_connected, '+9 hours'), datetime(last_connected, '+9 hours') FROM Connected_USB"
+        #         "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
         query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
         cur.execute(query)
         rows = cur.fetchall()
@@ -972,7 +974,7 @@ class MyWidget(QWidget):
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_3 문서실행 흔적 - 점프목록
         self.doc_jmp_table = QTableWidget(self)
-        self.set_doc_jmp()
+        # self.set_doc_jmp()
         self.tab4.layout.addWidget(self.doc_jmp_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item6_4 문서실행 흔적 - 프리패치
@@ -1296,7 +1298,7 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         query = "SELECT product_name, product_ID, system_root, owner, organization, build_lab, " \
                 "timezone_name, active_time_bias, UTC, computer_name, default_user_name, last_used_user_name, " \
-                "datetime(shutdown_time, '+9 hours'), datetime(install_date, '+9 hours') FROM OSInformation"
+                "datetime(shutdown_time, " + self.UTC + "), datetime(install_date, " + self.UTC + ") FROM OSInformation"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1335,9 +1337,9 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT RID_int, account_name, complete_account_name, logon_failure_count, logon_success_count, comment, homedir, " \
-                "datetime(last_login_time, '+9 hours'), datetime(last_password_change_time, '+9 hours'), " \
-                "datetime(expires_on, '+9 hours'), datetime(last_incorrect_password_time, '+9 hours'), " \
-                "datetime(created_on, '+9 hours') FROM UserAccounts"
+                "datetime(last_login_time, " + self.UTC + "), datetime(last_password_change_time, " + self.UTC + "), " \
+                "datetime(expires_on, " + self.UTC + "), datetime(last_incorrect_password_time, " + self.UTC + "), " \
+                "datetime(created_on, " + self.UTC + ") FROM UserAccounts"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1372,7 +1374,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, sbt_usr_name, trg_usr_name, display_name, mem_sid, " \
-                "datetime(time_created, '+9 hours') FROM event_log " \
+                "datetime(time_created, " + self.UTC + ") FROM event_log " \
                 "WHERE (event_id LIKE '1004' OR event_id LIKE '1005' OR event_id LIKE '4624'" \
                 "OR event_id LIKE '4625' OR event_id LIKE '4720' OR event_id LIKE '4724' OR event_id LIKE '4726'" \
                 "OR event_id LIKE '4732' OR event_id LIKE '4733' OR event_id LIKE '4738')"
@@ -1402,7 +1404,7 @@ class MyWidget(QWidget):
     def set_PC_update(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT detailed, computer, package, datetime(time_created, '+9 hours') " \
+        query = "SELECT detailed, computer, package, datetime(time_created, " + self.UTC + ") " \
                 "FROM event_log WHERE event_id LIKE '2'"
         cur.execute(query)
         rows = cur.fetchall()
@@ -1426,7 +1428,7 @@ class MyWidget(QWidget):
     def set_network_evt(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT event_id, detailed, computer, net_name, guid, conn_mode, reason, datetime(time_created, '+9 hours') " \
+        query = "SELECT event_id, detailed, computer, net_name, guid, conn_mode, reason, datetime(time_created, " + self.UTC + ") " \
                 "FROM event_log WHERE (event_id = '10000' AND net_name IS NOT '') OR (event_id = '10001' AND net_name IS NOT '') OR event_id = '8003';"
         cur.execute(query)
         rows = cur.fetchall()
@@ -1454,7 +1456,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT GUID, label, vendor_name, product_name, version, serial_num, " \
-                "datetime(first_connected, '+9 hours'), datetime(last_connected, '+9 hours') FROM Connected_USB"
+                "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1481,7 +1483,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, bus_type, drive_manufac, drive_serial, drive_model," \
-                "drive_location, datetime(time_created, '+9 hours') FROM event_log WHERE event_id LIKE '1006'"
+                "drive_location, datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id LIKE '1006'"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1510,7 +1512,7 @@ class MyWidget(QWidget):
     def set_browser_search(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT type, keyword, datetime(timestamp, '+9 hours') FROM keyword;"
+        query = "SELECT type, keyword, datetime(timestamp, " + self.UTC + ") FROM keyword;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1534,7 +1536,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT type, url, status, path, interrupt_reason, danger_type, opened, etag, " \
-                "datetime(timestamp, '+9 hours'), datetime(last_modified, '+9 hours') from download;"
+                "datetime(timestamp, " + self.UTC + "), datetime(last_modified, " + self.UTC + ") from download;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1564,7 +1566,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT url, title, source, visit_duration, visit_count, typed_count, url_hidden, transition, " \
-                "datetime(timestamp, '+9 hours') from url;"
+                "datetime(timestamp, " + self.UTC + ") from url;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1593,7 +1595,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT type, url, name, data, password_element, password_value," \
-                "datetime(timestamp, '+9 hours') from login;"
+                "datetime(timestamp, " + self.UTC + ") from login;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1618,7 +1620,7 @@ class MyWidget(QWidget):
     def set_browser_cookies(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT type, url, title, value, datetime(timestamp, '+9 hours') from cookies;"
+        query = "SELECT type, url, title, value, datetime(timestamp, " + self.UTC + ") from cookies;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1642,7 +1644,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT url, status, value, etag, server_name, data_location, all_http_headers, " \
-                "datetime(timestamp, '+9 hours'), datetime(last_modified, '+9 hours') from cache;"
+                "datetime(timestamp, " + self.UTC + "), datetime(last_modified, " + self.UTC + ") from cache;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1670,7 +1672,7 @@ class MyWidget(QWidget):
     def set_browser_bookmark(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT type, url, title, value, datetime(timestamp, '+9 hours') from bookmark;"
+        query = "SELECT type, url, title, value, datetime(timestamp, " + self.UTC + ") from bookmark;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1693,7 +1695,7 @@ class MyWidget(QWidget):
     def set_browser_autofill(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT type, status, value, datetime(timestamp, '+9 hours') from autofill;"
+        query = "SELECT type, status, value, datetime(timestamp, " + self.UTC + ") from autofill;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1715,7 +1717,7 @@ class MyWidget(QWidget):
     def set_browser_preference(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT type, url, status, data, datetime(timestamp, '+9 hours') FROM preference;"
+        query = "SELECT type, url, status, data, datetime(timestamp, " + self.UTC + ") FROM preference;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1738,7 +1740,7 @@ class MyWidget(QWidget):
     def set_browser_cloud(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT url, title, datetime(timestamp, '+9 hours') FROM cloud;"
+        query = "SELECT url, title, datetime(timestamp, " + self.UTC + ") FROM cloud;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1759,7 +1761,7 @@ class MyWidget(QWidget):
     def set_program_bam(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT SID, program_path, datetime(last_executed, '+9 hours') FROM BAM;"
+        query = "SELECT SID, program_path, datetime(last_executed, " + self.UTC + ") FROM BAM;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1780,7 +1782,7 @@ class MyWidget(QWidget):
     def set_program_userassist(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT name, run_count, datetime(last_executed, '+9 hours') FROM UserAssist_CEB;"
+        query = "SELECT name, run_count, datetime(last_executed, " + self.UTC + ") FROM UserAssist_CEB;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1801,7 +1803,7 @@ class MyWidget(QWidget):
     def set_program_uninstall(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT name, version, install_location, publisher, type, datetime(install_date, '+9 hours') FROM Uninstall;"
+        query = "SELECT name, version, install_location, publisher, type, datetime(install_date, " + self.UTC + ") FROM Uninstall;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1845,7 +1847,7 @@ class MyWidget(QWidget):
     def set_program_firstfolder(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT program_name, folder, mru, datetime(opened_on, '+9 hours') FROM FirstFolder;"
+        query = "SELECT program_name, folder, mru, datetime(opened_on, " + self.UTC + ") FROM FirstFolder;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1867,7 +1869,7 @@ class MyWidget(QWidget):
     def set_program_cidsizemru(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT program_name, mru, datetime(opened_on, '+9 hours') FROM CIDSizeMRU;"
+        query = "SELECT program_name, mru, datetime(opened_on, " + self.UTC + ") FROM CIDSizeMRU;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1889,10 +1891,10 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT Executable_Name, Run_Count, " \
-                "datetime(Last_Executed1, '+9 hours'), datetime(Last_Executed2, '+9 hours'), " \
-                "datetime(Last_Executed3, '+9 hours'), datetime(Last_Executed4, '+9 hours'), " \
-                "datetime(Last_Executed5, '+9 hours'), datetime(Last_Executed6, '+9 hours'), " \
-                "datetime(Last_Executed7, '+9 hours'), datetime(Last_Executed8, '+9 hours') FROM prefetch1"
+                "datetime(Last_Executed1, " + self.UTC + "), datetime(Last_Executed2, " + self.UTC + "), " \
+                "datetime(Last_Executed3, " + self.UTC + "), datetime(Last_Executed4, " + self.UTC + "), " \
+                "datetime(Last_Executed5, " + self.UTC + "), datetime(Last_Executed6, " + self.UTC + "), " \
+                "datetime(Last_Executed7, " + self.UTC + "), datetime(Last_Executed8, " + self.UTC + ") FROM prefetch1"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -1922,7 +1924,7 @@ class MyWidget(QWidget):
     def set_doc_reg(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT program, lnk, datetime(opened_on, '+9 hours') FROM RecentDocs WHERE (program LIKE '%.pdf' OR program LIKE '%.hwp' " \
+        query = "SELECT program, lnk, datetime(opened_on, " + self.UTC + ") FROM RecentDocs WHERE (program LIKE '%.pdf' OR program LIKE '%.hwp' " \
                 "OR program LIKE '%.docx' OR program LIKE '%.doc' OR program LIKE '%.xlsx' OR program LIKE '%.csv' " \
                 "OR program LIKE '%.pptx' OR program LIKE '%.ppt' OR program LIKE '%.txt')"
         cur.execute(query)
@@ -1947,8 +1949,8 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         query = "SELECT file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, " \
                 "drive_serial_number, drive_type, volume_label, icon_location, machine_info, " \
-                "datetime(target_creation_time, '+9 hours'), datetime(target_modified_time, '+9 hours'), " \
-                "datetime(target_accessed_time, '+9 hours') from lnk_files " \
+                "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), " \
+                "datetime(target_accessed_time, " + self.UTC + ") from lnk_files " \
                 "WHERE ((local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx'" \
                 "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv'" \
                 "OR local_base_path LIKE '%.pptx' OR local_base_path LIKE '%.ppt' OR local_base_path LIKE '%.txt')" \
@@ -1989,7 +1991,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT file_name, lnk_counter, local_base_path, file_size, file_flags, show_command, icon, description, volume_label, drive_type, " \
-                "datetime(target_creation_time, '+9 hours'), datetime(target_modified_time, '+9 hours'), datetime(target_accessed_time, '+9 hours')" \
+                "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), datetime(target_accessed_time, " + self.UTC + ")" \
                 " FROM jumplist WHERE (local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx' " \
                 "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv' OR local_base_path LIKE '%.pptx' " \
                 "OR local_base_path LIKE '%.ppt' OR local_base_path LIKE '%.txt')"
@@ -2051,8 +2053,8 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         query = "SELECT file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, " \
                 "drive_serial_number, drive_type, volume_label, icon_location, machine_info, " \
-                "datetime(target_creation_time, '+9 hours'), datetime(target_modified_time, '+9 hours'), " \
-                "datetime(target_accessed_time, '+9 hours') FROM lnk_files " \
+                "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), " \
+                "datetime(target_accessed_time, " + self.UTC + ") FROM lnk_files " \
                 "WHERE((local_base_path LIKE '%.jpg' OR local_base_path LIKE '%.jpeg' OR local_base_path LIKE '%.gif' " \
                 "OR local_base_path LIKE '%.bmp' OR local_base_path LIKE '%.png' OR local_base_path LIKE '%.raw' " \
                 "OR local_base_path LIKE '%.tiff' OR local_base_path LIKE '%.wav' OR local_base_path LIKE '%.wma' " \
@@ -2121,7 +2123,7 @@ class MyWidget(QWidget):
     def set_etc_dialog(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT program, mru, datetime(opened_on, '+9 hours') FROM Legacy;"
+        query = "SELECT program, mru, datetime(opened_on, " + self.UTC + ") FROM Legacy;"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2143,7 +2145,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, sbt_usr_name, channel, " \
-                "datetime(time_created, '+9 hours') FROM event_log WHERE event_id == '104' or event_id == '1102';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id == '104' or event_id == '1102';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2168,7 +2170,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, app_name, app_version, app_path, " \
-                "datetime(time_created, '+9 hours') FROM event_log WHERE event_id == '1002' AND app_name IS NOT '';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id == '1002' AND app_name IS NOT '';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2194,7 +2196,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, " \
-                "datetime(time_created, '+9 hours') FROM event_log WHERE event_id = '12' OR event_id = '13';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id = '12' OR event_id = '13';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2216,8 +2218,8 @@ class MyWidget(QWidget):
     def set_eventlog_powersaving(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT event_id, detailed, computer, datetime(time_created, '+9 hours'), " \
-                "datetime(sleep_time, '+9 hours'), datetime(wake_time, '+9 hours') " \
+        query = "SELECT event_id, detailed, computer, datetime(time_created, " + self.UTC + "), " \
+                "datetime(sleep_time, " + self.UTC + "), datetime(wake_time, " + self.UTC + ") " \
                 "FROM event_log WHERE event_id = '1' OR (event_id = '42' AND source IS 'System.evtx')"
         cur.execute(query)
         rows = cur.fetchall()
@@ -2243,7 +2245,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, remo_conn_user, remo_conn_addr, remo_conn_local, local_manager_sess_id, " \
-                "datetime(time_created, '+9 hours') FROM event_log WHERE event_id = '261' or event_id = '1149' or event_id = '24' or event_id = '25';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id = '261' or event_id = '1149' or event_id = '24' or event_id = '25';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2271,7 +2273,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, rdp_name, rdp_value, rdp_custom_level, rdp_domain, rdp_session, sec_id, " \
-                "datetime(time_created, '+9 hours') FROM event_log where (event_id = '1024' AND rdp_value IS NOT  '') or (event_id = '1026' AND rdp_value IS NOT '') or event_id = '1025' or event_id = '1027' or event_id = '1028' or event_id = '1102';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log where (event_id = '1024' AND rdp_value IS NOT  '') or (event_id = '1026' AND rdp_value IS NOT '') or event_id = '1025' or event_id = '1027' or event_id = '1028' or event_id = '1102';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2302,7 +2304,7 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, reason, old_bias, new_bias, sbt_usr_name, sys_prv_time, sys_new_time, " \
-                "datetime(time_created, '+9 hours') FROM event_log where (event_id = '1' AND reason IS NOT '') OR event_id = '22' OR event_id = '4616';"
+                "datetime(time_created, " + self.UTC + ") FROM event_log where (event_id = '1' AND reason IS NOT '') OR event_id = '22' OR event_id = '4616';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2333,7 +2335,7 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         query = "SELECT file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, " \
                 "drive_serial_number, drive_type, volume_label, icon_location, machine_info, droid_file, droid_vol, known_guid, " \
-                "datetime(target_creation_time, '+9 hours'), datetime(target_modified_time, '+9 hours'), datetime(target_accessed_time, '+9 hours')" \
+                "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), datetime(target_accessed_time, " + self.UTC + ")" \
                 " FROM lnk_files WHERE file_flags LIKE '%DIRECTORY%'"
         cur.execute(query)
         rows = cur.fetchall()
