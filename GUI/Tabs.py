@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
 import sqlite3
-import datetime
 
 class MyWidget(QWidget):
     def __init__(self, parent):
@@ -27,144 +26,230 @@ class MyWidget(QWidget):
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
         self.setLayout(total_layout)
-        #self.UTC = "+9"     # 수정할 것.
+        #self.UTC = "+9"     ############### UTC Dialog 불러와서 UTC를 받도록 수정할 것.
 
 #################################################
 #   tab2                                        #
 #################################################
+    # tab2 구성
     def set_tab2(self):
-        # tab2 구성
         self.tab2.layout = QVBoxLayout()
+        self.set_checklist()
+        self.set_PCinfo()
+        self.tab2.setLayout(self.tab2.layout)
 
-
-####수집 전 확인 사항####
-        groupbox1 = QGroupBox("수집 전 확인 사항")
-        vbox1 = QGridLayout()
-        text1_1 = QLabel("<b> * DRM  <b>  :  ", self)
-        text1_2 = QLabel("<b> * 매체제어  <b>  :  ", self)
-        text1_3 = QLabel("<b> * 디스크 암호화  <b>  :  ", self)
-        text1_4 = QLabel("<b> * VM  <b>  :  ", self)
-        text1_5 = QLabel("<b> * 정보 저장 매체  <b>  :  ", self)
-        text1_6 = QLabel("<b> * 안티포렌식  <b>  :  ", self)
-        text1_7 = QLabel("<b> * 볼륨 섀도우  :  <b>")
+    # tab2 수집 전 확인 사항
+    def set_checklist(self):
+        self.groupbox1 = QGroupBox("수집 전 확인 사항")
+        self.vbox1 = QVBoxLayout()
 
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        text1_4_n = [] # DRM 정보
-        query = "SELECT name, version, install_location, publisher, install_date FROM Uninstall " \
-                "WHERE name LIKE 'Oracle VM VirtualBox%' OR name LIKE 'VMware Workstation';"
+        # DRM
+        query1 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int < 503"
+        cur.execute(query1)
+        rows1 = cur.fetchall()
+        # 매체제어
+        query2 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        cur.execute(query2)
+        rows2 = cur.fetchall()
+        # 디스크 암호화
+        query3 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        cur.execute(query3)
+        rows3 = cur.fetchall()
+        # 안티포렌식
+        # query4 = "SELECT Executable_Name, Last_Executed1 from prefetch1 " \
+        #          "WHERE (Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' " \
+        #          "OR Executable_Name LIKE 'CipherShed%' OR Executable_Name LIKE 'Eraser%' " \
+        #          "OR Executable_Name LIKE 'SDelete%' OR Executable_Name LIKE 'SetMACE%'" \
+        #          "OR Executable_Name LIKE 'TrueCrypt%'  OR Executable_Name LIKE 'TimeStomp%'" \
+        #          "OR Executable_Name LIKE 'VeraCrypt%'  OR Executable_Name LIKE 'Wise Folder Hider%')"
+        query4 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        cur.execute(query4)
+        rows4 = cur.fetchall()
+        # VM
+        # query5 = "SELECT name, version, install_location, publisher, install_date FROM Uninstall " \
+        #         "WHERE name LIKE 'Oracle VM VirtualBox%' OR name LIKE 'VMware Workstation';"
+        query5 = "SELECT RID_int, account_name, datetime(last_password_change_time, '+9 hours'), datetime(created_on, '+9 hours') FROM UserAccounts WHERE RID_int > 503"
+        cur.execute(query5)
+        rows5 = cur.fetchall()
+        conn.close()
+
+        self.tab2_table = QTableWidget(self)
+        count = len(rows1) + len(rows2) + len(rows3) + len(rows4) + len(rows5) + 5
+        self.tab2_table.setRowCount(count)
+        self.tab2_table.setColumnCount(5)
+        column_headers = ["", "프로그램", "설치 시간", "마지막 실행 시간", "삭제 여부"]
+        self.tab2_table.setHorizontalHeaderLabels(column_headers)
+        tab2_accum = 0
+
+        # DRM
+        self.color_tab2_table("DRM", tab2_accum)
+        for i in range(len(rows1)):
+            program, install, execute, delete = rows1[i]
+            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        tab2_accum = tab2_accum + len(rows1) + 1
+
+        # 매체제어
+        self.color_tab2_table("매체제어", tab2_accum)
+        for i in range(len(rows2)):
+            program, install, execute, delete = rows2[i]
+            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        tab2_accum = tab2_accum + len(rows2) + 1
+
+        # 디스크 암호화
+        self.color_tab2_table("디스크 암호화", tab2_accum)
+        for i in range(len(rows3)):
+            program, install, execute, delete = rows3[i]
+            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        tab2_accum = tab2_accum + len(rows3) + 1
+
+        # 안티포렌식
+        self.color_tab2_table("안티포렌식", tab2_accum)
+        for i in range(len(rows4)):
+            program, install, execute, delete = rows4[i]
+            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+        tab2_accum = tab2_accum + len(rows4) + 1
+
+        # VM
+        self.color_tab2_table("VM", tab2_accum)
+        for i in range(len(rows5)):
+            program, install, execute, delete = rows5[i]
+            self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
+            self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
+            self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
+            self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+
+        self.tab2_table.verticalHeader().hide()
+        self.tab2_table.resizeColumnsToContents()
+        self.vbox1.addWidget(self.tab2_table)
+        self.groupbox1.setLayout(self.vbox1)
+        self.tab2.layout.addWidget(self.groupbox1)
+
+    # tab2_table의 라인 컬러링
+    def color_tab2_table(self, string, accum):
+        self.tab2_table.setItem(accum, 0, QTableWidgetItem(string))
+        self.tab2_table.setItem(accum, 1, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 2, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 3, QTableWidgetItem(""))
+        self.tab2_table.setItem(accum, 4, QTableWidgetItem(""))
+        self.tab2_table.item(accum, 0).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 1).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 2).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 3).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(217, 217, 217))
+
+    # tab2 PC 정보
+    def set_PCinfo(self):
+        self.groupbox2 = QGroupBox("PC 정보")
+        self.vbox2 = QVBoxLayout()
+        self.tab2_tree = QTreeWidget()
+        self.tab2_tree.header().setVisible(False)
+
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+
+        # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대
+        query = "SELECT product_name, product_ID, build_lab, computer_name, " \
+                "timezone_name, UTC, " \
+                "datetime(install_date, '+9 hours') FROM OSInformation;"
         cur.execute(query)
-        list = cur.fetchall()
-        for l in range(len(list)):
-            text1_4_n.append(QLabel("이름 : " + list[l][0] + ", 버전: " + list[l][1] + ", 경로: " + list[l][2] + ", 제조사: " + list[l][3] + ", 최초 실행 시각: " + list[l][4] + ", 삭제 여부 : ", self))
+        rows = cur.fetchall()[0]
+        string1 = "윈도우 버전:\t" + rows[0] + ", " + rows[1] + ", " + rows[2]
+        string2 = "윈도우 설치 시간:\t" + rows[6]
+        string3 = "컴퓨터 이름:\t" + rows[3]
+        string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
 
-####추가####
-        conn1 = sqlite3.connect("Believe_Me_Sister.db")
-        cur1 = conn1.cursor()
-        text1_6_n = [] # 안티포렌식 정보
-        query1 = "SELECT Executable_Name, Last_Executed1 from prefetch1 " \
-                 "WHERE (Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' " \
-                 "OR Executable_Name LIKE 'CipherShed%' OR Executable_Name LIKE 'Eraser%' " \
-                 "OR Executable_Name LIKE 'SDelete%' OR Executable_Name LIKE 'SetMACE%'" \
-                 "OR Executable_Name LIKE 'TrueCrypt%'  OR Executable_Name LIKE 'TimeStomp%'" \
-                 "OR Executable_Name LIKE 'VeraCrypt%'  OR Executable_Name LIKE 'Wise Folder Hider%')"
-        cur1.execute(query1)
-        list1 = cur1.fetchall()
-        for l in range(len(list1)):
-            text1_6_n.append(QLabel("이름 : " + list1[l][0] + ", 마지막 실행 시각: " + list1[l][1] + ", 삭제 여부 : ", self))
+        self.text1 = QTreeWidgetItem(self.tab2_tree)
+        self.text1.setText(0, string1)
+        self.text2 = QTreeWidgetItem(self.tab2_tree)
+        self.text2.setText(0, string2)
+        self.text3 = QTreeWidgetItem(self.tab2_tree)
+        self.text3.setText(0, string3)
+        self.text4 = QTreeWidgetItem(self.tab2_tree)
+        self.text4.setText(0, string4)
+        self.text5 = QTreeWidgetItem(self.tab2_tree)
+        self.text5.setText(0, "MFT 생성 시간")
+        self.text6 = QTreeWidgetItem(self.tab2_tree)
+        self.text6.setText(0, "계정")
+        self.text7 = QTreeWidgetItem(self.tab2_tree)
+        self.text7.setText(0, "USB")
+        # self.text8 = QTreeWidgetItem(self.tab2_tree)
+        # self.text8.setText(0, "네트워크")                 ################# 네트워크 파싱하고 주석 해제하기!!
 
-
-        vbox1.addWidget(text1_1, 0, 0)
-        vbox1.addWidget(text1_2, 1, 0)
-        vbox1.addWidget(text1_3, 2, 0)
-        vbox1.addWidget(text1_4, 3, 0)
-        vbox1.addWidget(text1_5, 5, 0)
-        vbox1.addWidget(text1_6, 6, 0)
-        vbox1.addWidget(text1_7, 7 + len(list1), 0)
-
-        vbox1.addWidget(text1_4_n[0], 3, 1)
-
-####추가####
-        for i in range(len(list1)):
-            vbox1.addWidget(text1_6_n[i], 6 + i, 1)
-
-        groupbox1.setLayout(vbox1)
-
-
-##PC 정보##
-        groupbox2 = QGroupBox("PC 정보")
-        vbox2 = QGridLayout()
-
-        query = "SELECT * FROM OSInformation;"
+        # MFT 생성 시간
+        query = "SELECT drive, datetime(SI_M_timestamp, '+9 hours') " \
+                "from parsed_MFT WHERE file_path Like '/$MFT'"
         cur.execute(query)
-        list = cur.fetchall()[0]
+        rows = cur.fetchall()
+        self.text3_content = []
+        for i in range(len(rows)):
+            drive, m_time = rows[i]
+            self.text3_content.append(QTreeWidgetItem(self.text5))
+            self.text3_content[i].setText(0, drive + "드라이브: " + m_time)
 
-        text2_1 = QLabel("<b> * 윈도우 버전  <b>  :  ", self)
-        text2_2 = QLabel("<b> * 윈도우 설치 시각  <b>  :  ", self)
-        text2_3 = QLabel("<b> * 컴퓨터 이름  <b>  :  ", self)
-        text2_4 = QLabel("<b> * 작업 그룹  <b>  :  ", self)
-        text2_5 = QLabel("<b> * 표준 시간대  <b>  :  ", self)
-        text2_6 = QLabel("<b> * usb  <b>  :  ", self)
-        text2_7 = QLabel("<b> * 네트워크  <b>  :  ", self)
-        text2_8 = QLabel("<b> * 계정  <b>  :  ", self)
-        text2_1_1 = QLabel(list[0] + " (" + list[6] + ")", self)
-        text2_2_1 = QLabel(list[4] + " (UTC +00)", self)
-        text2_3_1 = QLabel(list[10], self)
-        # text4_2 = QLabel(string4, self)
-        text2_5_1 = QLabel(list[7] + " (UTC"+ f"{list[9]:+03d}" + ")", self)
-
-        text2_6_n = []
-        query = "SELECT serial_num, random_yn, UIID, vendor_name, product_name, version, label, GUID, " \
-                "first_connected, last_connected FROM Connected_USB"
+        # 계정
+        query = "SELECT account_name, RID_int, datetime(created_on, '+9 hours'), " \
+                "datetime(last_login_time, '+9 hours') FROM UserAccounts"
         cur.execute(query)
-        list = cur.fetchall()
-        for l in range(len(list)):
-            string = "시리얼 넘버: " + list[l][0] + ", GUID: " + list[l][7] + ", UIID: " + list[l][2] + ", 최초 연결: " + list[l][8] + ", 마지막 연결: " + list[l][9]
-            text2_6_n.append(QLabel(string))
+        rows = cur.fetchall()
+        self.text6_content = []
+        for i in range(len(rows)):
+            account_name, RID_int, created_on, last_login_time = rows[i]
+            self.text6_content.append(QTreeWidgetItem(self.text6))
+            if last_login_time == None:
+                string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on
+            else:
+                string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+            self.text6_content[i].setText(0, string)
 
-        text2_8_n = []
-        query = "SELECT account_name, created_on FROM UserAccounts"
+        # USB
+        # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
+        #         "datetime(first_connected, '+9 hours'), datetime(last_connected, '+9 hours') FROM Connected_USB"
+        query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
         cur.execute(query)
-        list = cur.fetchall()
-        for l in range(len(list)):
-            text2_8_n.append(QLabel(list[l][0] + ", 생성: " + list[l][1]))
+        rows = cur.fetchall()
+        self.text7_content = []
+        for i in range(len(rows)):
+            serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
+            self.text7_content.append(QTreeWidgetItem(self.text7))
+            if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
+                string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + serial_num + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+            elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
+                string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+            self.text7_content[i].setText(0, string)
+        #
+        # # 네트워크
+        # # query =
+        # # cur.execute(query)
+        # # fors = cur.fetchall()
+        # # self.text8_content = []
+        # # for i in range(len(rows)):
+        # #     ## = rows[i]
+        # #     self.text8_content.append(QTreeWidgetItem(self.text8))
+        # #     self.text8_content[i].setText(0, "##")
 
-
-        vbox2.addWidget(text2_1, 0, 0) # 윈도우 버전
-        vbox2.addWidget(text2_2, 1, 0) # 윈도우 설치 시각
-        vbox2.addWidget(text2_3, 2, 0) # 컴퓨터 이름
-        vbox2.addWidget(text2_4, 3, 0) # 작업 그룹
-        vbox2.addWidget(text2_5, 4, 0) # 표준 시간대
-        vbox2.addWidget(text2_6, 5, 0) # USB
-        vbox2.addWidget(text2_7, 10, 0) # 네트워크
-        vbox2.addWidget(text2_8, 11, 0) # 계정
-        vbox2.addWidget(text2_1_1, 0, 1)
-        vbox2.addWidget(text2_2_1, 1, 1)
-        vbox2.addWidget(text2_3_1, 2, 1)
-        vbox2.addWidget(text2_5_1, 4, 1)
-        vbox2.addWidget(text2_6_n[0], 5, 1)
-        # vbox2.addWidget(text2_6_n[1], 6, 1)
-        # vbox2.addWidget(text2_6_n[2], 7, 1)
-        # vbox2.addWidget(text2_6_n[3], 8, 1)
-        # vbox2.addWidget(text2_6_n[4], 9, 1)
-        vbox2.addWidget(text2_8_n[0], 11, 1)
-        vbox2.addWidget(text2_8_n[1], 12, 1)
-        vbox2.addWidget(text2_8_n[2], 13, 1)
-        vbox2.addWidget(text2_8_n[3], 14, 1)
-        vbox2.addWidget(text2_8_n[4], 15, 1)
-        groupbox2.setLayout(vbox2)
-
-        self.tab2.layout.addWidget(groupbox1)
-        self.tab2.layout.addWidget(groupbox2)
-
-        self.tab2.setLayout(self.tab2.layout)
+        self.vbox2.addWidget(self.tab2_tree)
+        self.groupbox2.setLayout(self.vbox2)
+        self.tab2.layout.addWidget(self.groupbox2)
 
 #################################################
 #   tab3                                        #
 #################################################
-
+    # tab3 구성
     def set_tab3(self):
-        # tab3 구성
         self.tab3.layout = QGridLayout(self)
 
         self.box1 = QVBoxLayout()
@@ -223,6 +308,7 @@ class MyWidget(QWidget):
         self.tab3.layout.addWidget(self.timeline, 2, 0)
         self.tab3.setLayout(self.tab3.layout)
 
+    # tab3의 타임라인 구성
     def set_timeline(self):
         self.datetime1 = self.input_datetime1.dateTime().toString('yyyy-MM-dd hh:mm:ss')
         self.datetime2 = self.input_datetime2.dateTime().toString('yyyy-MM-dd hh:mm:ss')
@@ -252,7 +338,7 @@ class MyWidget(QWidget):
 
         self.timeline.resizeColumnsToContents()
 
-    # MFT 생성
+    # 타임라인 - MFT 생성
     def timeline_data1_1(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -422,7 +508,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-    # 계정 생성
+    # 타임라인 - 계정 생성
     def timeline_data1_2(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -471,8 +557,7 @@ class MyWidget(QWidget):
         self.timeline.setSortingEnabled(sortingEnabled)
         self.set_color()
 
-
-    # Windows 설치
+    # 타임라인 - Windows 설치
     def timeline_data1_3(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -495,7 +580,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(accum + i, 2, QTableWidgetItem(product_name + ", 제품 ID: " + product_ID))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-    # Windows 업데이트
+    # 타임라인 - Windows 업데이트
     def timeline_data1_4(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -519,7 +604,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-    # 시스템 On/Off
+    # 타임라인 - 시스템 On/Off
     def timeline_data1_5(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -546,7 +631,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(i + accum, 2, QTableWidgetItem(computer))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-    # 문서 생성 및 수정
+    # 타임라인 - 문서 생성 및 수정
     def timeline_date2_1(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -621,7 +706,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(accum + i, 3, QTableWidgetItem(local_base_path))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-    # 안티포렌식 도구 실행
+    # 타임라인 - 안티포렌식 도구 실행
     def timeline_data2_2(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -650,7 +735,7 @@ class MyWidget(QWidget):
         self.timeline.setSortingEnabled(sortingEnabled)
         self.set_color()
 
-    # 클라우드 접근
+    # 타임라인 - 클라우드 접근
     def timeline_data2_3(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -675,7 +760,7 @@ class MyWidget(QWidget):
         self.timeline.setSortingEnabled(sortingEnabled)
         self.set_color()
 
-    # 저장장치 연결 및 해제
+    # 타임라인 - 저장장치 연결 및 해제
     def timeline_data2_4(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -705,7 +790,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-    # 이벤트로그 삭제
+    # 타임라인 - 이벤트로그 삭제
     def timeline_data2_5(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -731,6 +816,7 @@ class MyWidget(QWidget):
         self.timeline.setSortingEnabled(sortingEnabled)
         self.set_color()
 
+    # tab3의 타임라인 컬러링
     def set_color(self):
         for i in range(self.timeline_count):
             for i in range(self.timeline_count):
@@ -1079,7 +1165,7 @@ class MyWidget(QWidget):
         self.tab4.layout.addWidget(self.tree)
         self.tree.itemClicked.connect(self.tab4_onItemClicked)
 
-    # tab4의 tree의 item을 클릭할 시 현재 테이블을 레이아웃에서 없애고 item에 해당하는 테이블을 추가
+    # tab4의 tree의 아이템을 클릭할 시 레이아웃에서 현재 테이블을 클릭한 아이템의 테이블로 교체
     def tab4_onItemClicked(self, it, col):
         delete = self.tab4.layout.itemAt(1).widget()
 
@@ -1212,35 +1298,35 @@ class MyWidget(QWidget):
                 "timezone_name, active_time_bias, UTC, computer_name, default_user_name, last_used_user_name, " \
                 "datetime(shutdown_time, '+9 hours'), datetime(install_date, '+9 hours') FROM OSInformation"
         cur.execute(query)
-        rows = cur.fetchall()[0]
+        rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.PC_system_table.setRowCount(count)
-        self.PC_system_table.setColumnCount(1)
-        row_headers = ["제품명", "제품 ID", "시스템 루트", "사용자", "설치 시간",
+        self.PC_system_table.setColumnCount(14)
+        column_headers = ["제품명", "제품 ID", "시스템 루트", "사용자", "설치 시간",
                        "제조사", "버전", "타임존", "time_bias", "UTC",
                        "컴퓨터 이름", "기본 사용자", "마지막 사용자", "종료 시간"]
-        self.PC_system_table.setVerticalHeaderLabels(row_headers)
-        self.PC_system_table.horizontalHeader().setVisible(False)
+        self.PC_system_table.setHorizontalHeaderLabels(column_headers)
 
-        product_name, product_ID, system_root, owner, organization, build_lab, \
-        timezone_name, active_time_bias, UTC, computer_name, default_user_name, last_used_user_name, \
-        shutdown_time, install_date = rows
-        self.PC_system_table.setItem(0, 0, QTableWidgetItem(product_name))
-        self.PC_system_table.setItem(1, 0, QTableWidgetItem(product_ID))
-        self.PC_system_table.setItem(2, 0, QTableWidgetItem(system_root))
-        self.PC_system_table.setItem(3, 0, QTableWidgetItem(owner))
-        self.PC_system_table.setItem(4, 0, QTableWidgetItem(install_date))
-        self.PC_system_table.setItem(5, 0, QTableWidgetItem(organization))
-        self.PC_system_table.setItem(6, 0, QTableWidgetItem(build_lab))
-        self.PC_system_table.setItem(7, 0, QTableWidgetItem(timezone_name))
-        self.PC_system_table.setItem(8, 0, QTableWidgetItem(str(active_time_bias)))
-        self.PC_system_table.setItem(9, 0, QTableWidgetItem(str(UTC)))
-        self.PC_system_table.setItem(10, 0, QTableWidgetItem(computer_name))
-        self.PC_system_table.setItem(11, 0, QTableWidgetItem(default_user_name))
-        self.PC_system_table.setItem(12, 0, QTableWidgetItem(last_used_user_name))
-        self.PC_system_table.setItem(13, 0, QTableWidgetItem(shutdown_time))
+        for i in range(len(rows)):
+            product_name, product_ID, system_root, owner, organization, build_lab, \
+            timezone_name, active_time_bias, UTC, computer_name, default_user_name, last_used_user_name, \
+            shutdown_time, install_date = rows[i]
+            self.PC_system_table.setItem(i, 0, QTableWidgetItem(product_name))
+            self.PC_system_table.setItem(i, 1, QTableWidgetItem(product_ID))
+            self.PC_system_table.setItem(i, 2, QTableWidgetItem(system_root))
+            self.PC_system_table.setItem(i, 3, QTableWidgetItem(owner))
+            self.PC_system_table.setItem(i, 4, QTableWidgetItem(install_date))
+            self.PC_system_table.setItem(i, 5, QTableWidgetItem(organization))
+            self.PC_system_table.setItem(i, 6, QTableWidgetItem(build_lab))
+            self.PC_system_table.setItem(i, 7, QTableWidgetItem(timezone_name))
+            self.PC_system_table.setItem(i, 8, QTableWidgetItem(str(active_time_bias)))
+            self.PC_system_table.setItem(i, 9, QTableWidgetItem(str(UTC)))
+            self.PC_system_table.setItem(i, 10, QTableWidgetItem(computer_name))
+            self.PC_system_table.setItem(i, 11, QTableWidgetItem(default_user_name))
+            self.PC_system_table.setItem(i, 12, QTableWidgetItem(last_used_user_name))
+            self.PC_system_table.setItem(i, 13, QTableWidgetItem(shutdown_time))
 
         self.PC_system_table.resizeColumnsToContents()
 
@@ -2284,9 +2370,3 @@ class MyWidget(QWidget):
             self.folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
             self.folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
             self.folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    mywidget = MyWidget()
-    mywidget.show()
-    sys.exit(app.exec_())
