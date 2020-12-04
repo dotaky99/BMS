@@ -2,7 +2,7 @@ import sqlite3
 
 
 def Event_Log_Database(data_list):
-    conn = sqlite3.connect('../Believe_Me_Sister.db')
+    conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS event_log')
     conn.execute('CREATE TABLE event_log('
@@ -37,7 +37,7 @@ def Event_Log_Database(data_list):
     conn.close()
 
 def Prefetch_Database(data_list1, data_list2):
-    conn = sqlite3.connect('../Believe_Me_Sister.db')
+    conn = sqlite3.connect('Believe_Me_Sister.db')
     cur1 = conn.cursor()
     cur2 = conn.cursor()
 
@@ -55,7 +55,7 @@ def Prefetch_Database(data_list1, data_list2):
     conn.commit()
 
 def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5, data_list6, data_list7, data_list8, data_list9):
-    dest = sqlite3.connect("../Believe_Me_Sister.db")
+    dest = sqlite3.connect("GUI/Believe_Me_Sister.db")
     d_cur = dest.cursor()
     d_cur.execute('DROP TABLE IF EXISTS url')
     d_cur.execute(
@@ -123,7 +123,7 @@ def browser_db_insert(data_list1, data_list2, data_list3, data_list4, data_list5
     dest.close()
 
 def cache_db_insert(data_list):
-    dest = sqlite3.connect("../Believe_Me_Sister.db")
+    dest = sqlite3.connect("GUI/Believe_Me_Sister.db")
     d_cur = dest.cursor()
 
     sql="INSERT INTO cache (type, timestamp, url, status, value, etag, last_modified, server_name, data_location, all_http_headers) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -134,7 +134,7 @@ def cache_db_insert(data_list):
     dest.close()
 
 def Lnk_Databases(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS lnk_files')
     conn.execute(
@@ -152,31 +152,31 @@ def Lnk_Databases(data_list):
 
 def JumpList_Databases(data_list):
 
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS jumplist')
     conn.execute(
-        "CREATE TABLE jumplist(Type TEXT, jump_file_name, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
+        "CREATE TABLE jumplist(Type TEXT, file_name TEXT, lnk_counter TEXT, Used_path TEXT, file_size TEXT, "
         "file_flags TEXT, target_creation_time DATETIME, target_modified_time DATETIME, target_accessed_time DATETIME, "
         "show_command TEXT, icon TEXT, description TEXT, local_base_path TEXT, volume_label TEXT, "
         "drive_type TEXT)")
-    cur.executemany("INSERT INTO jumplist VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
+    cur.executemany("INSERT INTO jumplist VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
 
     conn.commit()
     conn.close()
 
 def MFT_Databases(data_list):
-    conn = sqlite3.connect('../Believe_Me_Sister.db')
+    conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS parsed_MFT')
     cur.execute(
-        "CREATE TABLE parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, LSN, file_path, SI_flag, FN_flag, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
-    cur.executemany('INSERT INTO parsed_MFT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', data_list)
+        "CREATE TABLE parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, log_file_seq_num, file_path, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN_value, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
+    cur.executemany('INSERT INTO parsed_MFT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', data_list)
     conn.commit()
     conn.close()
 
 def Usn_Databases(data_list):
-    conn = sqlite3.connect('../Believe_Me_Sister.db')
+    conn = sqlite3.connect('Believe_Me_Sister.db')
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS parsed_usn')
     cur.execute(
@@ -188,7 +188,7 @@ def Usn_Databases(data_list):
 
 # REGParse.py가 호출
 def Reg_OSInformation(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS OSInformation')
@@ -205,7 +205,7 @@ def Reg_OSInformation(data_list):
     conn.close()
 
 def Reg_Uninstall(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS Uninstall')
@@ -218,21 +218,20 @@ def Reg_Uninstall(data_list):
     conn.close()
 
 def Reg_BAM(data_list):
-    if data_list != None:
-        conn = sqlite3.connect("../Believe_Me_Sister.db")
-        cur = conn.cursor()
-        try:
-            conn.execute('DROP TABLE IF EXISTS BAM')
-            query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
-            conn.execute(query)
-            cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
-            conn.commit()
-        except:
-            print("BAM table parsing error")
-        conn.close()
+    conn = sqlite3.connect("Believe_Me_Sister.db")
+    cur = conn.cursor()
+    try:
+        conn.execute('DROP TABLE IF EXISTS BAM')
+        query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
+        conn.execute(query)
+        cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
+        conn.commit()
+    except:
+        print("BAM table parsing error")
+    conn.close()
 
 def Reg_UserAccounts(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS UserAccounts')
@@ -248,7 +247,7 @@ def Reg_UserAccounts(data_list):
     conn.close()
 
 def Reg_MuiCache(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS MuiCache')
@@ -261,7 +260,7 @@ def Reg_MuiCache(data_list):
     conn.close()
 
 def Reg_UseraAsist_CEB(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS UserAssist_CEB')
@@ -274,7 +273,7 @@ def Reg_UseraAsist_CEB(data_list):
     conn.close()
 
 def Reg_UserAssist_F4E(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS UserAssist_F4E')
@@ -287,7 +286,7 @@ def Reg_UserAssist_F4E(data_list):
     conn.close()
 
 def Reg_UserAssist_CIDSizeMRU(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS CIDSizeMRU')
@@ -300,7 +299,7 @@ def Reg_UserAssist_CIDSizeMRU(data_list):
     conn.close()
 
 def Reg_FirstFolder(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS FirstFolder')
@@ -313,7 +312,7 @@ def Reg_FirstFolder(data_list):
     conn.close()
 
 def Reg_Connected_USB(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS Connected_USB')
@@ -327,7 +326,7 @@ def Reg_Connected_USB(data_list):
     conn.close()
 
 def Reg_RecentDocs(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS RecentDocs')
@@ -340,7 +339,7 @@ def Reg_RecentDocs(data_list):
     conn.close()
 
 def Reg_LastVisitedPidl(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS LastVisitedPidl')
@@ -353,7 +352,7 @@ def Reg_LastVisitedPidl(data_list):
     conn.close()
 
 def Reg_Legacy(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS Legacy')
@@ -366,7 +365,7 @@ def Reg_Legacy(data_list):
     conn.close()
 
 def Reg_OpenSavePidl(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS OpenSavePidl')
@@ -379,7 +378,7 @@ def Reg_OpenSavePidl(data_list):
     conn.close()
 
 def Reg_Run(data_list):
-    conn = sqlite3.connect("../Believe_Me_Sister.db")
+    conn = sqlite3.connect("Believe_Me_Sister.db")
     cur = conn.cursor()
     try:
         conn.execute('DROP TABLE IF EXISTS Run')

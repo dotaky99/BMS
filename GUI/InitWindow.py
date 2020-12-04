@@ -79,7 +79,7 @@ class FileCopy(QDialog):
         self.setLayout(layout)
 
     def pushButtonCopy(self):
-        os.system("python COPY/copy.py")
+        os.system("python ../COPY/copy.py")
 
 form_class = uic.loadUiType("Initial Window.ui")[0]
 class InitWindow(QMainWindow, form_class) :

@@ -27,7 +27,7 @@ def PC_Processing(file_et):
                 eventid = soup.eventid.string
                 computer = soup.computer.string
                 time_created = soup.timecreated['systemtime'].split('.')[0]
-                source = each_et.split('/')[-1]
+                source = each_et.split('/')[3]
 
                 if eventid not in file_et[each_et]:
                     continue
@@ -72,7 +72,7 @@ def PC_Processing(file_et):
                 if 'System' in each_et and eventid in file_et[each_et]:
                     if eventid == '104':
                         detailed = file_et[each_et][eventid]
-                        for data in soup.findAll('userdata'):
+                        for data in soup.findAll('data'):
                             sbt_usr_name = data.subjectusername.string
                             channel = data.channel.string
 

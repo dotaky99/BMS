@@ -275,7 +275,7 @@ def convert_time_to_unix(windows_time):
         return datetime.fromtimestamp(unix_time).strftime('%Y-%m-%d %H:%M:%S')
         # return datetime.strptime('%Y-%m-%d %H:%M:%S')
     except OSError:
-        return None
+        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def convert_time_to_windows(unix_time):
