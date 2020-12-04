@@ -634,7 +634,7 @@ class MyWidget(QWidget):
     def timeline_data1_4(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT detailed, computer, datetime(time_created," + self.UCT + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
+        query = "SELECT detailed, computer, datetime(time_created," + self.UTC + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
                 " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
         cur.execute(query)
         rows = cur.fetchall()
@@ -876,7 +876,7 @@ class MyWidget(QWidget):
                 elif self.timeline.item(i, 1).text()=="클라우드 접근":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 255, 102))
                 elif self.timeline.item(i, 1).text() == "이벤트로그 삭제":
-                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(51, 102, 225))
+                    self.timeline.item(i, 1).setBackground(QtGui.QColor(51, 102, 225))
 
 #################################################
 #   tab4                                        #
