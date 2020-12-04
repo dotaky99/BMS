@@ -3,7 +3,7 @@ import Database
 from NTFSParse.ntfs import MFT, Attributes, WSL, Format
 
 def parsing(): ## MAIN ##
-    mft_path = "./COPY/NTFS/"
+    mft_path = "NTFS/"
     mft_list = []
 
     for f in os.listdir(mft_path):
@@ -20,7 +20,7 @@ def parsing(): ## MAIN ##
 
 def mft_parse(mft_file, data_list):
     drive_name = mft_file.split('_')[0]
-    mft_file = './COPY/NTFS/'+mft_file
+    mft_file = 'NTFS/'+mft_file
     input_file = open(mft_file, 'rb')
 
     mft = MFT.MasterFileTableParser(input_file)

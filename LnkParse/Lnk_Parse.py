@@ -114,7 +114,7 @@ def allfile(path):
    res = []
 
    for root, dirs, files in os.walk(path):
-      roots = root.split("COPY/LNK/")
+      roots = root.split("GUI/COPY/LNK/")
       root = roots[1]
       rootpath = os.path.join(os.path.abspath(path), root)
       # rootpath = os.path.abspath(path)
@@ -126,7 +126,7 @@ def allfile(path):
    return res
 
 def files_parse():
-    path_dir = 'COPY/LNK/'
+    path_dir = 'GUI/COPY/LNK/'
     files_list = allfile(path_dir)
     lnk_lists = lnk_parse(files_list)
     return lnk_lists

@@ -452,7 +452,7 @@ def Browser_parser():
 
         ########################### autofill 파싱 시작 ###########################
     try:
-        source2 = sqlite3.connect("COPY\\BROWSER\\Web Data")
+        source2 = sqlite3.connect("GUI\\COPY\\BROWSER\\Web Data")
         s_cur2 = source2.cursor()  # autofill 파싱
         s_cur2.execute('SELECT autofill.date_last_used, autofill.name, autofill.value, autofill.count FROM autofill')
         autofill = s_cur2.fetchall()
@@ -465,7 +465,7 @@ def Browser_parser():
 
         ################################ bookmark 파싱 시작 #################################
     try:
-        bookmarks_path = os.path.join('COPY\\BROWSER', 'Bookmarks')
+        bookmarks_path = os.path.join('GUI\\COPY\\BROWSER', 'Bookmarks')
 
         with open(bookmarks_path, encoding='utf-8', errors='replace') as f:
             decoded_json = json.loads(f.read())
@@ -490,7 +490,7 @@ def Browser_parser():
 
         ########################## Cookies 파싱 시작 #############################
     try:
-        source3 = sqlite3.connect("COPY\\BROWSER\\Cookies")
+        source3 = sqlite3.connect("GUI\\COPY\\BROWSER\\Cookies")
         s_cur3 = source3.cursor()  # 쿠키 파싱
         def decrypt_cookie(encrypted_value):
             """Decryption based on work by Nathan Henrie and Jordan Wright as well as Chromium source:
@@ -547,7 +547,7 @@ def Browser_parser():
 
         ###############################login data parsing###############################333
     try:
-        source4 = sqlite3.connect("COPY\\BROWSER\\Login Data")
+        source4 = sqlite3.connect("GUI\\COPY\\BROWSER\\Login Data")
         s_cur4 = source4.cursor()  # login 파싱
         s_cur4.execute(
             'SELECT origin_url, action_url, username_element, username_value, password_element, password_value, date_created, date_last_used, blacklisted_by_user FROM logins')
@@ -744,7 +744,7 @@ def Browser_parser():
         results = []
         timestamped_preference_items = []
 
-        preferences_file = 'COPY\\BROWSER\\Preferences'
+        preferences_file = 'GUI\\COPY\\BROWSER\\Preferences'
         # Open 'Preferences' file
 
         with open(preferences_file, encoding='utf-8', errors='replace') as f:

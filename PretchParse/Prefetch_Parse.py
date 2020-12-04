@@ -12,7 +12,7 @@ import Database
 second_data_list1 = []
 second_data_list2 = []
 
-path_dir = 'COPY/PREFETCH/'
+path_dir = 'PREFETCH/'
 file_list = os.listdir(path_dir)
 
 class Prefetch(object):

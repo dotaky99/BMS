@@ -107,16 +107,16 @@ def read_auto(jump_filename):
 
 def main():
 
-    path = 'COPY\\JUMPLIST'
+    path = 'JUMPLIST/'
     lists = os.listdir(path)
     jump_list_auto, jump_list_cust = [], []
     try:
         for i in lists:
             jm_type = i.split(".")[-1]
             if jm_type == 'automaticDestinations-ms':
-                jump_list_auto.append("COPY/JUMPLIST/"+i)
+                jump_list_auto.append("JUMPLIST/"+i)
             if jm_type == 'customDestinations-ms':
-                jump_list_cust.append("COPY/JUMPLIST/"+i)
+                jump_list_cust.append("JUMPLIST/"+i)
     except:
         pass
 
