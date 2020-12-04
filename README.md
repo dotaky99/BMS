@@ -26,7 +26,6 @@
 - pycryptodomex
 - 등등 더 있음
 
-
 ### 프로그램 실행순서
 
 1. copy.py 실행
