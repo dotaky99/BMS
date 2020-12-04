@@ -3,12 +3,14 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
 import sqlite3
+from datetime import timedelta
 
 class MyWidget(QWidget):
     def __init__(self, parent, UTC):
         super(MyWidget, self).__init__(parent)
         self.setGeometry(100, 100, 1500, 700)
         self.UTC = "'" + UTC + " hours'"
+        self.UTC_int = UTC
         self.initUI()
 
     def initUI(self):
@@ -345,8 +347,8 @@ class MyWidget(QWidget):
 
     # tab3의 타임라인 구성
     def set_timeline(self):
-        self.datetime1 = self.input_datetime1.dateTime().toString('yyyy-MM-dd hh:mm:ss')
-        self.datetime2 = self.input_datetime2.dateTime().toString('yyyy-MM-dd hh:mm:ss')
+        self.datetime1 = (self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -9)).strftime("%Y-%m-%d %H:%M:%S")
+        self.datetime2 = (self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -9)).strftime("%Y-%m-%d %H:%M:%S")
         self.timeline.clearContents()
         self.timeline_count = 0
 
@@ -569,7 +571,7 @@ class MyWidget(QWidget):
         self.timeline.setSortingEnabled(sortingEnabled)
         self.set_color()
 
-        query_2 = "SELECT last_password_change_time, account_name, RID_int FROM UserAccounts " \
+        query_2 = "SELECT datetime(last_password_change_time," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
                   " WHERE (last_password_change_time >= '" + self.datetime1 + "' AND last_password_change_time <= '" + self.datetime2 + "')"
         cur.execute(query_2)
         rows = cur.fetchall()
@@ -695,7 +697,7 @@ class MyWidget(QWidget):
 
         self.timeline.setSortingEnabled(sortingEnabled)
 
-        query_2 = "SELECT file_name, local_base_path, target_modified_time From jumplist " \
+        query_2 = "SELECT file_name, local_base_path, datetime(target_modified_time, " + self.UTC + ") From jumplist " \
                 " WHERE ((file_name LIKE '%.pdf' OR file_name LIKE '%.hwp' OR file_name LIKE '%.docx' OR file_name LIKE '%.doc' " \
                 " OR file_name LIKE '%.xlsx' OR file_name LIKE '%.csv' OR file_name LIKE '%.pptx' OR file_name LIKE '%.ppt' " \
                 " OR file_name LIKE '%.txt')" \
@@ -718,7 +720,7 @@ class MyWidget(QWidget):
             self.timeline.setItem(accum + i, 3, QTableWidgetItem(local_base_path))
         self.timeline.setSortingEnabled(sortingEnabled)
 
-        query_3 = "SELECT file_name, local_base_path, target_accessed_time From jumplist " \
+        query_3 = "SELECT file_name, local_base_path, datetime(target_accessed_time, " + self.UTC + ") From jumplist " \
                 " WHERE ((file_name LIKE '%.pdf' OR file_name LIKE '%.hwp' OR file_name LIKE '%.docx' OR file_name LIKE '%.doc' " \
                 " OR file_name LIKE '%.xlsx' OR file_name LIKE '%.csv' OR file_name LIKE '%.pptx' OR file_name LIKE '%.ppt' " \
                 " OR file_name LIKE '%.txt')" \
@@ -750,7 +752,8 @@ class MyWidget(QWidget):
                 " OR Executable_Name LIKE 'Eraser%' OR Executable_Name LIKE 'SDelete%' " \
                 " OR Executable_Name LIKE 'SetMACE%' OR Executable_Name LIKE 'TimeStomp%'  " \
                 " OR Executable_Name LIKE 'Wise Folder Hider%') " \
-                " AND (Last_Executed1 >= '" + self.datetime1 + "' AND Last_Executed1 <= '" + self.datetime2 + "'))"
+                " AND (Last_Executed1 >= '" + self.datetime1 + "' AND (Last_Executed1 <= '" + self.datetime2 + "')))"
+
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -774,7 +777,7 @@ class MyWidget(QWidget):
     def timeline_data2_3(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT datetime(timestamp," + self.UTC+ "), Title, URL FROM cloud " \
+        query = "SELECT datetime(timestamp," + self.UTC + "), Title, URL FROM cloud " \
                 " WHERE (timestamp >= '" + self.datetime1 + "' AND timestamp <= '" + self.datetime2 + "')"
         cur.execute(query)
         rows = cur.fetchall()
@@ -1345,23 +1348,26 @@ class MyWidget(QWidget):
         self.PC_system_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(len(rows)):
-            product_name, product_ID, system_root, owner, organization, build_lab, \
-            timezone_name, active_time_bias, UTC, computer_name, default_user_name, last_used_user_name, \
-            shutdown_time, install_date = rows[i]
-            self.PC_system_table.setItem(i, 0, QTableWidgetItem(product_name))
-            self.PC_system_table.setItem(i, 1, QTableWidgetItem(product_ID))
-            self.PC_system_table.setItem(i, 2, QTableWidgetItem(system_root))
-            self.PC_system_table.setItem(i, 3, QTableWidgetItem(owner))
-            self.PC_system_table.setItem(i, 4, QTableWidgetItem(install_date))
-            self.PC_system_table.setItem(i, 5, QTableWidgetItem(organization))
-            self.PC_system_table.setItem(i, 6, QTableWidgetItem(build_lab))
-            self.PC_system_table.setItem(i, 7, QTableWidgetItem(timezone_name))
-            self.PC_system_table.setItem(i, 8, QTableWidgetItem(str(active_time_bias)))
-            self.PC_system_table.setItem(i, 9, QTableWidgetItem(str(UTC)))
-            self.PC_system_table.setItem(i, 10, QTableWidgetItem(computer_name))
-            self.PC_system_table.setItem(i, 11, QTableWidgetItem(default_user_name))
-            self.PC_system_table.setItem(i, 12, QTableWidgetItem(last_used_user_name))
-            self.PC_system_table.setItem(i, 13, QTableWidgetItem(shutdown_time))
+            try:
+                product_name, product_ID, system_root, owner, organization, build_lab, \
+                timezone_name, active_time_bias, UTC, computer_name, default_user_name, last_used_user_name, \
+                shutdown_time, install_date = rows[i]
+                self.PC_system_table.setItem(i, 0, QTableWidgetItem(product_name))
+                self.PC_system_table.setItem(i, 1, QTableWidgetItem(product_ID))
+                self.PC_system_table.setItem(i, 2, QTableWidgetItem(system_root))
+                self.PC_system_table.setItem(i, 3, QTableWidgetItem(owner))
+                self.PC_system_table.setItem(i, 4, QTableWidgetItem(install_date))
+                self.PC_system_table.setItem(i, 5, QTableWidgetItem(organization))
+                self.PC_system_table.setItem(i, 6, QTableWidgetItem(build_lab))
+                self.PC_system_table.setItem(i, 7, QTableWidgetItem(timezone_name))
+                self.PC_system_table.setItem(i, 8, QTableWidgetItem(str(active_time_bias)))
+                self.PC_system_table.setItem(i, 9, QTableWidgetItem(str(UTC)))
+                self.PC_system_table.setItem(i, 10, QTableWidgetItem(computer_name))
+                self.PC_system_table.setItem(i, 11, QTableWidgetItem(default_user_name))
+                self.PC_system_table.setItem(i, 12, QTableWidgetItem(last_used_user_name))
+                self.PC_system_table.setItem(i, 13, QTableWidgetItem(shutdown_time))
+            except:
+                pass
 
         self.PC_system_table.resizeColumnsToContents()
 
@@ -1386,28 +1392,31 @@ class MyWidget(QWidget):
         self.PC_user_reg_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            RID_int, account_name, complete_account_name, logon_failure_count, logon_success_count, comment, homedir, \
-            last_login_time, last_password_change_time, expires_on, last_incorrect_password_time, created_on = rows[
-                i]
-            self.PC_user_reg_table.setItem(i, 0, QTableWidgetItem(str(RID_int)))
-            self.PC_user_reg_table.setItem(i, 1, QTableWidgetItem(created_on))
-            self.PC_user_reg_table.setItem(i, 2, QTableWidgetItem(account_name))
-            self.PC_user_reg_table.setItem(i, 3, QTableWidgetItem(complete_account_name))
-            self.PC_user_reg_table.setItem(i, 4, QTableWidgetItem(str(logon_failure_count)))
-            self.PC_user_reg_table.setItem(i, 5, QTableWidgetItem(str(logon_success_count)))
-            self.PC_user_reg_table.setItem(i, 6, QTableWidgetItem(comment))
-            self.PC_user_reg_table.setItem(i, 7, QTableWidgetItem(homedir))
-            self.PC_user_reg_table.setItem(i, 8, QTableWidgetItem(last_login_time))
-            self.PC_user_reg_table.setItem(i, 9, QTableWidgetItem(last_password_change_time))
-            self.PC_user_reg_table.setItem(i, 10, QTableWidgetItem(expires_on))
-            self.PC_user_reg_table.setItem(i, 11, QTableWidgetItem(last_incorrect_password_time))
+            try:
+                RID_int, account_name, complete_account_name, logon_failure_count, logon_success_count, comment, homedir, \
+                last_login_time, last_password_change_time, expires_on, last_incorrect_password_time, created_on = rows[
+                    i]
+                self.PC_user_reg_table.setItem(i, 0, QTableWidgetItem(str(RID_int)))
+                self.PC_user_reg_table.setItem(i, 1, QTableWidgetItem(created_on))
+                self.PC_user_reg_table.setItem(i, 2, QTableWidgetItem(account_name))
+                self.PC_user_reg_table.setItem(i, 3, QTableWidgetItem(complete_account_name))
+                self.PC_user_reg_table.setItem(i, 4, QTableWidgetItem(str(logon_failure_count)))
+                self.PC_user_reg_table.setItem(i, 5, QTableWidgetItem(str(logon_success_count)))
+                self.PC_user_reg_table.setItem(i, 6, QTableWidgetItem(comment))
+                self.PC_user_reg_table.setItem(i, 7, QTableWidgetItem(homedir))
+                self.PC_user_reg_table.setItem(i, 8, QTableWidgetItem(last_login_time))
+                self.PC_user_reg_table.setItem(i, 9, QTableWidgetItem(last_password_change_time))
+                self.PC_user_reg_table.setItem(i, 10, QTableWidgetItem(expires_on))
+                self.PC_user_reg_table.setItem(i, 11, QTableWidgetItem(last_incorrect_password_time))
+            except:
+                pass
 
     # item1_2_2 계정정보 - 이벤트로그
     def set_PC_user_evt(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, sbt_usr_name, trg_usr_name, display_name, mem_sid, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log " \
+                "datetime(time_created, " + self.UTC + "), source FROM event_log " \
                 "WHERE (event_id LIKE '1004' OR event_id LIKE '1005' OR event_id LIKE '4624'" \
                 "OR event_id LIKE '4625' OR event_id LIKE '4720' OR event_id LIKE '4724' OR event_id LIKE '4726'" \
                 "OR event_id LIKE '4732' OR event_id LIKE '4733' OR event_id LIKE '4738')"
@@ -1417,27 +1426,31 @@ class MyWidget(QWidget):
 
         count = len(rows)
         self.PC_user_evt_table.setRowCount(count)
-        self.PC_user_evt_table.setColumnCount(8)
+        self.PC_user_evt_table.setColumnCount(9)
         column_headers = ["Event_ID", "Detailed", "Time_Created", "Computer", "Sbt_User_Name",
-                          "Trg_User_Name", "Display", "Mem_Sid"]
+                          "Trg_User_Name", "Display", "Mem_Sid", "Source"]
         self.PC_user_evt_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, sbt_usr_name, trg_usr_name, display_name, mem_sid, time_created = rows[i]
-            self.PC_user_evt_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.PC_user_evt_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.PC_user_evt_table.setItem(i, 2, QTableWidgetItem(time_created))
-            self.PC_user_evt_table.setItem(i, 3, QTableWidgetItem(computer))
-            self.PC_user_evt_table.setItem(i, 4, QTableWidgetItem(sbt_usr_name))
-            self.PC_user_evt_table.setItem(i, 5, QTableWidgetItem(trg_usr_name))
-            self.PC_user_evt_table.setItem(i, 6, QTableWidgetItem(display_name))
-            self.PC_user_evt_table.setItem(i, 7, QTableWidgetItem(mem_sid))
+            try:
+                event_id, detailed, computer, sbt_usr_name, trg_usr_name, display_name, mem_sid, time_created, source = rows[i]
+                self.PC_user_evt_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.PC_user_evt_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.PC_user_evt_table.setItem(i, 2, QTableWidgetItem(time_created))
+                self.PC_user_evt_table.setItem(i, 3, QTableWidgetItem(computer))
+                self.PC_user_evt_table.setItem(i, 4, QTableWidgetItem(sbt_usr_name))
+                self.PC_user_evt_table.setItem(i, 5, QTableWidgetItem(trg_usr_name))
+                self.PC_user_evt_table.setItem(i, 6, QTableWidgetItem(display_name))
+                self.PC_user_evt_table.setItem(i, 7, QTableWidgetItem(mem_sid))
+                self.PC_user_evt_table.setItem(i, 8, QTableWidgetItem(source))
+            except:
+                pass
 
     # item1_3 윈도우 업데이트
     def set_PC_update(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT detailed, computer, package, datetime(time_created, " + self.UTC + ") " \
+        query = "SELECT event_id, detailed, computer, package, datetime(time_created, " + self.UTC + "), source " \
                 "FROM event_log WHERE event_id LIKE '2'"
         cur.execute(query)
         rows = cur.fetchall()
@@ -1445,23 +1458,27 @@ class MyWidget(QWidget):
 
         count = len(rows)
         self.PC_update_table.setRowCount(count)
-        self.PC_update_table.setColumnCount(5)
-        column_headers = ["Detailed", "Time_Created", "Computer", "Package", "출처"]
+        self.PC_update_table.setColumnCount(6)
+        column_headers = ["Event_ID", "Detailed", "Time_Created", "Computer", "Package", "Source"]
         self.PC_update_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            detailed, computer, package, time_created, = rows[i]
-            self.PC_update_table.setItem(i, 0, QTableWidgetItem(detailed))
-            self.PC_update_table.setItem(i, 1, QTableWidgetItem(time_created))
-            self.PC_update_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.PC_update_table.setItem(i, 3, QTableWidgetItem(package))
-            self.PC_update_table.setItem(i, 4, QTableWidgetItem("eventlog: id == 2"))
+            try:
+                event_id, detailed, computer, package, time_created, source = rows[i]
+                self.PC_update_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.PC_update_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.PC_update_table.setItem(i, 2, QTableWidgetItem(time_created))
+                self.PC_update_table.setItem(i, 3, QTableWidgetItem(computer))
+                self.PC_update_table.setItem(i, 4, QTableWidgetItem(package))
+                self.PC_update_table.setItem(i, 5, QTableWidgetItem(source))
+            except:
+                pass
 
     # item2_2 네트워크 - 이벤트로그
     def set_network_evt(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT event_id, detailed, computer, net_name, guid, conn_mode, reason, datetime(time_created, " + self.UTC + ") " \
+        query = "SELECT event_id, detailed, computer, net_name, guid, conn_mode, reason, datetime(time_created, " + self.UTC + "), source " \
                 "FROM event_log WHERE (event_id = '10000' AND net_name IS NOT '') OR (event_id = '10001' AND net_name IS NOT '') OR event_id = '8003';"
         cur.execute(query)
         rows = cur.fetchall()
@@ -1469,20 +1486,24 @@ class MyWidget(QWidget):
 
         count = len(rows)
         self.network_evt_table.setRowCount(count)
-        self.network_evt_table.setColumnCount(8)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 이름", "이벤트 생성날짜", "네트워크 이름", "네트워크 GUID", "연결 방식", "해제 이유"]
+        self.network_evt_table.setColumnCount(9)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 이름", "이벤트 생성날짜", "네트워크 이름", "네트워크 GUID", "연결 방식", "해제 이유", "출처"]
         self.network_evt_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, net_name, guid, conn_mode, reason, time_created = rows[i]
-            self.network_evt_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.network_evt_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.network_evt_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.network_evt_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.network_evt_table.setItem(i, 4, QTableWidgetItem(net_name))
-            self.network_evt_table.setItem(i, 5, QTableWidgetItem(guid))
-            self.network_evt_table.setItem(i, 6, QTableWidgetItem(conn_mode))
-            self.network_evt_table.setItem(i, 7, QTableWidgetItem(reason))
+            try:
+                event_id, detailed, computer, net_name, guid, conn_mode, reason, time_created, source = rows[i]
+                self.network_evt_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.network_evt_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.network_evt_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.network_evt_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.network_evt_table.setItem(i, 4, QTableWidgetItem(net_name))
+                self.network_evt_table.setItem(i, 5, QTableWidgetItem(guid))
+                self.network_evt_table.setItem(i, 6, QTableWidgetItem(conn_mode))
+                self.network_evt_table.setItem(i, 7, QTableWidgetItem(reason))
+                self.network_evt_table.setItem(i, 8, QTableWidgetItem(source))
+            except:
+                pass
 
     # item3_1 외부저장장치 - 레지스트리
     def set_storage_reg(self):
@@ -1501,15 +1522,18 @@ class MyWidget(QWidget):
         self.storage_reg_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            GUID, label, vendor_name, product_name, version, serial_num, first_connected, last_connected = rows[i]
-            self.storage_reg_table.setItem(i, 0, QTableWidgetItem(GUID))
-            self.storage_reg_table.setItem(i, 1, QTableWidgetItem(label))
-            self.storage_reg_table.setItem(i, 2, QTableWidgetItem(vendor_name))
-            self.storage_reg_table.setItem(i, 3, QTableWidgetItem(product_name))
-            self.storage_reg_table.setItem(i, 4, QTableWidgetItem(version))
-            self.storage_reg_table.setItem(i, 5, QTableWidgetItem(product_name))
-            self.storage_reg_table.setItem(i, 6, QTableWidgetItem(first_connected))
-            self.storage_reg_table.setItem(i, 7, QTableWidgetItem(last_connected))
+            try:
+                GUID, label, vendor_name, product_name, version, serial_num, first_connected, last_connected = rows[i]
+                self.storage_reg_table.setItem(i, 0, QTableWidgetItem(GUID))
+                self.storage_reg_table.setItem(i, 1, QTableWidgetItem(label))
+                self.storage_reg_table.setItem(i, 2, QTableWidgetItem(vendor_name))
+                self.storage_reg_table.setItem(i, 3, QTableWidgetItem(product_name))
+                self.storage_reg_table.setItem(i, 4, QTableWidgetItem(version))
+                self.storage_reg_table.setItem(i, 5, QTableWidgetItem(product_name))
+                self.storage_reg_table.setItem(i, 6, QTableWidgetItem(first_connected))
+                self.storage_reg_table.setItem(i, 7, QTableWidgetItem(last_connected))
+            except:
+                pass
 
     # item3_2 외부저장장치 - 이벤트로그
     def set_storage_evt(self):
@@ -1529,17 +1553,20 @@ class MyWidget(QWidget):
         self.storage_evt_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, bus_type, drive_manufac, drive_serial, drive_model, drive_location, time_created = \
-            rows[i]
-            self.storage_evt_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.storage_evt_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.storage_evt_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.storage_evt_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.storage_evt_table.setItem(i, 4, QTableWidgetItem(bus_type))
-            self.storage_evt_table.setItem(i, 5, QTableWidgetItem(drive_manufac))
-            self.storage_evt_table.setItem(i, 6, QTableWidgetItem(drive_serial))
-            self.storage_evt_table.setItem(i, 7, QTableWidgetItem(drive_model))
-            self.storage_evt_table.setItem(i, 8, QTableWidgetItem(drive_location))
+            try:
+                event_id, detailed, computer, bus_type, drive_manufac, drive_serial, drive_model, drive_location, time_created = \
+                rows[i]
+                self.storage_evt_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.storage_evt_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.storage_evt_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.storage_evt_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.storage_evt_table.setItem(i, 4, QTableWidgetItem(bus_type))
+                self.storage_evt_table.setItem(i, 5, QTableWidgetItem(drive_manufac))
+                self.storage_evt_table.setItem(i, 6, QTableWidgetItem(drive_serial))
+                self.storage_evt_table.setItem(i, 7, QTableWidgetItem(drive_model))
+                self.storage_evt_table.setItem(i, 8, QTableWidgetItem(drive_location))
+            except:
+                pass
 
     # item4_1 검색 기록
     def set_browser_search(self):
@@ -1557,10 +1584,13 @@ class MyWidget(QWidget):
         self.browser_search_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, keyword, timestamp = rows[i]
-            self.browser_search_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_search_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_search_table.setItem(i, 2, QTableWidgetItem(keyword))
+            try:
+                type, keyword, timestamp = rows[i]
+                self.browser_search_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_search_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_search_table.setItem(i, 2, QTableWidgetItem(keyword))
+            except:
+                pass
 
         self.browser_search_table.resizeColumnsToContents()
 
@@ -1581,18 +1611,21 @@ class MyWidget(QWidget):
         self.browser_dowload_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, url, status, path, interrupt_reason, danger_type, opened, etag, \
-            timestamp, last_modified = rows[i]
-            self.browser_dowload_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_dowload_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_dowload_table.setItem(i, 2, QTableWidgetItem(url))
-            self.browser_dowload_table.setItem(i, 3, QTableWidgetItem(status))
-            self.browser_dowload_table.setItem(i, 4, QTableWidgetItem(path))
-            self.browser_dowload_table.setItem(i, 5, QTableWidgetItem(interrupt_reason))
-            self.browser_dowload_table.setItem(i, 6, QTableWidgetItem(danger_type))
-            self.browser_dowload_table.setItem(i, 7, QTableWidgetItem(opened))
-            self.browser_dowload_table.setItem(i, 8, QTableWidgetItem(etag))
-            self.browser_dowload_table.setItem(i, 9, QTableWidgetItem(last_modified))
+            try:
+                type, url, status, path, interrupt_reason, danger_type, opened, etag, \
+                timestamp, last_modified = rows[i]
+                self.browser_dowload_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_dowload_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_dowload_table.setItem(i, 2, QTableWidgetItem(url))
+                self.browser_dowload_table.setItem(i, 3, QTableWidgetItem(status))
+                self.browser_dowload_table.setItem(i, 4, QTableWidgetItem(path))
+                self.browser_dowload_table.setItem(i, 5, QTableWidgetItem(interrupt_reason))
+                self.browser_dowload_table.setItem(i, 6, QTableWidgetItem(danger_type))
+                self.browser_dowload_table.setItem(i, 7, QTableWidgetItem(opened))
+                self.browser_dowload_table.setItem(i, 8, QTableWidgetItem(etag))
+                self.browser_dowload_table.setItem(i, 9, QTableWidgetItem(last_modified))
+            except:
+                pass
 
     # item4_3 URL 히스토리
     def set_browser_url(self):
@@ -1611,17 +1644,20 @@ class MyWidget(QWidget):
         self.browser_url_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            url, title, source, visit_duration, visit_count, typed_count, url_hidden, transition, timestamp = rows[
-                i]
-            self.browser_url_table.setItem(i, 0, QTableWidgetItem(timestamp))
-            self.browser_url_table.setItem(i, 1, QTableWidgetItem(url))
-            self.browser_url_table.setItem(i, 2, QTableWidgetItem(title))
-            self.browser_url_table.setItem(i, 3, QTableWidgetItem(source))
-            self.browser_url_table.setItem(i, 4, QTableWidgetItem(visit_duration))
-            self.browser_url_table.setItem(i, 5, QTableWidgetItem(visit_count))
-            self.browser_url_table.setItem(i, 6, QTableWidgetItem(typed_count))
-            self.browser_url_table.setItem(i, 7, QTableWidgetItem(url_hidden))
-            self.browser_url_table.setItem(i, 8, QTableWidgetItem(transition))
+            try:
+                url, title, source, visit_duration, visit_count, typed_count, url_hidden, transition, timestamp = rows[
+                    i]
+                self.browser_url_table.setItem(i, 0, QTableWidgetItem(timestamp))
+                self.browser_url_table.setItem(i, 1, QTableWidgetItem(url))
+                self.browser_url_table.setItem(i, 2, QTableWidgetItem(title))
+                self.browser_url_table.setItem(i, 3, QTableWidgetItem(source))
+                self.browser_url_table.setItem(i, 4, QTableWidgetItem(visit_duration))
+                self.browser_url_table.setItem(i, 5, QTableWidgetItem(visit_count))
+                self.browser_url_table.setItem(i, 6, QTableWidgetItem(typed_count))
+                self.browser_url_table.setItem(i, 7, QTableWidgetItem(url_hidden))
+                self.browser_url_table.setItem(i, 8, QTableWidgetItem(transition))
+            except:
+                pass
 
     # item4_4 로그인 기록
     def set_browser_login(self):
@@ -1640,14 +1676,17 @@ class MyWidget(QWidget):
         self.browser_login_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, url, name, data, password_element, password_value, timestamp = rows[i]
-            self.browser_login_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_login_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_login_table.setItem(i, 2, QTableWidgetItem(url))
-            self.browser_login_table.setItem(i, 3, QTableWidgetItem(name))
-            self.browser_login_table.setItem(i, 4, QTableWidgetItem(data))
-            self.browser_login_table.setItem(i, 5, QTableWidgetItem(password_element))
-            self.browser_login_table.setItem(i, 6, QTableWidgetItem(str(password_value)))
+            try:
+                type, url, name, data, password_element, password_value, timestamp = rows[i]
+                self.browser_login_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_login_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_login_table.setItem(i, 2, QTableWidgetItem(url))
+                self.browser_login_table.setItem(i, 3, QTableWidgetItem(name))
+                self.browser_login_table.setItem(i, 4, QTableWidgetItem(data))
+                self.browser_login_table.setItem(i, 5, QTableWidgetItem(password_element))
+                self.browser_login_table.setItem(i, 6, QTableWidgetItem(str(password_value)))
+            except:
+                pass
 
     # item4_5 쿠키
     def set_browser_cookies(self):
@@ -1665,12 +1704,15 @@ class MyWidget(QWidget):
         self.browser_cookies_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, url, title, value, timestamp = rows[i]
-            self.browser_cookies_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_cookies_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_cookies_table.setItem(i, 2, QTableWidgetItem(url))
-            self.browser_cookies_table.setItem(i, 3, QTableWidgetItem(title))
-            self.browser_cookies_table.setItem(i, 4, QTableWidgetItem(value))
+            try:
+                type, url, title, value, timestamp = rows[i]
+                self.browser_cookies_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_cookies_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_cookies_table.setItem(i, 2, QTableWidgetItem(url))
+                self.browser_cookies_table.setItem(i, 3, QTableWidgetItem(title))
+                self.browser_cookies_table.setItem(i, 4, QTableWidgetItem(value))
+            except:
+                pass
 
     # item4_6 캐시
     def set_browser_cache(self):
@@ -1689,17 +1731,20 @@ class MyWidget(QWidget):
         self.browser_cache_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            url, status, value, etag, server_name, data_location, all_http_headers, timestamp, last_modified = rows[
-                i]
-            self.browser_cache_table.setItem(i, 0, QTableWidgetItem(timestamp))
-            self.browser_cache_table.setItem(i, 1, QTableWidgetItem(url))
-            self.browser_cache_table.setItem(i, 2, QTableWidgetItem(status))
-            self.browser_cache_table.setItem(i, 3, QTableWidgetItem(value))
-            self.browser_cache_table.setItem(i, 4, QTableWidgetItem(etag))
-            self.browser_cache_table.setItem(i, 5, QTableWidgetItem(last_modified))
-            self.browser_cache_table.setItem(i, 6, QTableWidgetItem(server_name))
-            self.browser_cache_table.setItem(i, 7, QTableWidgetItem(data_location))
-            self.browser_cache_table.setItem(i, 8, QTableWidgetItem(all_http_headers))
+            try:
+                url, status, value, etag, server_name, data_location, all_http_headers, timestamp, last_modified = rows[
+                    i]
+                self.browser_cache_table.setItem(i, 0, QTableWidgetItem(timestamp))
+                self.browser_cache_table.setItem(i, 1, QTableWidgetItem(url))
+                self.browser_cache_table.setItem(i, 2, QTableWidgetItem(status))
+                self.browser_cache_table.setItem(i, 3, QTableWidgetItem(value))
+                self.browser_cache_table.setItem(i, 4, QTableWidgetItem(etag))
+                self.browser_cache_table.setItem(i, 5, QTableWidgetItem(last_modified))
+                self.browser_cache_table.setItem(i, 6, QTableWidgetItem(server_name))
+                self.browser_cache_table.setItem(i, 7, QTableWidgetItem(data_location))
+                self.browser_cache_table.setItem(i, 8, QTableWidgetItem(all_http_headers))
+            except:
+                pass
 
     # item4_7 북마크
     def set_browser_bookmark(self):
@@ -1717,12 +1762,15 @@ class MyWidget(QWidget):
         self.browser_bookmark_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, url, title, value, timestamp = rows[i]
-            self.browser_bookmark_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_bookmark_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_bookmark_table.setItem(i, 2, QTableWidgetItem(url))
-            self.browser_bookmark_table.setItem(i, 3, QTableWidgetItem(title))
-            self.browser_bookmark_table.setItem(i, 4, QTableWidgetItem(value))
+            try:
+                type, url, title, value, timestamp = rows[i]
+                self.browser_bookmark_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_bookmark_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_bookmark_table.setItem(i, 2, QTableWidgetItem(url))
+                self.browser_bookmark_table.setItem(i, 3, QTableWidgetItem(title))
+                self.browser_bookmark_table.setItem(i, 4, QTableWidgetItem(value))
+            except:
+                pass
 
     # item4_8 자동완성
     def set_browser_autofill(self):
@@ -1740,11 +1788,14 @@ class MyWidget(QWidget):
         self.browser_autofill_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, status, value, timestamp = rows[i]
-            self.browser_autofill_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_autofill_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_autofill_table.setItem(i, 2, QTableWidgetItem(status))
-            self.browser_autofill_table.setItem(i, 3, QTableWidgetItem(value))
+            try:
+                type, status, value, timestamp = rows[i]
+                self.browser_autofill_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_autofill_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_autofill_table.setItem(i, 2, QTableWidgetItem(status))
+                self.browser_autofill_table.setItem(i, 3, QTableWidgetItem(value))
+            except:
+                pass
 
     # item4_9 환경설정
     def set_browser_preference(self):
@@ -1762,12 +1813,15 @@ class MyWidget(QWidget):
         self.browser_preference_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            type, url, status, data, timestamp = rows[i]
-            self.browser_preference_table.setItem(i, 0, QTableWidgetItem(type))
-            self.browser_preference_table.setItem(i, 1, QTableWidgetItem(timestamp))
-            self.browser_preference_table.setItem(i, 2, QTableWidgetItem(url))
-            self.browser_preference_table.setItem(i, 3, QTableWidgetItem(status))
-            self.browser_preference_table.setItem(i, 4, QTableWidgetItem(data))
+            try:
+                type, url, status, data, timestamp = rows[i]
+                self.browser_preference_table.setItem(i, 0, QTableWidgetItem(type))
+                self.browser_preference_table.setItem(i, 1, QTableWidgetItem(timestamp))
+                self.browser_preference_table.setItem(i, 2, QTableWidgetItem(url))
+                self.browser_preference_table.setItem(i, 3, QTableWidgetItem(status))
+                self.browser_preference_table.setItem(i, 4, QTableWidgetItem(data))
+            except:
+                pass
 
     # item4_10 클라우드 접속기록
     def set_browser_cloud(self):
@@ -1785,10 +1839,13 @@ class MyWidget(QWidget):
         self.browser_cloud_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            url, title, timestamp = rows[i]
-            self.browser_cloud_table.setItem(i, 0, QTableWidgetItem(timestamp))
-            self.browser_cloud_table.setItem(i, 1, QTableWidgetItem(url))
-            self.browser_cloud_table.setItem(i, 2, QTableWidgetItem(title))
+            try:
+                url, title, timestamp = rows[i]
+                self.browser_cloud_table.setItem(i, 0, QTableWidgetItem(timestamp))
+                self.browser_cloud_table.setItem(i, 1, QTableWidgetItem(url))
+                self.browser_cloud_table.setItem(i, 2, QTableWidgetItem(title))
+            except:
+                pass
 
     # item5_1_1 프로그램 실행 흔적 - 레지스트리 - BAM
     def set_program_bam(self):
@@ -1806,10 +1863,13 @@ class MyWidget(QWidget):
         self.program_bam.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            SID, program_path, last_executed = rows[i]
-            self.program_bam.setItem(i, 0, QTableWidgetItem(SID))
-            self.program_bam.setItem(i, 1, QTableWidgetItem(program_path))
-            self.program_bam.setItem(i, 2, QTableWidgetItem(last_executed))
+            try:
+                SID, program_path, last_executed = rows[i]
+                self.program_bam.setItem(i, 0, QTableWidgetItem(SID))
+                self.program_bam.setItem(i, 1, QTableWidgetItem(program_path))
+                self.program_bam.setItem(i, 2, QTableWidgetItem(last_executed))
+            except:
+                pass
 
     # item5_1_2 프로그램 실행 흔적 - 레지스트리 - UserAssist
     def set_program_userassist(self):
@@ -1827,10 +1887,13 @@ class MyWidget(QWidget):
         self.program_userassist.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            name, run_count, last_executed = rows[i]
-            self.program_userassist.setItem(i, 0, QTableWidgetItem(name))
-            self.program_userassist.setItem(i, 1, QTableWidgetItem(run_count))
-            self.program_userassist.setItem(i, 2, QTableWidgetItem(last_executed))
+            try:
+                name, run_count, last_executed = rows[i]
+                self.program_userassist.setItem(i, 0, QTableWidgetItem(name))
+                self.program_userassist.setItem(i, 1, QTableWidgetItem(run_count))
+                self.program_userassist.setItem(i, 2, QTableWidgetItem(last_executed))
+            except:
+                pass
 
     # item5_1_3 프로그램 실행 흔적 - 레지스트리 - Uninstall
     def set_program_uninstall(self):
@@ -1848,13 +1911,16 @@ class MyWidget(QWidget):
         self.program_uninstall.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            name, version, install_location, publisher, type, install_date = rows[i]
-            self.program_uninstall.setItem(i, 0, QTableWidgetItem(name))
-            self.program_uninstall.setItem(i, 1, QTableWidgetItem(version))
-            self.program_uninstall.setItem(i, 2, QTableWidgetItem(install_location))
-            self.program_uninstall.setItem(i, 3, QTableWidgetItem(publisher))
-            self.program_uninstall.setItem(i, 4, QTableWidgetItem(type))
-            self.program_uninstall.setItem(i, 5, QTableWidgetItem(install_date))
+            try:
+                name, version, install_location, publisher, type, install_date = rows[i]
+                self.program_uninstall.setItem(i, 0, QTableWidgetItem(name))
+                self.program_uninstall.setItem(i, 1, QTableWidgetItem(version))
+                self.program_uninstall.setItem(i, 2, QTableWidgetItem(install_location))
+                self.program_uninstall.setItem(i, 3, QTableWidgetItem(publisher))
+                self.program_uninstall.setItem(i, 4, QTableWidgetItem(type))
+                self.program_uninstall.setItem(i, 5, QTableWidgetItem(install_date))
+            except:
+                pass
 
     # item5_1_4 프로그램 실행 흔적 - 레지스트리 - MuiCache
     def set_program_muicache(self):
@@ -1872,9 +1938,12 @@ class MyWidget(QWidget):
         self.program_muicache.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            name, path = rows[i]
-            self.program_muicache.setItem(i, 0, QTableWidgetItem(name))
-            self.program_muicache.setItem(i, 1, QTableWidgetItem(path))
+            try:
+                name, path = rows[i]
+                self.program_muicache.setItem(i, 0, QTableWidgetItem(name))
+                self.program_muicache.setItem(i, 1, QTableWidgetItem(path))
+            except:
+                pass
 
     # item5_1_5 프로그램 실행 흔적 - 레지스트리 - FirstFolder
     def set_program_firstfolder(self):
@@ -1892,11 +1961,14 @@ class MyWidget(QWidget):
         self.program_firstfolder.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            program_name, folder, mru, opened_on = rows[i]
-            self.program_firstfolder.setItem(i, 0, QTableWidgetItem(program_name))
-            self.program_firstfolder.setItem(i, 1, QTableWidgetItem(folder))
-            self.program_firstfolder.setItem(i, 2, QTableWidgetItem(mru))
-            self.program_firstfolder.setItem(i, 3, QTableWidgetItem(opened_on))
+            try:
+                program_name, folder, mru, opened_on = rows[i]
+                self.program_firstfolder.setItem(i, 0, QTableWidgetItem(program_name))
+                self.program_firstfolder.setItem(i, 1, QTableWidgetItem(folder))
+                self.program_firstfolder.setItem(i, 2, QTableWidgetItem(str(mru)))
+                self.program_firstfolder.setItem(i, 3, QTableWidgetItem(opened_on))
+            except:
+                pass
 
     # item5_1_6 프로그램 실행 흔적 - 레지스트리 - CIDSizeMRU
     def set_program_cidsizemru(self):
@@ -1914,10 +1986,13 @@ class MyWidget(QWidget):
         self.program_cidsizemru.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            program_name, mru, opened_on = rows[i]
-            self.program_cidsizemru.setItem(i, 0, QTableWidgetItem(program_name))
-            self.program_cidsizemru.setItem(i, 1, QTableWidgetItem(mru))
-            self.program_cidsizemru.setItem(i, 2, QTableWidgetItem(opened_on))
+            try:
+                program_name, mru, opened_on = rows[i]
+                self.program_cidsizemru.setItem(i, 0, QTableWidgetItem(program_name))
+                self.program_cidsizemru.setItem(i, 1, QTableWidgetItem(str(mru)))
+                self.program_cidsizemru.setItem(i, 2, QTableWidgetItem(opened_on))
+            except:
+                pass
 
     # item5_2 프로그램 실행 흔적 - 프리패치
     def set_program_pre(self):
@@ -1940,18 +2015,21 @@ class MyWidget(QWidget):
         self.program_pre.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            executable_name, run_count, last_executed1, last_executed2, last_executed3, \
-            last_executed4, last_executed5, last_executed6, last_executed7, last_executed8 = rows[i]
-            self.program_pre.setItem(i, 0, QTableWidgetItem(executable_name))
-            self.program_pre.setItem(i, 1, QTableWidgetItem(str(run_count)))
-            self.program_pre.setItem(i, 2, QTableWidgetItem(last_executed1))
-            self.program_pre.setItem(i, 3, QTableWidgetItem(last_executed2))
-            self.program_pre.setItem(i, 4, QTableWidgetItem(last_executed3))
-            self.program_pre.setItem(i, 5, QTableWidgetItem(last_executed4))
-            self.program_pre.setItem(i, 6, QTableWidgetItem(last_executed5))
-            self.program_pre.setItem(i, 7, QTableWidgetItem(last_executed6))
-            self.program_pre.setItem(i, 8, QTableWidgetItem(last_executed7))
-            self.program_pre.setItem(i, 9, QTableWidgetItem(last_executed8))
+            try:
+                executable_name, run_count, last_executed1, last_executed2, last_executed3, \
+                last_executed4, last_executed5, last_executed6, last_executed7, last_executed8 = rows[i]
+                self.program_pre.setItem(i, 0, QTableWidgetItem(executable_name))
+                self.program_pre.setItem(i, 1, QTableWidgetItem(str(run_count)))
+                self.program_pre.setItem(i, 2, QTableWidgetItem(last_executed1))
+                self.program_pre.setItem(i, 3, QTableWidgetItem(last_executed2))
+                self.program_pre.setItem(i, 4, QTableWidgetItem(last_executed3))
+                self.program_pre.setItem(i, 5, QTableWidgetItem(last_executed4))
+                self.program_pre.setItem(i, 6, QTableWidgetItem(last_executed5))
+                self.program_pre.setItem(i, 7, QTableWidgetItem(last_executed6))
+                self.program_pre.setItem(i, 8, QTableWidgetItem(last_executed7))
+                self.program_pre.setItem(i, 9, QTableWidgetItem(last_executed8))
+            except:
+                pass
 
     # item6_1 문서실행 흔적 - 레지스트리
     def set_doc_reg(self):
@@ -1971,23 +2049,25 @@ class MyWidget(QWidget):
         self.doc_reg_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            program, lnk, opened_on = rows[i]
-            self.doc_reg_table.setItem(i, 0, QTableWidgetItem(program))
-            self.doc_reg_table.setItem(i, 1, QTableWidgetItem(lnk))
-            self.doc_reg_table.setItem(i, 2, QTableWidgetItem(opened_on))
+            try:
+                program, lnk, opened_on = rows[i]
+                self.doc_reg_table.setItem(i, 0, QTableWidgetItem(program))
+                self.doc_reg_table.setItem(i, 1, QTableWidgetItem(lnk))
+                self.doc_reg_table.setItem(i, 2, QTableWidgetItem(opened_on))
+            except:
+                pass
 
     # item6_2 문서실행 흔적 - 링크 파일
     def set_doc_lnk(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, " \
-                "drive_serial_number, drive_type, volume_label, icon_location, machine_info, " \
-                "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), " \
-                "datetime(target_accessed_time, " + self.UTC + ") from lnk_files " \
-                "WHERE ((local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx'" \
-                "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv'" \
-                "OR local_base_path LIKE '%.pptx' OR local_base_path LIKE '%.ppt' OR local_base_path LIKE '%.txt')" \
-                "AND lnk_file_full_path LIKE '%Recent%')"
+        query = "select file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, " \
+                "datetime(target_accessed_time, " + self.UTC + "), datetime(target_creation_time," + self.UTC + ")," \
+                "datetime(target_modified_time, " + self.UTC + "), drive_serial_number, drive_type, volume_label, " \
+                "icon_location, machine_info FROM lnk_files WHERE (local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' " \
+                "OR local_base_path LIKE '%.docx' OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' " \
+                "OR local_base_path LIKE '%.csv' OR local_base_path LIKE '%.pptx' OR local_base_path LIKE '%.ppt' " \
+                "OR local_base_path LIKE '%.txt')"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2001,29 +2081,32 @@ class MyWidget(QWidget):
         self.doc_lnk_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
-            drive_serial_number, drive_type, volume_label, icon_location, machine_info, \
-            target_creation_time, target_modified_time, target_accessed_time = rows[i]
-            self.doc_lnk_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.doc_lnk_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
-            self.doc_lnk_table.setItem(i, 2, QTableWidgetItem(file_flags))
-            self.doc_lnk_table.setItem(i, 3, QTableWidgetItem(file_size))
-            self.doc_lnk_table.setItem(i, 4, QTableWidgetItem(local_base_path))
-            self.doc_lnk_table.setItem(i, 5, QTableWidgetItem(show_command))
-            self.doc_lnk_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
-            self.doc_lnk_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
-            self.doc_lnk_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
-            self.doc_lnk_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
-            self.doc_lnk_table.setItem(i, 10, QTableWidgetItem(drive_type))
-            self.doc_lnk_table.setItem(i, 11, QTableWidgetItem(volume_label))
-            self.doc_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
-            self.doc_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
+            try:
+                file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
+                drive_serial_number, drive_type, volume_label, icon_location, machine_info, \
+                target_creation_time, target_modified_time, target_accessed_time = rows[i]
+                self.doc_lnk_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.doc_lnk_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
+                self.doc_lnk_table.setItem(i, 2, QTableWidgetItem(file_flags))
+                self.doc_lnk_table.setItem(i, 3, QTableWidgetItem(file_size))
+                self.doc_lnk_table.setItem(i, 4, QTableWidgetItem(local_base_path))
+                self.doc_lnk_table.setItem(i, 5, QTableWidgetItem(show_command))
+                self.doc_lnk_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
+                self.doc_lnk_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
+                self.doc_lnk_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
+                self.doc_lnk_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
+                self.doc_lnk_table.setItem(i, 10, QTableWidgetItem(drive_type))
+                self.doc_lnk_table.setItem(i, 11, QTableWidgetItem(volume_label))
+                self.doc_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
+                self.doc_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
+            except:
+                pass
 
     # item6_3 문서실행 흔적 - 점프 목록
     def set_doc_jmp(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT file_name, lnk_counter, local_base_path, file_size, file_flags, show_command, icon, description, volume_label, drive_type, " \
+        query = "SELECT file_name, jump_file_name, lnk_counter, local_base_path, file_size, file_flags, show_command, icon, description, volume_label, drive_type, " \
                 "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), datetime(target_accessed_time, " + self.UTC + ")" \
                 " FROM jumplist WHERE (local_base_path LIKE '%.pdf' OR local_base_path LIKE '%.hwp' OR local_base_path LIKE '%.docx' " \
                 "OR local_base_path LIKE '%.doc' OR local_base_path LIKE '%.xlsx' OR local_base_path LIKE '%.csv' OR local_base_path LIKE '%.pptx' " \
@@ -2034,29 +2117,33 @@ class MyWidget(QWidget):
 
         count = len(rows)
         self.doc_jmp_table.setRowCount(count)
-        self.doc_jmp_table.setColumnCount(13)
-        column_headers = ["file_name", "lnk_counter", "local_base_path", "file_size", "file_flags",
+        self.doc_jmp_table.setColumnCount(14)
+        column_headers = ["file_name", "jump_file+name", "lnk_counter", "local_base_path", "file_size", "file_flags",
                           "target_created_time",
                           "target_modified_time", "target_accessed_time", "show_command", "icon", "description",
                           "volume_label", "drive_type"]
         self.doc_jmp_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            file_name, lnk_counter, local_base_path, file_size, file_flags, show_command, icon, description, volume_label, drive_type, \
-            target_creation_time, target_modified_time, target_accessed_time, = rows[i]
-            self.doc_jmp_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.doc_jmp_table.setItem(i, 1, QTableWidgetItem(lnk_counter))
-            self.doc_jmp_table.setItem(i, 2, QTableWidgetItem(local_base_path))
-            self.doc_jmp_table.setItem(i, 3, QTableWidgetItem(file_size))
-            self.doc_jmp_table.setItem(i, 4, QTableWidgetItem(file_flags))
-            self.doc_jmp_table.setItem(i, 5, QTableWidgetItem(target_creation_time))
-            self.doc_jmp_table.setItem(i, 6, QTableWidgetItem(target_modified_time))
-            self.doc_jmp_table.setItem(i, 7, QTableWidgetItem(target_accessed_time))
-            self.doc_jmp_table.setItem(i, 8, QTableWidgetItem(show_command))
-            self.doc_jmp_table.setItem(i, 9, QTableWidgetItem(icon))
-            self.doc_jmp_table.setItem(i, 10, QTableWidgetItem(description))
-            self.doc_jmp_table.setItem(i, 11, QTableWidgetItem(volume_label))
-            self.doc_jmp_table.setItem(i, 12, QTableWidgetItem(drive_type))
+            try:
+                file_name, jump_file_name, lnk_counter, local_base_path, file_size, file_flags, show_command, icon, description, volume_label, drive_type, \
+                target_creation_time, target_modified_time, target_accessed_time, = rows[i]
+                self.doc_jmp_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.doc_jmp_table.setItem(i, 1, QTableWidgetItem(jump_file_name))
+                self.doc_jmp_table.setItem(i, 2, QTableWidgetItem(lnk_counter))
+                self.doc_jmp_table.setItem(i, 3, QTableWidgetItem(local_base_path))
+                self.doc_jmp_table.setItem(i, 4, QTableWidgetItem(file_size))
+                self.doc_jmp_table.setItem(i, 5, QTableWidgetItem(file_flags))
+                self.doc_jmp_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
+                self.doc_jmp_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
+                self.doc_jmp_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
+                self.doc_jmp_table.setItem(i, 9, QTableWidgetItem(show_command))
+                self.doc_jmp_table.setItem(i, 10, QTableWidgetItem(icon))
+                self.doc_jmp_table.setItem(i, 11, QTableWidgetItem(description))
+                self.doc_jmp_table.setItem(i, 12, QTableWidgetItem(volume_label))
+                self.doc_jmp_table.setItem(i, 13, QTableWidgetItem(drive_type))
+            except:
+                pass
 
     # item6_4 문서실행 흔적 - 프리패치
     def set_doc_pre(self):
@@ -2076,26 +2163,26 @@ class MyWidget(QWidget):
         self.doc_pre_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            file_name, path = rows[i]
-            self.doc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.doc_pre_table.setItem(i, 1, QTableWidgetItem(path))
+            try:
+                file_name, path = rows[i]
+                self.doc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.doc_pre_table.setItem(i, 1, QTableWidgetItem(path))
+            except:
+                pass
 
     # item7_1 기타실행 흔적 - 링크 파일
     def set_etc_lnk(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, " \
-                "drive_serial_number, drive_type, volume_label, icon_location, machine_info, " \
-                "datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), " \
-                "datetime(target_accessed_time, " + self.UTC + ") FROM lnk_files " \
-                "WHERE((local_base_path LIKE '%.jpg' OR local_base_path LIKE '%.jpeg' OR local_base_path LIKE '%.gif' " \
-                "OR local_base_path LIKE '%.bmp' OR local_base_path LIKE '%.png' OR local_base_path LIKE '%.raw' " \
-                "OR local_base_path LIKE '%.tiff' OR local_base_path LIKE '%.wav' OR local_base_path LIKE '%.wma' " \
-                "OR local_base_path LIKE '%.mp3' OR local_base_path LIKE '%.mp4' OR local_base_path LIKE '%.mkv' " \
-                "OR local_base_path LIKE '%.avi' OR local_base_path LIKE '%.flv' OR local_base_path LIKE '%.mov' " \
-                "OR local_base_path LIKE '%.zip' OR local_base_path LIKE '%.7z' OR local_base_path LIKE '%.alz' " \
-                "OR local_base_path LIKE '%.egg' OR local_base_path LIKE '%.rar')" \
-                "AND file_flags not LIKE '%DIRECTORY%' AND lnk_file_full_path LIKE '%Recent%')"
+                "datetime(target_accessed_time, " + self.UTC + "), datetime(target_creation_time, " + self.UTC + "), datetime(target_modified_time, " + self.UTC + "), " \
+                "drive_serial_number, drive_type, volume_label, icon_location, machine_info " \
+                "FROM lnk_files WHERE(local_base_path LIKE '%.jpg' OR local_base_path LIKE '%.jpeg' OR local_base_path LIKE '%.gif' " \
+                "OR local_base_path LIKE '%.bmp' OR local_base_path LIKE '%.png' OR local_base_path LIKE '%.raw' OR local_base_path LIKE '%.tiff' " \
+                "OR local_base_path LIKE '%.wav' OR local_base_path LIKE '%.wma' OR local_base_path LIKE '%.mp3' OR local_base_path LIKE '%.mp4' " \
+                "OR local_base_path LIKE '%.mkv' OR local_base_path LIKE '%.avi' OR local_base_path LIKE '%.flv' OR local_base_path LIKE '%.mov' " \
+                "OR local_base_path LIKE '%.zip' OR local_base_path LIKE '%.7z' OR local_base_path LIKE '%.alz' OR local_base_path LIKE '%.egg' " \
+                "OR local_base_path LIKE '%.rar')"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2109,23 +2196,26 @@ class MyWidget(QWidget):
         self.etc_lnk_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
-            drive_serial_number, drive_type, volume_label, icon_location, machine_info, \
-            target_creation_time, target_modified_time, target_accessed_time = rows[i]
-            self.etc_lnk_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.etc_lnk_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
-            self.etc_lnk_table.setItem(i, 2, QTableWidgetItem(file_flags))
-            self.etc_lnk_table.setItem(i, 3, QTableWidgetItem(file_size))
-            self.etc_lnk_table.setItem(i, 4, QTableWidgetItem(local_base_path))
-            self.etc_lnk_table.setItem(i, 5, QTableWidgetItem(show_command))
-            self.etc_lnk_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
-            self.etc_lnk_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
-            self.etc_lnk_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
-            self.etc_lnk_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
-            self.etc_lnk_table.setItem(i, 10, QTableWidgetItem(drive_type))
-            self.etc_lnk_table.setItem(i, 11, QTableWidgetItem(volume_label))
-            self.etc_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
-            self.etc_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
+            try:
+                file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
+                drive_serial_number, drive_type, volume_label, icon_location, machine_info, \
+                target_creation_time, target_modified_time, target_accessed_time = rows[i]
+                self.etc_lnk_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.etc_lnk_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
+                self.etc_lnk_table.setItem(i, 2, QTableWidgetItem(file_flags))
+                self.etc_lnk_table.setItem(i, 3, QTableWidgetItem(file_size))
+                self.etc_lnk_table.setItem(i, 4, QTableWidgetItem(local_base_path))
+                self.etc_lnk_table.setItem(i, 5, QTableWidgetItem(show_command))
+                self.etc_lnk_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
+                self.etc_lnk_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
+                self.etc_lnk_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
+                self.etc_lnk_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
+                self.etc_lnk_table.setItem(i, 10, QTableWidgetItem(drive_type))
+                self.etc_lnk_table.setItem(i, 11, QTableWidgetItem(volume_label))
+                self.etc_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
+                self.etc_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
+            except:
+                pass
 
     # item7_2 기타실행 흔적 - 프리패치
     def set_etc_pre(self):
@@ -2148,9 +2238,12 @@ class MyWidget(QWidget):
         self.etc_pre_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            file_name, path = rows[i]
-            self.etc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.etc_pre_table.setItem(i, 1, QTableWidgetItem(path))
+            try:
+                file_name, path = rows[i]
+                self.etc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.etc_pre_table.setItem(i, 1, QTableWidgetItem(path))
+            except:
+                pass
 
     # item7_3 기타실행 흔적 - 대화상자
     def set_etc_dialog(self):
@@ -2161,6 +2254,7 @@ class MyWidget(QWidget):
         rows = cur.fetchall()
         conn.close()
 
+
         count = len(rows)
         self.etc_dialog_table.setRowCount(count)
         self.etc_dialog_table.setColumnCount(3)
@@ -2168,91 +2262,106 @@ class MyWidget(QWidget):
         self.etc_dialog_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            program, mru, opened_on = rows[i]
-            self.etc_dialog_table.setItem(i, 0, QTableWidgetItem(program))
-            self.etc_dialog_table.setItem(i, 1, QTableWidgetItem(str(mru)))
-            self.etc_dialog_table.setItem(i, 2, QTableWidgetItem(opened_on))
+            try:
+                program, mru, opened_on = rows[i]
+                self.etc_dialog_table.setItem(i, 0, QTableWidgetItem(program))
+                self.etc_dialog_table.setItem(i, 1, QTableWidgetItem(str(mru)))
+                self.etc_dialog_table.setItem(i, 2, QTableWidgetItem(opened_on))
+            except:
+                pass
 
     # item8_1 이벤트 로그 삭제
     def set_eventlog_delete(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, sbt_usr_name, channel, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id == '104' or event_id == '1102'"
+                "datetime(time_created, " + self.UTC + "), source FROM event_log WHERE event_id == '104' or event_id == '1102'"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.eventlog_delete_table.setRowCount(count)
-        self.eventlog_delete_table.setColumnCount(6)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "주체이름", "채널"]
+        self.eventlog_delete_table.setColumnCount(7)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "주체이름", "채널", "출처"]
         self.eventlog_delete_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, sbt_usr_name, channel, time_created = rows[i]
-            self.eventlog_delete_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_delete_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_delete_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_delete_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.eventlog_delete_table.setItem(i, 4, QTableWidgetItem(sbt_usr_name))
-            self.eventlog_delete_table.setItem(i, 5, QTableWidgetItem(channel))
+            try:
+                event_id, detailed, computer, sbt_usr_name, channel, time_created, source = rows[i]
+                self.eventlog_delete_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_delete_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_delete_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_delete_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_delete_table.setItem(i, 4, QTableWidgetItem(sbt_usr_name))
+                self.eventlog_delete_table.setItem(i, 5, QTableWidgetItem(channel))
+                self.eventlog_delete_table.setItem(i, 6, QTableWidgetItem(source))
+            except:
+                pass
 
     # item8_2 프로세스 강제 종료
     def set_eventlog_terminate(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, app_name, app_version, app_path, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id == '1002' AND app_name IS NOT '';"
+                "datetime(time_created, " + self.UTC + "), source FROM event_log WHERE event_id == '1002' AND app_name IS NOT '';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.eventlog_terminate_table.setRowCount(count)
-        self.eventlog_terminate_table.setColumnCount(7)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "프로세스 이름", "프로그램 버전", "경로"]
+        self.eventlog_terminate_table.setColumnCount(8)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "프로세스 이름", "프로그램 버전", "경로", "출처"]
         self.eventlog_terminate_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, app_name, app_version, app_path, time_created = rows[i]
-            self.eventlog_terminate_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_terminate_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_terminate_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_terminate_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.eventlog_terminate_table.setItem(i, 4, QTableWidgetItem(app_name))
-            self.eventlog_terminate_table.setItem(i, 5, QTableWidgetItem(app_version))
-            self.eventlog_terminate_table.setItem(i, 6, QTableWidgetItem(app_path))
+            try:
+                event_id, detailed, computer, app_name, app_version, app_path, time_created, source = rows[i]
+                self.eventlog_terminate_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_terminate_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_terminate_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_terminate_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_terminate_table.setItem(i, 4, QTableWidgetItem(app_name))
+                self.eventlog_terminate_table.setItem(i, 5, QTableWidgetItem(app_version))
+                self.eventlog_terminate_table.setItem(i, 6, QTableWidgetItem(app_path))
+                self.eventlog_terminate_table.setItem(i, 7, QTableWidgetItem(source))
+            except:
+                pass
 
     # item8_3_1 PC 전원 기록 - 운영체제 시작 및 종료
     def set_eventlog_onoff(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id = '12' OR event_id = '13';"
+                "datetime(time_created, " + self.UTC + "), source FROM event_log WHERE event_id = '12' OR event_id = '13';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.eventlog_onoff_table.setRowCount(count)
-        self.eventlog_onoff_table.setColumnCount(4)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜"]
+        self.eventlog_onoff_table.setColumnCount(5)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "출처"]
         self.eventlog_onoff_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, time_created = rows[i]
-            self.eventlog_onoff_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_onoff_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_onoff_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_onoff_table.setItem(i, 3, QTableWidgetItem(time_created))
+            try:
+                event_id, detailed, computer, time_created, source = rows[i]
+                self.eventlog_onoff_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_onoff_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_onoff_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_onoff_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_onoff_table.setItem(i, 4, QTableWidgetItem(source))
+            except:
+                pass
 
     # item8_3_2 PC 전원 기록 - 절전모드 전환 및 해제
     def set_eventlog_powersaving(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, datetime(time_created, " + self.UTC + "), " \
-                "datetime(sleep_time, " + self.UTC + "), datetime(wake_time, " + self.UTC + ") " \
+                "datetime(sleep_time, " + self.UTC + "), datetime(wake_time, " + self.UTC + "), source " \
                 "FROM event_log WHERE event_id = '1' OR (event_id = '42' AND source IS 'System.evtx')"
         cur.execute(query)
         rows = cur.fetchall()
@@ -2260,107 +2369,123 @@ class MyWidget(QWidget):
 
         count = len(rows)
         self.eventlog_powersaving_table.setRowCount(count)
-        self.eventlog_powersaving_table.setColumnCount(6)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "전환시간", "복귀시간"]
+        self.eventlog_powersaving_table.setColumnCount(7)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "전환시간", "복귀시간", "출처"]
         self.eventlog_powersaving_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, time_created, sleep_time, wake_time = rows[i]
-            self.eventlog_powersaving_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_powersaving_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_powersaving_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_powersaving_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.eventlog_powersaving_table.setItem(i, 4, QTableWidgetItem(sleep_time))
-            self.eventlog_powersaving_table.setItem(i, 5, QTableWidgetItem(wake_time))
+            try:
+                event_id, detailed, computer, time_created, sleep_time, wake_time, source = rows[i]
+                self.eventlog_powersaving_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_powersaving_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_powersaving_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_powersaving_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_powersaving_table.setItem(i, 4, QTableWidgetItem(sleep_time))
+                self.eventlog_powersaving_table.setItem(i, 5, QTableWidgetItem(wake_time))
+                self.eventlog_powersaving_table.setItem(i, 6, QTableWidgetItem(source))
+            except:
+                pass
 
     # item8_4_1 원격 - 원격 접속 기록
     def set_eventlog_access1(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, remo_conn_user, remo_conn_addr, remo_conn_local, local_manager_sess_id, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log WHERE event_id = '261' or event_id = '1149' or event_id = '24' or event_id = '25';"
+                "datetime(time_created, " + self.UTC + "), source FROM event_log WHERE event_id = '261' or event_id = '1149' or event_id = '24' or event_id = '25';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.eventlog_access1_table.setRowCount(count)
-        self.eventlog_access1_table.setColumnCount(8)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "로그인 계정", "들어온 IP", "내 컴퓨터 이름", "세션 ID"]
+        self.eventlog_access1_table.setColumnCount(9)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "로그인 계정", "들어온 IP", "내 컴퓨터 이름", "세션 ID", "출처"]
         self.eventlog_access1_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, remo_conn_user, remo_conn_addr, remo_conn_local, local_manager_sess_id, time_created = \
-            rows[i]
-            self.eventlog_access1_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_access1_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_access1_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_access1_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.eventlog_access1_table.setItem(i, 4, QTableWidgetItem(remo_conn_user))
-            self.eventlog_access1_table.setItem(i, 5, QTableWidgetItem(remo_conn_addr))
-            self.eventlog_access1_table.setItem(i, 6, QTableWidgetItem(remo_conn_local))
-            self.eventlog_access1_table.setItem(i, 7, QTableWidgetItem(local_manager_sess_id))
+            try:
+                event_id, detailed, computer, remo_conn_user, remo_conn_addr, remo_conn_local, local_manager_sess_id, time_created, source = \
+                rows[i]
+                self.eventlog_access1_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_access1_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_access1_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_access1_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_access1_table.setItem(i, 4, QTableWidgetItem(remo_conn_user))
+                self.eventlog_access1_table.setItem(i, 5, QTableWidgetItem(remo_conn_addr))
+                self.eventlog_access1_table.setItem(i, 6, QTableWidgetItem(remo_conn_local))
+                self.eventlog_access1_table.setItem(i, 7, QTableWidgetItem(local_manager_sess_id))
+                self.eventlog_access1_table.setItem(i, 8, QTableWidgetItem(source))
+            except:
+                pass
 
     # item8_4_2 원격 - 원격 실행 기록
     def set_eventlog_access2(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, rdp_name, rdp_value, rdp_custom_level, rdp_domain, rdp_session, sec_id, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log where (event_id = '1024' AND rdp_value IS NOT  '') or (event_id = '1026' AND rdp_value IS NOT '') or event_id = '1025' or event_id = '1027' or event_id = '1028' or event_id = '1102';"
+                "datetime(time_created, " + self.UTC + "), source FROM event_log where (event_id = '1024' AND rdp_value IS NOT  '') or (event_id = '1026' AND rdp_value IS NOT '') or event_id = '1025' or event_id = '1027' or event_id = '1028' or event_id = '1102';"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.eventlog_access2_table.setRowCount(count)
-        self.eventlog_access2_table.setColumnCount(10)
+        self.eventlog_access2_table.setColumnCount(11)
         column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "서버 이름", "서버 주소", "커스텀 레벨", "도메인 이름", "세션 ID",
-                          "계정 SID"]
+                          "계정 SID", "출처"]
         self.eventlog_access2_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, rdp_name, rdp_value, rdp_custom_level, rdp_domain, rdp_session, sec_id, time_created = \
-            rows[i]
-            self.eventlog_access2_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_access2_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_access2_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_access2_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.eventlog_access2_table.setItem(i, 4, QTableWidgetItem(rdp_name))
-            self.eventlog_access2_table.setItem(i, 5, QTableWidgetItem(rdp_value))
-            self.eventlog_access2_table.setItem(i, 6, QTableWidgetItem(rdp_custom_level))
-            self.eventlog_access2_table.setItem(i, 7, QTableWidgetItem(rdp_domain))
-            self.eventlog_access2_table.setItem(i, 8, QTableWidgetItem(rdp_session))
-            self.eventlog_access2_table.setItem(i, 9, QTableWidgetItem(sec_id))
+            try:
+                event_id, detailed, computer, rdp_name, rdp_value, rdp_custom_level, rdp_domain, rdp_session, sec_id, time_created,source = \
+                rows[i]
+                self.eventlog_access2_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_access2_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_access2_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_access2_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_access2_table.setItem(i, 4, QTableWidgetItem(rdp_name))
+                self.eventlog_access2_table.setItem(i, 5, QTableWidgetItem(rdp_value))
+                self.eventlog_access2_table.setItem(i, 6, QTableWidgetItem(rdp_custom_level))
+                self.eventlog_access2_table.setItem(i, 7, QTableWidgetItem(rdp_domain))
+                self.eventlog_access2_table.setItem(i, 8, QTableWidgetItem(rdp_session))
+                self.eventlog_access2_table.setItem(i, 9, QTableWidgetItem(sec_id))
+                self.eventlog_access2_table.setItem(i, 10, QTableWidgetItem(source))
+            except:
+                pass
 
     # item8_5 시스템 시간 변경  기록
     def set_eventlog_time(self):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        query = "SELECT event_id, detailed, computer, reason, old_bias, new_bias, sbt_usr_name, sys_prv_time, sys_new_time, " \
-                "datetime(time_created, " + self.UTC + ") FROM event_log where (event_id = '1' AND reason IS NOT '') OR event_id = '22' OR event_id = '4616';"
+        query = "SELECT event_id, detailed, computer, reason, old_bias, new_bias, sbt_usr_name, datetime(sys_prv_time, " + self.UTC + "),  datetime(sys_new_time, " + self.UTC + "), " \
+                "datetime(time_created, " + self.UTC + "), source FROM event_log where (event_id = '1' AND reason IS NOT '') OR event_id = '22' OR event_id = '4616'"
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
 
         count = len(rows)
         self.eventlog_time_table.setRowCount(count)
-        self.eventlog_time_table.setColumnCount(10)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "이유", "전 표준시간", "후 표준시간", "주체이름", "전 시간", "후 시간"]
+        self.eventlog_time_table.setColumnCount(11)
+        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "이유", "전 표준시간", "후 표준시간", "주체이름", "전 시간", "후 시간", "출처"]
         self.eventlog_time_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            event_id, detailed, computer, reason, old_bias, new_bias, sbt_usr_name, sys_prv_time, sys_new_time, time_created = \
-            rows[i]
-            self.eventlog_time_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
-            self.eventlog_time_table.setItem(i, 1, QTableWidgetItem(detailed))
-            self.eventlog_time_table.setItem(i, 2, QTableWidgetItem(computer))
-            self.eventlog_time_table.setItem(i, 3, QTableWidgetItem(time_created))
-            self.eventlog_time_table.setItem(i, 4, QTableWidgetItem(reason))
-            self.eventlog_time_table.setItem(i, 5, QTableWidgetItem(old_bias))
-            self.eventlog_time_table.setItem(i, 6, QTableWidgetItem(new_bias))
-            self.eventlog_time_table.setItem(i, 7, QTableWidgetItem(sbt_usr_name))
-            self.eventlog_time_table.setItem(i, 8, QTableWidgetItem(sys_prv_time))
-            self.eventlog_time_table.setItem(i, 9, QTableWidgetItem(sys_new_time))
+            try:
+                event_id, detailed, computer, reason, old_bias, new_bias, sbt_usr_name, sys_prv_time, sys_new_time, time_created, source = \
+                rows[i]
+                self.eventlog_time_table.setItem(i, 0, QTableWidgetItem(str(event_id)))
+                self.eventlog_time_table.setItem(i, 1, QTableWidgetItem(detailed))
+                self.eventlog_time_table.setItem(i, 2, QTableWidgetItem(computer))
+                self.eventlog_time_table.setItem(i, 3, QTableWidgetItem(time_created))
+                self.eventlog_time_table.setItem(i, 4, QTableWidgetItem(reason))
+                self.eventlog_time_table.setItem(i, 5, QTableWidgetItem(old_bias))
+                self.eventlog_time_table.setItem(i, 6, QTableWidgetItem(new_bias))
+                self.eventlog_time_table.setItem(i, 7, QTableWidgetItem(sbt_usr_name))
+                self.eventlog_time_table.setItem(i, 8, QTableWidgetItem(sys_prv_time))
+                self.eventlog_time_table.setItem(i, 9, QTableWidgetItem(sys_new_time))
+                self.eventlog_time_table.setItem(i, 10, QTableWidgetItem(source))
+            except:
+                pass
 
     # item9 폴더 열람 흔적
     def set_folder(self):
@@ -2385,23 +2510,26 @@ class MyWidget(QWidget):
         self.folder_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
-            file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
-            drive_serial_number, drive_type, volume_label, icon_location, machine_info, droid_file, droid_vol, known_guid, \
-            target_creation_time, target_modified_time, target_accessed_time = rows[i]
-            self.folder_table.setItem(i, 0, QTableWidgetItem(file_name))
-            self.folder_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
-            self.folder_table.setItem(i, 2, QTableWidgetItem(file_flags))
-            self.folder_table.setItem(i, 3, QTableWidgetItem(file_size))
-            self.folder_table.setItem(i, 4, QTableWidgetItem(local_base_path))
-            self.folder_table.setItem(i, 5, QTableWidgetItem(show_command))
-            self.folder_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
-            self.folder_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
-            self.folder_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
-            self.folder_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
-            self.folder_table.setItem(i, 10, QTableWidgetItem(drive_type))
-            self.folder_table.setItem(i, 11, QTableWidgetItem(volume_label))
-            self.folder_table.setItem(i, 12, QTableWidgetItem(icon_location))
-            self.folder_table.setItem(i, 13, QTableWidgetItem(machine_info))
-            self.folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
-            self.folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
-            self.folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
+            try:
+                file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
+                drive_serial_number, drive_type, volume_label, icon_location, machine_info, droid_file, droid_vol, known_guid, \
+                target_creation_time, target_modified_time, target_accessed_time = rows[i]
+                self.folder_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.folder_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
+                self.folder_table.setItem(i, 2, QTableWidgetItem(file_flags))
+                self.folder_table.setItem(i, 3, QTableWidgetItem(file_size))
+                self.folder_table.setItem(i, 4, QTableWidgetItem(local_base_path))
+                self.folder_table.setItem(i, 5, QTableWidgetItem(show_command))
+                self.folder_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
+                self.folder_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
+                self.folder_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
+                self.folder_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
+                self.folder_table.setItem(i, 10, QTableWidgetItem(drive_type))
+                self.folder_table.setItem(i, 11, QTableWidgetItem(volume_label))
+                self.folder_table.setItem(i, 12, QTableWidgetItem(icon_location))
+                self.folder_table.setItem(i, 13, QTableWidgetItem(machine_info))
+                self.folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
+                self.folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
+                self.folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
+            except:
+                pass
