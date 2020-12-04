@@ -387,6 +387,7 @@ class MyWidget(QWidget):
             self.timeline_data2_5()
 
         self.timeline.resizeColumnsToContents()
+        self.timeline.sortItems(0, Qt.AscendingOrder)
 
     # 타임라인 - MFT 생성
     def timeline_data1_1(self):
@@ -873,10 +874,18 @@ class MyWidget(QWidget):
             for i in range(self.timeline_count):
                 if self.timeline.item(i, 1).text() == "안티포렌식 도구 실행":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 51, 51))
-                elif self.timeline.item(i, 1).text()=="클라우드 접근":
+                elif self.timeline.item(i, 1).text() == "클라우드 접근":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 255, 102))
                 elif self.timeline.item(i, 1).text() == "이벤트로그 삭제":
-                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(51, 102, 225))
+                    self.timeline.item(i, 1).setBackground(QtGui.QColor(51, 102, 225))
+                # elif self.timeline.item(i, 1).text() == "Windows 설치":
+                #     self.timeline.item(i, 1).setBackground(QtGui.QColor(107, 165, 43))
+                # elif self.timeline.item(i, 1).text() in "드라이브 MFT 생성":
+                #     self.timeline.item(i, 1).setBackground(QtGui.QColor(146, 208, 80))
+                # elif self.timeline.item(i, 1).text() == "계정 생성":
+                #     self.timeline.item(i, 1).setBackground(QtGui.QColor(194, 228, 156))
+                # elif self.timeline.item(i, 1).text() == "계정 패스워드 변경":
+                #     self.timeline.item(i, 1).setBackground(QtGui.QColor(225, 242, 206))
 
 #################################################
 #   tab4                                        #
