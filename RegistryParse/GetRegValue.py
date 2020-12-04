@@ -26,7 +26,7 @@ def get_reg_value(reg, path, name):
                 if v.name() == name:
                     return v.value()
     except:
-        return None
+        return False
 
 
 if __name__ == "__main__":

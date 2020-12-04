@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
@@ -56,9 +57,24 @@ class MyWidget(QWidget):
         cur.execute(query1)
         rows1 = cur.fetchall()
         # 매체제어
-        query2 = "SELECT RID_int, account_name, datetime(last_password_change_time, " + self.UTC + "), datetime(created_on, " + self.UTC + ") FROM UserAccounts WHERE RID_int > 503"
-        cur.execute(query2)
-        rows2 = cur.fetchall()
+        # Symantec이 설치되었는지 확인
+        symantec = []
+        GetRegKey_command = "python ..\RegistryParse\GetRegKey.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
+        GetRegValue_command = "python ..\RegistryParse\GetRegValue.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
+        input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion"
+        result1 = os.popen(GetRegKey_command + input).read()
+        input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion"
+        result2 = os.popen(GetRegKey_command + input).read()
+        if result1 == 1 or result2 == 1:    # 시만텍이 있는 경우
+            symantec.append("Symantec")
+            input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
+            result1 = os.popen(GetRegValue_command + input).read()
+            input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
+            result2 = os.popen(GetRegValue_command + input).read()
+            if result1 == 1 or result2 == 2:    # 시만텍이 실행중인 경우
+                symantec.append("실행중")
+            else:
+                symantec.append("")
         # 디스크 암호화
         query3 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date," + self.UTC + "), " \
                  "datetime(b.Last_Executed1, "+ self.UTC + ") FROM Uninstall a,  prefetch1 b WHERE (a.name like 'CipherShed%' " \
@@ -85,7 +101,7 @@ class MyWidget(QWidget):
         conn.close()
 
         self.tab2_table = QTableWidget(self)
-        count = len(rows1) + len(rows2) + len(rows3) + len(rows4) + len(rows5) + 5
+        count = len(rows1) + len(symantec) + len(rows3) + len(rows4) + len(rows5) + 5
         self.tab2_table.setRowCount(count)
         self.tab2_table.setColumnCount(8)
         column_headers = ["", "프로그램", "버전", "설치 경로", "제조사", "설치 시각", "실행 시각", "삭제 여부"]
@@ -108,15 +124,12 @@ class MyWidget(QWidget):
         # 매체제어
         self.color_tab2_table("매체제어", tab2_accum)
         try:
-            for i in range(len(rows2)):
-                program, install, execute, delete = rows2[i]
-                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+            program, execute = symantec
+            self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(program))
+            self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(execute))
         except:
             pass
-        tab2_accum = tab2_accum + len(rows2) + 1
+        tab2_accum = tab2_accum + len(symantec) + 1
 
         # 디스크 암호화
         self.color_tab2_table("디스크 암호화", tab2_accum)
