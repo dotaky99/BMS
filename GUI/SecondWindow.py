@@ -9,10 +9,11 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.title = 'Believe Me Sister' # 실행 프로그램의 이름
         # 실행 프로그램의 시작 위치 설정
-        self.left = 100
-        self.top = 100
-        self.width = 1000
-        self.height = 700
+        # self.left = 100
+        # self.top = 100
+        # self.width = 1000
+        # self.height = 700
+        self.showMaximized();
         self.initUI()
         # UTC 변환
         self.UTC = None
@@ -23,7 +24,7 @@ class MainWindow(QMainWindow):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('bob.png')) # 실행 프로그램 대표 이미지
-        self.setGeometry(self.left, self.top, self.width, self.height) # 실행 프로그램의 시작 위치
+        # self.setGeometry(self.left, self.top, self.width, self.height) # 실행 프로그램의 시작 위치
         self.make_menubar() # 메뉴바 만들기
         self.show()
 

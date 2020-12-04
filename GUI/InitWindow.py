@@ -56,7 +56,6 @@ class MemoryDialog(QDialog):
             self.yn = 0
         self.close()
 
-####추가####
 class FileCopy(QDialog):
     def __init__(self):
         super().__init__()
@@ -91,8 +90,8 @@ class InitWindow(QMainWindow, form_class) :
         self.setWindowTitle("Believe Me Sister")
         self.pushButton.clicked.connect(self.buttonFunction)
 
-        self.window2 = SecondWindow.MainWindow()
-        self.window2.hide()
+        # self.window2 = SecondWindow.MainWindow()
+        # self.window2.hide()
 
         self.qPixmap = QPixmap()
         self.qPixmap.load("BoB.png")
@@ -103,8 +102,9 @@ class InitWindow(QMainWindow, form_class) :
         dlg.exec_()
         file = FileCopy()
         file.exec_()
-        self.window2.show()
         self.hide()
+        self.window2 = SecondWindow.MainWindow()
+        self.window2.show()
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)

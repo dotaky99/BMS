@@ -176,14 +176,14 @@ class MyWidget(QWidget):
         self.tab2_table.setItem(accum, 5, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 6, QTableWidgetItem(""))
         self.tab2_table.setItem(accum, 7, QTableWidgetItem(""))
-        self.tab2_table.item(accum, 0).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 1).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 2).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 3).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(217, 217, 217))
-        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(217, 217, 217))
+        self.tab2_table.item(accum, 0).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 1).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 2).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 3).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(229, 243, 255))
 
     # tab2 PC 정보
     def set_PCinfo(self):
@@ -1427,8 +1427,8 @@ class MyWidget(QWidget):
         count = len(rows)
         self.PC_user_evt_table.setRowCount(count)
         self.PC_user_evt_table.setColumnCount(9)
-        column_headers = ["Event_ID", "Detailed", "Time_Created", "Computer", "Sbt_User_Name",
-                          "Trg_User_Name", "Display", "Mem_Sid", "Source"]
+        column_headers = ["이벤트 아이디", "상세설명", "행위 발생 시간", "컴퓨터 이름", "주체 이름",
+                          "타겟 이름", "Display", "Mem_Sid", "출처"]
         self.PC_user_evt_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -1459,7 +1459,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.PC_update_table.setRowCount(count)
         self.PC_update_table.setColumnCount(6)
-        column_headers = ["Event_ID", "Detailed", "Time_Created", "Computer", "Package", "Source"]
+        column_headers = ["이벤트 로그", "상세설명", "행위 발생 시간", "컴퓨터 이름", "업데이트 내용", "출처"]
         self.PC_update_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -1487,7 +1487,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.network_evt_table.setRowCount(count)
         self.network_evt_table.setColumnCount(9)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 이름", "이벤트 생성날짜", "네트워크 이름", "네트워크 GUID", "연결 방식", "해제 이유", "출처"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "net_name", "GUID", "conn_mode", "reason", "출처"]
         self.network_evt_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -1548,8 +1548,8 @@ class MyWidget(QWidget):
         count = len(rows)
         self.storage_evt_table.setRowCount(count)
         self.storage_evt_table.setColumnCount(9)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 이름", "Time_Created", "Bus_Type", "제조사", "시리얼 번호", "Drive_Model",
-                          "Drive_Location"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "연결 내용", "제조사", "시리얼 번호", "드라이브 모델",
+                          "드라이브 위치"]
         self.storage_evt_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2075,9 +2075,9 @@ class MyWidget(QWidget):
         count = len(rows)
         self.doc_lnk_table.setRowCount(count)
         self.doc_lnk_table.setColumnCount(14)
-        column_headers = ["파일", "경로", "File_Flags", "크기", "Local_Base_Path", "Show_Command",
-                          "생성", "수정", "접근", "Drive_Serial_Number",
-                          "Drive_Type", "Volume_Label", "Icon_Location", "Machine_Info"]
+        column_headers = ["파일", "링크 파일 경로", "플래그", "크기", "원본 파일 경로", "Show_Command",
+                          "원본 생성 시간", "원본 수정 시간", "원본 접근 시간", "드라이브 시리얼 번호",
+                          "드라이브 타입", "볼륨 라벨", "아이콘 경로", "NetBIOS 이름"]
         self.doc_lnk_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2118,10 +2118,9 @@ class MyWidget(QWidget):
         count = len(rows)
         self.doc_jmp_table.setRowCount(count)
         self.doc_jmp_table.setColumnCount(14)
-        column_headers = ["file_name", "jump_file+name", "lnk_counter", "local_base_path", "file_size", "file_flags",
-                          "target_created_time",
-                          "target_modified_time", "target_accessed_time", "show_command", "icon", "description",
-                          "volume_label", "drive_type"]
+        column_headers = ["파일 이름", "점프리스트 이름", "링크 넘버", "원본 파일 경로", "사이즈", "플래그",
+                          "원본 생성 시간", "원본 수정 시간", "원본 접근 시간", "Show_Command", "아이콘 경로", "행위",
+                          "볼륨 라벨", "드라이브 타입"]
         self.doc_jmp_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2190,9 +2189,9 @@ class MyWidget(QWidget):
         count = len(rows)
         self.etc_lnk_table.setRowCount(count)
         self.etc_lnk_table.setColumnCount(14)
-        column_headers = ["파일", "LNK 경로", "Flags", "크기", "Local_Base_Path", "Show_Command",
-                          "생성", "수정", "접근", "Drive_Serial_Number",
-                          "Drive_Type", "Volume_Label", "Icon_Location", "Machine_Info"]
+        column_headers = ["파일", "링크 파일 경로", "플래그", "크기", "원본 파일 경로", "Show_Command",
+                          "원본 생성 시간", "원본 수정 시간", "원본 접근 시간", "드라이브 시리얼 번호",
+                          "드라이브 타입", "볼륨 라벨", "아이콘 경로", "NetBIOS 이름"]
         self.etc_lnk_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2283,7 +2282,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_delete_table.setRowCount(count)
         self.eventlog_delete_table.setColumnCount(7)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "주체이름", "채널", "출처"]
+        column_headers = ["이벤트 아이디", "상세 설명", "컴퓨터 이름", "행위 발생 시간", "주체 이름", "채널", "출처"]
         self.eventlog_delete_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2312,7 +2311,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_terminate_table.setRowCount(count)
         self.eventlog_terminate_table.setColumnCount(8)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "프로세스 이름", "프로그램 버전", "경로", "출처"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "프로세스 이름", "프로그램 버전", "경로", "출처"]
         self.eventlog_terminate_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2342,7 +2341,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_onoff_table.setRowCount(count)
         self.eventlog_onoff_table.setColumnCount(5)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "출처"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "출처"]
         self.eventlog_onoff_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2370,7 +2369,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_powersaving_table.setRowCount(count)
         self.eventlog_powersaving_table.setColumnCount(7)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "전환시간", "복귀시간", "출처"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "전환시간", "복귀시간", "출처"]
         self.eventlog_powersaving_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2399,7 +2398,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_access1_table.setRowCount(count)
         self.eventlog_access1_table.setColumnCount(9)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "로그인 계정", "들어온 IP", "내 컴퓨터 이름", "세션 ID", "출처"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "로그인 계정", "들어온 IP", "내 컴퓨터 이름", "세션 ID", "출처"]
         self.eventlog_access1_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):
@@ -2431,7 +2430,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_access2_table.setRowCount(count)
         self.eventlog_access2_table.setColumnCount(11)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "서버 이름", "서버 주소", "커스텀 레벨", "도메인 이름", "세션 ID",
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "서버 이름", "서버 주소", "커스텀 레벨", "도메인 이름", "세션 ID",
                           "계정 SID", "출처"]
         self.eventlog_access2_table.setHorizontalHeaderLabels(column_headers)
 
@@ -2466,7 +2465,7 @@ class MyWidget(QWidget):
         count = len(rows)
         self.eventlog_time_table.setRowCount(count)
         self.eventlog_time_table.setColumnCount(11)
-        column_headers = ["이벤트 아이디", "내용", "컴퓨터 아이디", "이벤트 생성날짜", "이유", "전 표준시간", "후 표준시간", "주체이름", "전 시간", "후 시간", "출처"]
+        column_headers = ["이벤트 아이디", "상세설명", "컴퓨터 이름", "행위 발생 시간", "이유", "전 표준시간", "후 표준시간", "주체 이름", "전 시간", "후 시간", "출처"]
         self.eventlog_time_table.setHorizontalHeaderLabels(column_headers)
 
         for i in range(count):

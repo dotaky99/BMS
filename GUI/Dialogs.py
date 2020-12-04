@@ -7,8 +7,9 @@ class UTCDialog(QDialog):
         self.UTC = None
 
     def setupUI(self):
-        self.setGeometry(300, 300, 300, 300)
         self.setWindowTitle('UTC 설정')
+        self.resize(300, 300)
+        self.center()
         layout = QBoxLayout(QBoxLayout.TopToBottom, parent = self)
         self.setLayout(layout)
         label = QLabel()
@@ -27,6 +28,12 @@ class UTCDialog(QDialog):
     def buttonClicked(self):
         self.UTC = self.combobox.currentText().split("UTC")[1]
         self.close()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
 class HelpDialog(QDialog):
     def __init__(self, parent):
