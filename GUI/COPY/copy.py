@@ -34,9 +34,10 @@ def file_copy():
     if not os.path.isdir(reg_dir):
         os.mkdir(reg_dir)
     for r in reg:
-        os.system(r'RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}COPY\REGHIVE'.format(reg_path,r,cur_path))
-    os.system(r'RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}COPY\REGHIVE'.format(cur_user_dir, cur_path))
-    os.system(r'RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}COPY\REGHIVE'.format(cur_user_dir, cur_path))
+        os.system(r'RawCopy.exe /FileNamePath:{}\{} /OutputPath:{}/COPY/REGHIVE'.format(reg_path,r,cur_path))
+        print(cur_path)
+    os.system(r'RawCopy.exe /FileNamePath:{}\NTUSER.DAT /OutputPath:{}/COPY/REGHIVE'.format(cur_user_dir, cur_path))
+    os.system(r'RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}/COPY/REGHIVE'.format(cur_user_dir, cur_path))
 
     #mft BMS/COPY/NTFS
     drive_list = get_drives()
@@ -44,11 +45,11 @@ def file_copy():
     if not os.path.isdir(nt_dir):
         os.mkdir(nt_dir)
     for drive in drive_list:
-        os.system(r'RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}COPY\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
-    os.system(r'ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}COPY\NTFS /OutputName:$UsnJrnl'.format(cur_path))
+        os.system(r'RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}/COPY/NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
+    os.system(r'ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}/COPY/NTFS /OutputName:$UsnJrnl'.format(cur_path))
 
     # Event Log BMS/COPY/eventlogs/Logs
-    os.system(r'forecopy_handy.exe -e ./')
+    os.system(r'forecopy_handy.exe -e ./COPY')
 
     #Browser BMS/COPY/BROWSER
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default" COPY/BROWSER History Bookmarks Cookies Preferences "Web Data" "Login Data"'.format(cur_user_dir))
@@ -73,4 +74,4 @@ def file_copy():
     os.system(r'robocopy "%UserProfile%\AppData\Roaming\Microsoft\Windows\Recent\CustomDestinations" COPY/JUMPLIST')
 
 file_copy()
-os.system("python Parse.py")
+os.system("python COPY/Parse.py")
