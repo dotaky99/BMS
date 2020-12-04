@@ -1,7 +1,5 @@
 import sys
 from Registry import Registry
-
-
 SYSTEM = sys.argv[1]
 SOFTWARE = sys.argv[2]
 SAM = sys.argv[3]

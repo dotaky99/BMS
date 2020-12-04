@@ -26,9 +26,17 @@ def get_reg_value(reg, path, name):
                 if v.name() == name:
                     return v.value()
     except:
-        print("GetRegValue Error")
         return None
 
 
 if __name__ == "__main__":
-    print(get_reg_value(REG, PATH, NAME))
+    if REG == "SYSTEM":
+        print(get_reg_value(SYSTEM, PATH, NAME))
+    elif REG == "SOFTWARE":
+        print(get_reg_value(SOFTWARE, PATH, NAME))
+    elif REG == "SAM":
+        print(get_reg_value(SAM, PATH, NAME))
+    elif REG == "NTUSER":
+        print(get_reg_value(NTUSER, PATH, NAME))
+    elif REG == "USRCLASS":
+        print(get_reg_value(USRCLASS, PATH, NAME))
