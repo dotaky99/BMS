@@ -49,56 +49,70 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         # DRM
-        query1 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
-                 "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE (a.name like '%fasoo%' " \
-                 "and b.Executable_Name like '%fasoo%') or ((a.name like 'SDSLaunc%' or a.name like 'SoftcampDS%') " \
-                 "and (b.Executable_Name like 'SDSLaunc%' or b.Executable_Name like 'SoftcampDS%')) or (a.name like 'DocumentSAFER%' " \
-                 "and b.Executable_Name like 'DocumentSAFER%')"
-        cur.execute(query1)
-        rows1 = cur.fetchall()
+        try:
+            query1 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
+                     "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE (a.name like '%fasoo%' " \
+                     "and b.Executable_Name like '%fasoo%') or ((a.name like 'SDSLaunc%' or a.name like 'SoftcampDS%') " \
+                     "and (b.Executable_Name like 'SDSLaunc%' or b.Executable_Name like 'SoftcampDS%')) or (a.name like 'DocumentSAFER%' " \
+                     "and b.Executable_Name like 'DocumentSAFER%')"
+            cur.execute(query1)
+            rows1 = cur.fetchall()
+        except:
+            pass
         # 매체제어
         # Symantec이 설치되었는지 확인
-        symantec = []
-        GetRegKey_command = "python ..\RegistryParse\GetRegKey.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
-        GetRegValue_command = "python ..\RegistryParse\GetRegValue.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
-        input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion"
-        result1 = os.popen(GetRegKey_command + input).read()
-        input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion"
-        result2 = os.popen(GetRegKey_command + input).read()
-        if result1 == 1 or result2 == 1:    # 시만텍이 있는 경우
-            symantec.append("Symantec")
-            input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
-            result1 = os.popen(GetRegValue_command + input).read()
-            input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
-            result2 = os.popen(GetRegValue_command + input).read()
-            if result1 == 1 or result2 == 2:    # 시만텍이 실행중인 경우
-                symantec.append("실행중")
-            else:
-                symantec.append("")
+        try:
+            symantec = []
+            GetRegKey_command = "python ..\RegistryParse\GetRegKey.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
+            GetRegValue_command = "python ..\RegistryParse\GetRegValue.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
+            input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion"
+            result1 = os.popen(GetRegKey_command + input).read()
+            input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion"
+            result2 = os.popen(GetRegKey_command + input).read()
+            if result1 == 1 or result2 == 1:    # 시만텍이 있는 경우
+                symantec.append("Symantec")
+                input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
+                result1 = os.popen(GetRegValue_command + input).read()
+                input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
+                result2 = os.popen(GetRegValue_command + input).read()
+                if result1 == 1 or result2 == 2:    # 시만텍이 실행중인 경우
+                    symantec.append("실행중")
+                else:
+                    symantec.append("")
+        except:
+            pass
         # 디스크 암호화
-        query3 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date," + self.UTC + "), " \
-                 "datetime(b.Last_Executed1, "+ self.UTC + ") FROM Uninstall a,  prefetch1 b WHERE (a.name like 'CipherShed%' " \
-                 "AND b.Executable_Name like 'CipherShed%') OR (a.name like 'TrueCrypt%' AND b.Executable_Name like 'TrueCrypt%') " \
-                 "OR (a.name like 'VeraCrypt%' and b.Executable_Name like 'VeraCrypt%')"
-        cur.execute(query3)
-        rows3 = cur.fetchall()
+        try:
+            query3 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date," + self.UTC + "), " \
+                     "datetime(b.Last_Executed1, "+ self.UTC + ") FROM Uninstall a,  prefetch1 b WHERE (a.name like 'CipherShed%' " \
+                     "AND b.Executable_Name like 'CipherShed%') OR (a.name like 'TrueCrypt%' AND b.Executable_Name like 'TrueCrypt%') " \
+                     "OR (a.name like 'VeraCrypt%' and b.Executable_Name like 'VeraCrypt%')"
+            cur.execute(query3)
+            rows3 = cur.fetchall()
+        except:
+            pass
         # 안티포렌식
-        query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
-                 "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
-                 "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
-                 "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
-                 "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
-                 "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
-        cur.execute(query4)
-        rows4 = cur.fetchall()
+        try:
+            query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
+                     "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
+                     "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
+                     "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
+                     "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
+                     "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
+            cur.execute(query4)
+            rows4 = cur.fetchall()
+        except:
+            pass
         # VM
-        query5 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + "), " \
-                 "datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, prefetch1 b " \
-                 "WHERE (a.name like '%vmware%' and b.Executable_Name like '%vmware%') " \
-                 "or (a.name like '%virtualbox%' and b.Executable_Name like '%virtualbox%')"
-        cur.execute(query5)
-        rows5 = cur.fetchall()
-        conn.close()
+        try:
+            query5 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + "), " \
+                     "datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, prefetch1 b " \
+                     "WHERE (a.name like '%vmware%' and b.Executable_Name like '%vmware%') " \
+                     "or (a.name like '%virtualbox%' and b.Executable_Name like '%virtualbox%')"
+            cur.execute(query5)
+            rows5 = cur.fetchall()
+        except:
+            pass
 
         self.tab2_table = QTableWidget(self)
         count = len(rows1) + len(symantec) + len(rows3) + len(rows4) + len(rows5) + 5
@@ -204,7 +218,6 @@ class MyWidget(QWidget):
         self.vbox2 = QVBoxLayout()
         self.tab2_tree = QTreeWidget()
         self.tab2_tree.header().setVisible(False)
-
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
 
