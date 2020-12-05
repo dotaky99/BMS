@@ -70,7 +70,6 @@ class FileCopy(QDialog):
         self.pushButton_ = QPushButton("시작")
         self.pushButton_.clicked.connect(self.pushButtonCopy)
 
-
         layout = QGridLayout()
         layout.addWidget(self.explanation1_, 0, 0)
         layout.addWidget(self.blank_, 1, 0)
@@ -79,8 +78,8 @@ class FileCopy(QDialog):
         self.setLayout(layout)
 
     def pushButtonCopy(self):
-        os.system("python COPY/copy.py")
-        #os.system("python Parse.py") # parsing 코드 => 경로 수정 후 삽입할 예정
+        os.system("python ../COPY/copy.py")
+        self.close()
 
 form_class = uic.loadUiType("Initial Window.ui")[0]
 class InitWindow(QMainWindow, form_class) :

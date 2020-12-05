@@ -72,7 +72,7 @@ def PC_Processing(file_et):
                 if 'System' in each_et and eventid in file_et[each_et]:
                     if eventid == '104':
                         detailed = file_et[each_et][eventid]
-                        for data in soup.findAll('userdata'):
+                        for data in soup.findAll('data'):
                             sbt_usr_name = data.subjectusername.string
                             channel = data.channel.string
 

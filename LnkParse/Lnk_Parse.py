@@ -126,7 +126,7 @@ def allfile(path):
    return res
 
 def files_parse():
-    path_dir = 'COPY/LNK/'
+    path_dir = '../COPY/LNK/'
     files_list = allfile(path_dir)
     lnk_lists = lnk_parse(files_list)
     return lnk_lists
