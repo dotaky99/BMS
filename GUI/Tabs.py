@@ -1683,7 +1683,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_dowload_table.setRowCount(count)
             self.browser_dowload_table.setColumnCount(10)
-            column_headers = ["타입", "시간", "url", "상태", "경로", "실패 이유", "위험 파일", "opened", "etag", "last_modified"]
+            column_headers = ["타입", "시간", "url", "상태", "경로", "실패 이유", "위험 파일", "열림 유무", "이태그", "마지막 수정시각"]
             self.browser_dowload_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1716,7 +1716,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_url_table.setRowCount(count)
             self.browser_url_table.setColumnCount(9)
-            column_headers = ["시간", "url", "제목", "source", "머문 시간", "방문 횟수", "검색 횟수", "url hidden", "접근 방식"]
+            column_headers = ["시간", "url", "제목", "소스", "머문 시간", "방문 횟수", "검색 횟수", "hidden 값", "접근 방식"]
             self.browser_url_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1748,7 +1748,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_login_table.setRowCount(count)
             self.browser_login_table.setColumnCount(7)
-            column_headers = ["type", "시간", "로그인 url", "id임을 나타내는 값", "id 또는 계정", "password임을 나타내는 값", "password"]
+            column_headers = ["type", "시간", "로그인 url", "id임을 나타내는 값", "id 또는 계정", "password임을 나타내는 값", "비밀번호"]
             self.browser_login_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1776,7 +1776,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_cookies_table.setRowCount(count)
             self.browser_cookies_table.setColumnCount(5)
-            column_headers = ["type", "시간", "url", "title", "value"]
+            column_headers = ["타입", "시간", "url", "", "쿠키값"]
             self.browser_cookies_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1834,7 +1834,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_bookmark_table.setRowCount(count)
             self.browser_bookmark_table.setColumnCount(5)
-            column_headers = ["type", "시간", "url", "타이틀", "parent value"]
+            column_headers = ["타입", "시간", "url", "타이틀", "상위값"]
             self.browser_bookmark_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1860,7 +1860,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_autofill_table.setRowCount(count)
             self.browser_autofill_table.setColumnCount(4)
-            column_headers = ["type", "시간", "id/email", "value"]
+            column_headers = ["타입", "시간", "id/email", "자동 완성 값"]
             self.browser_autofill_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1885,7 +1885,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_preference_table.setRowCount(count)
             self.browser_preference_table.setColumnCount(5)
-            column_headers = ["type", "시간", "url", "status", "data"]
+            column_headers = ["타입", "시간", "url", "상태", "데이터"]
             self.browser_preference_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1911,7 +1911,7 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_cloud_table.setRowCount(count)
             self.browser_cloud_table.setColumnCount(3)
-            column_headers = ["시간", "url", "title"]
+            column_headers = ["시간", "url", "사이트 제목"]
             self.browser_cloud_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
