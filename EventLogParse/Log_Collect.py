@@ -27,7 +27,7 @@ def PC_Processing(file_et):
                 eventid = soup.eventid.string
                 computer = soup.computer.string
                 time_created = soup.timecreated['systemtime'].split('.')[0]
-                source = each_et.split('/')[3]
+                source = each_et.split('/')[-1]
 
                 if eventid not in file_et[each_et]:
                     continue

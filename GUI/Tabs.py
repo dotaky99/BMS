@@ -58,6 +58,7 @@ class MyWidget(QWidget):
             cur.execute(query1)
             rows1 = cur.fetchall()
         except:
+            rows1 = ''
             pass
         # 매체제어
         # Symantec이 설치되었는지 확인
@@ -90,6 +91,7 @@ class MyWidget(QWidget):
             cur.execute(query3)
             rows3 = cur.fetchall()
         except:
+            rows3 = ''
             pass
         # 안티포렌식
         try:
@@ -102,6 +104,7 @@ class MyWidget(QWidget):
             cur.execute(query4)
             rows4 = cur.fetchall()
         except:
+            rows4 = ''
             pass
         # VM
         try:
@@ -112,6 +115,7 @@ class MyWidget(QWidget):
             cur.execute(query5)
             rows5 = cur.fetchall()
         except:
+            rows5 = ''
             pass
 
         self.tab2_table = QTableWidget(self)
@@ -155,6 +159,7 @@ class MyWidget(QWidget):
                 self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
                 self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
         except:
+            rows3 = ''
             pass
         tab2_accum = tab2_accum + len(rows3) + 1
 
@@ -170,6 +175,7 @@ class MyWidget(QWidget):
                 self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                 self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
         except:
+            rows4 = ''
             pass
         tab2_accum = tab2_accum + len(rows4) + 1
 
