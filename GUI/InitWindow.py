@@ -65,7 +65,7 @@ class FileCopy(QDialog):
         self.setWindowTitle("파일 복사")
         self.explanation1_ = QLabel("분석에 필요한 파일을 복사중입니다.")
         self.blank_ = QLabel()
-        self.explanation2_ = QLabel("아래 버튼을 누른 후, 조금만 기다려 주세요.")
+        self.explanation2_ = QLabel("아래 버튼을 누른 후, 조금만 기다려 주세요.\nDB가 생성되면 창이 종료됩니다.")
 
         self.pushButton_ = QPushButton("시작")
         self.pushButton_.clicked.connect(self.pushButtonCopy)
