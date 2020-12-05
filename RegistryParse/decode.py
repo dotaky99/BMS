@@ -18,6 +18,20 @@ def convert_time(bytes_time):
         return a.split('.')[0]
 
 
+# convert little endian 16 bytes to time
+def convert_time16(bytes):
+    format(110, '05d')
+    year = format(bytes[1] * 256 + bytes[0], "02d")
+    month = format(bytes[3] * 256 + bytes[2], "02d")
+    day = format(bytes[7] * 256 + bytes[6], "02d")
+
+    hour = format(bytes[9] * 256 + bytes[8], "02d")
+    minute = format(bytes[11] * 256 + bytes[10], "02d")
+    second = format(bytes[13] * 256 + bytes[12], "02d")
+
+    return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
+
+
 def ROT13(string):
     return codecs.getencoder("rot-13")(string)[0]
 

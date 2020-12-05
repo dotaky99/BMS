@@ -809,15 +809,73 @@ def connected_usb():
 # 무선랜 접속 기록
 def network():
     try:
-        soft_registry = Registry.Registry(SYSTEM)
-        sys_registry = Registry.Registry(SOFTWARE)
-        path = ""
-        key = registry.open(path)
+        registry = Registry.Registry(SOFTWARE)
 
-        result = []
-        return result
+        net_info = []
+        path = "Microsoft\\Windows NT\\CurrentVersion\\NetworkList\\Nla\\Wireless"
+        key = registry.open(path)
+        for v in key.subkeys():
+            net_info.append([v.name()])
+
+        tmp = []
+        path = "Microsoft\\Windows NT\\CurrentVersion\\NetworkList\\Signatures\\Unmanaged"
+        key = registry.open(path)
+        for v in key.subkeys():
+            subkey_name = v.name()
+            subpath = path + "\\" + subkey_name
+            subkey = registry.open(subpath)
+            default_gateway_mac = None
+            dns_suffix = None
+            profile_GUID = None
+            for s in subkey.values():
+                if s.name() == "DefaultGatewayMac":
+                    if s.value() == b'':
+                        default_gateway_mac = ""
+                    else:
+                        default_gateway_mac = s.value().hex()
+                if s.name() == "DnsSuffix":
+                    dns_suffix = s.value()
+                if s.name() == "ProfileGuid":
+                    profile_GUID = s.value()
+            tmp.append([subkey_name, default_gateway_mac, dns_suffix, profile_GUID])
+
+        # Wireless와 Unmanaged 매칭
+        for n in net_info:
+            for t in tmp:
+                if n[0] in t[0]:
+                    n.extend(t[1:4])
+
+        tmp = []
+        path = "Microsoft\\Windows NT\\CurrentVersion\\NetworkList\\Profiles"
+        key = registry.open(path)
+        for v in key.subkeys():
+            subkey_name = v.name()
+            subpath = path + "\\" + subkey_name
+            subkey = registry.open(subpath)
+            profile_name = None
+            description = None
+            date_created = None
+            date_last_connected = None
+            for s in subkey.values():
+                if s.name() == "ProfileName":
+                    profile_name = s.value()
+                if s.name() == "Description":
+                    description = s.value()
+                if s.name() == "DateCreated":
+                    date_created = decode.convert_time16(s.value())
+                if s.name() == "DateLastConnected":
+                    date_last_connected = decode.convert_time16(s.value())
+            tmp.append([subkey_name, profile_name, description, date_created, date_last_connected])
+
+        # Wireless, Unmanaged와 Profiles 매칭
+        for n in net_info:
+            for t in tmp:
+                if n[3] == t[0]:
+                    n.extend(t[1:5])
+
+        return net_info
     except:
-        print("Error while parsing network information")
+        print("Error while parsing wireless network information")
         return None
 
 
@@ -846,7 +904,7 @@ if __name__ == "__main__":
 
     # UserAssist_CEB 테이블
     data_list = UserAssist_CEB()
-    Database.Reg_UseraAsist_CEB(data_list)
+    Database.Reg_UserAsist_CEB(data_list)
 
     # UserAssist_F4E 테이블
     data_list = UserAssist_F4E()

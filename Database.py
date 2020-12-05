@@ -192,6 +192,7 @@ def Usn_Databases(data_list):
     conn.commit()
     conn.close()
 
+
 ##############################
 # REGParse.py가 호출하는 함수들 #
 ##############################
@@ -277,7 +278,7 @@ def Reg_MuiCache(data_list):
         conn.close()
 
 
-def Reg_UseraAsist_CEB(data_list):
+def Reg_UserAsist_CEB(data_list):
     if data_list is not None:
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
@@ -430,13 +431,13 @@ def Reg_Run(data_list):
 
 def Reg_Network(data_list):
     if data_list is not None:
-        conn = sqlite3.connect("Believe_Me_Sister.db")
+        conn = sqlite3.connect("Believe_Me_Sister_test.db")
         cur = conn.cursor()
         try:
             conn.execute('DROP TABLE IF EXISTS Network')
-            query = "CREATE TABLE Network(ip TEXT)"
+            query = "CREATE TABLE Network(id TEXT, default_gateway_mac, dns_suffix TEXT, GUID TEXT, profile_name TEXT, description TEXT, created_time TEXT, last_connected_time TEXT)"
             conn.execute(query)
-            cur.executemany("INSERT INTO Network VALUES(?)", data_list)
+            cur.executemany("INSERT INTO Network VALUES(?, ?, ?, ?, ?, ?, ?, ?)", data_list)
             conn.commit()
         except:
             print("Error while making Network table")
