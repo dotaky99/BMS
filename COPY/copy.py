@@ -30,7 +30,7 @@ def file_copy():
     #prefetch BMS/COPY/PREFETCH
     os.system('robocopy {} ..\COPY/PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
 
-    #registry BMS/COPY/REGHIVE
+    registry BMS/COPY/REGHIVE
     if not os.path.isdir(reg_dir):
         os.mkdir(reg_dir)
     for r in reg:
@@ -55,7 +55,7 @@ def file_copy():
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default\Cache" ..\COPY/BROWSER/Cache'.format(cur_user_dir))
     os.system(r'robocopy "{}\AppData\Local\Google\Chrome\User Data\Default\GPUCache" ..\COPY/BROWSER/GPUCache'.format(cur_user_dir))
 
-    #LNK BMS/COPY/LNK
+    LNK BMS/COPY/LNK
     lnk_list = ['C:\\Users\\Default','%UserProfile%']
     for l in lnk_list:
         os.system(r'robocopy "{}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs" ..\COPY/LNK *.lnk /e'.format(l))
