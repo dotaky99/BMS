@@ -2262,9 +2262,12 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT program, mru, datetime(opened_on, " + self.UTC + ") FROM Legacy"
-        cur.execute(query)
-        rows = cur.fetchall()
-        conn.close()
+        try:
+            cur.execute(query)
+            rows = cur.fetchall()
+        except:
+            conn.close()
+            return
 
 
         count = len(rows)
@@ -2288,6 +2291,7 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, sbt_usr_name, channel, " \
                 "datetime(time_created, " + self.UTC + "), source FROM event_log WHERE event_id == '104' or event_id == '1102'"
+
         cur.execute(query)
         rows = cur.fetchall()
         conn.close()
@@ -2317,9 +2321,12 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         query = "SELECT event_id, detailed, computer, app_name, app_version, app_path, " \
                 "datetime(time_created, " + self.UTC + "), source FROM event_log WHERE event_id == '1002' AND app_name IS NOT '';"
-        cur.execute(query)
-        rows = cur.fetchall()
-        conn.close()
+        try:
+            cur.execute(query)
+            rows = cur.fetchall()
+        except:
+            conn.close()
+            return
 
         count = len(rows)
         self.eventlog_terminate_table.setRowCount(count)
