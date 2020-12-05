@@ -2152,8 +2152,8 @@ class MyWidget(QWidget):
 
             for i in range(count):
                 file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
-                drive_serial_number, drive_type, volume_label, icon_location, machine_info, \
-                target_creation_time, target_modified_time, target_accessed_time = rows[i]
+                target_creation_time, target_modified_time, target_accessed_time, \
+                drive_serial_number, drive_type, volume_label, icon_location, machine_info = rows[i]
                 self.doc_lnk_table.setItem(i, 0, QTableWidgetItem(file_name))
                 self.doc_lnk_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
                 self.doc_lnk_table.setItem(i, 2, QTableWidgetItem(file_flags))
@@ -2266,8 +2266,8 @@ class MyWidget(QWidget):
 
             for i in range(count):
                 file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
-                drive_serial_number, drive_type, volume_label, icon_location, machine_info, \
-                target_creation_time, target_modified_time, target_accessed_time = rows[i]
+                target_creation_time, target_modified_time, target_accessed_time, \
+                drive_serial_number, drive_type, volume_label, icon_location, machine_info = rows[i]
                 self.etc_lnk_table.setItem(i, 0, QTableWidgetItem(file_name))
                 self.etc_lnk_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
                 self.etc_lnk_table.setItem(i, 2, QTableWidgetItem(file_flags))
@@ -2565,11 +2565,11 @@ class MyWidget(QWidget):
             count = len(rows)
             self.folder_table.setRowCount(count)
             self.folder_table.setColumnCount(17)
-            column_headers = ["File_Name", "Lnk_File_Path", "Flags", "Size", "Local_Base_Path", "Show_Command", \
-                              "Target_Created_Time", "Target_Modified_Time", "Target_Accessed_Time",
-                              "Drive_Serial_Number",
-                              "Drive_Type", "Volume_Label", "Icon_Location", "Machine_Info", "Droid_File", "Droid_Vol",
-                              "Known_Guid"]
+            column_headers = ["파일", "링크 파일 경로", "플래그", "크기", "원본 파일 경로", "Show_Command", \
+                              "원본 생성 시간", "원본 수정 시간", "원본 접근 시간",
+                              "드라이브 시리얼 번호",
+                              "드라이브 타입", "볼륨 라벨", "아이콘 경로", "NetBIOS 이름", "Droid_File", "Droid_Vol",
+                              "Known_GUID"]
             self.folder_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
