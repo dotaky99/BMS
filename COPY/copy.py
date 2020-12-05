@@ -30,7 +30,7 @@ def file_copy():
     #prefetch BMS/COPY/PREFETCH
     os.system('robocopy {} ..\COPY/PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
 
-    registry BMS/COPY/REGHIVE
+    #registry BMS/COPY/REGHIVE
     if not os.path.isdir(reg_dir):
         os.mkdir(reg_dir)
     for r in reg:
