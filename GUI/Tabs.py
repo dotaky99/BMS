@@ -2753,25 +2753,25 @@ class MyWidget(QWidget):
                 SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
                 FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
                 mft_ref_num, LSN, ADS_list = rows[i]
-                self.file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
-                self.file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
-                self.file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
-                self.file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
-                self.file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
-                self.file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
-                self.file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
-                self.file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
-                self.file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
-                self.file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
-                self.file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
-                self.file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
-                self.file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
-                self.file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
-                self.file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
-                self.file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
-                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
-                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
-                self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
+                self.del_file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
+                self.del_file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
+                self.del_file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
+                self.del_file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
+                self.del_file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
+                self.del_file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
+                self.del_file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
+                self.del_file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
+                self.del_file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
+                self.del_file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
+                self.del_file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
+                self.del_file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
+                self.del_file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
+                self.del_file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
+                self.del_file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
+                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
+                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
+                self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
+                self.del_file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
         except:
             pass
 
@@ -2804,6 +2804,7 @@ class MyWidget(QWidget):
                 self.modified_file_table.setItem(i, 7, QTableWidgetItem(time_stamp))
         except:
             pass
+
     # item9_4 폴더 열람 흔적
     def set_recent_folder(self):
         try:
