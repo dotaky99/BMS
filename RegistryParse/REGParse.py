@@ -952,6 +952,7 @@ def network():
 
         return net_info
     except:
+        print("Error while parsing network interface information")
         return None
 
 
