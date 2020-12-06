@@ -242,22 +242,22 @@ class MyWidget(QWidget):
         except:
             pass
 
-            self.text1 = QTreeWidgetItem(self.tab2_tree)
-            self.text1.setText(0, string1)
-            self.text2 = QTreeWidgetItem(self.tab2_tree)
-            self.text2.setText(0, string2)
-            self.text3 = QTreeWidgetItem(self.tab2_tree)
-            self.text3.setText(0, string3)
-            self.text4 = QTreeWidgetItem(self.tab2_tree)
-            self.text4.setText(0, string4)
-            self.text5 = QTreeWidgetItem(self.tab2_tree)
-            self.text5.setText(0, "MFT 생성 시간")
-            self.text6 = QTreeWidgetItem(self.tab2_tree)
-            self.text6.setText(0, "계정")
-            self.text7 = QTreeWidgetItem(self.tab2_tree)
-            self.text7.setText(0, "USB")
-            self.text8 = QTreeWidgetItem(self.tab2_tree)
-            self.text8.setText(0, "네트워크")
+        self.text1 = QTreeWidgetItem(self.tab2_tree)
+        self.text1.setText(0, string1)
+        self.text2 = QTreeWidgetItem(self.tab2_tree)
+        self.text2.setText(0, string2)
+        self.text3 = QTreeWidgetItem(self.tab2_tree)
+        self.text3.setText(0, string3)
+        self.text4 = QTreeWidgetItem(self.tab2_tree)
+        self.text4.setText(0, string4)
+        self.text5 = QTreeWidgetItem(self.tab2_tree)
+        self.text5.setText(0, "MFT 생성 시간")
+        self.text6 = QTreeWidgetItem(self.tab2_tree)
+        self.text6.setText(0, "계정")
+        self.text7 = QTreeWidgetItem(self.tab2_tree)
+        self.text7.setText(0, "USB")
+        self.text8 = QTreeWidgetItem(self.tab2_tree)
+        self.text8.setText(0, "네트워크")
 
         # MFT 생성 시간
         try:
