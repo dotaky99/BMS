@@ -806,8 +806,9 @@ def connected_usb():
 
     return usb
 
+
 # 무선랜 접속 기록
-def network():
+def wireless():
     try:
         registry = Registry.Registry(SOFTWARE)
 
@@ -876,6 +877,81 @@ def network():
         return net_info
     except:
         print("Error while parsing wireless network information")
+        return None
+
+
+# 네트워크 인터페이스 정보
+def network():
+    try:
+        sys_registry = Registry.Registry(SYSTEM)
+        soft_registry = Registry.Registry(SOFTWARE)
+
+        net_info = []
+        path = "Microsoft\\Windows NT\\CurrentVersion\\NetworkCards"
+        key = soft_registry.open(path)
+        for v in key.subkeys():
+            subkey_name = v.name()
+            subpath = path + "\\" + subkey_name
+            subkey = soft_registry.open(subpath)
+            description = None
+            GUID = None
+            for s in subkey.values():
+                if s.name() == "Description":
+                    description = s.value()
+                if s.name() == "ServiceName":
+                    GUID = s.value().lower()
+            net_info.append([description, GUID])
+
+        tmp = []
+        path = ControlSet00n + "\\Services\\Tcpip\\Parameters\\Interfaces"
+        key = sys_registry.open(path)
+        for v in key.subkeys():
+            subkey_name = v.name()
+            subpath = path + "\\" + subkey_name
+            subkey = sys_registry.open(subpath)
+            ip = None
+            subnet_mask = None
+            default_gateway = None
+            dhcp_use = None
+            dhcp_server = None
+            dns_server = None
+            domain = None
+            lease_obtained_time = None
+            lease_terminates_time = None
+            for s in subkey.values():
+                if s.name() == "DhcpIPAddress":
+                    ip = s.value()
+                if s.name() == "IPAddress":
+                    ip = s.value()
+                if s.name() == "DhcpSubnetMask":
+                    subnet_mask = s.value()
+                if s.name() == "DhcpDefaultGateway":
+                    if s.value_type_str() == "RegMultiSZ":
+                        default_gateway = " ".join(s.value())
+                    else:
+                        default_gateway = s.value()
+                if s.name() == "EnableDHCP":
+                    dhcp_use = s.value()
+                if s.name() == "DhcpServer":
+                    dhcp_server = s.value()
+                if s.name() == "DhcpNameServer":
+                    dns_server = s.value()
+                if s.name() == "Domain":
+                    domain = s.value()
+                if s.name() == "LeaseObtainedTime":
+                    lease_obtained_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(s.value()))
+                if s.name() == "LeaseTerminatesTime":
+                    lease_terminates_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(s.value()))
+            tmp.append([subkey_name, ip, subnet_mask, default_gateway, dhcp_use, dhcp_server, dns_server, domain, lease_obtained_time, lease_terminates_time])
+
+        # NetworkCards와 Interfaces 매핑
+        for n in net_info:
+            for t in tmp:
+                if n[1] == t[0]:
+                    n.extend(t[1:10])
+
+        return net_info
+    except:
         return None
 
 
@@ -949,6 +1025,10 @@ if __name__ == "__main__":
     # ConnectedUSB 테이블
     data_list = connected_usb()
     Database.Reg_Connected_USB(data_list)
+
+    # Wireless 테이블
+    data_list = wireless()
+    Database.Reg_Wireless(data_list)
 
     # Network 테이블
     data_list = network()

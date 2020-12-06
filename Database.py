@@ -429,15 +429,32 @@ def Reg_Run(data_list):
         conn.close()
 
 
-def Reg_Network(data_list):
+def Reg_Wireless(data_list):
     if data_list is not None:
-        conn = sqlite3.connect("Believe_Me_Sister_test.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         try:
-            conn.execute('DROP TABLE IF EXISTS Network')
-            query = "CREATE TABLE Network(id TEXT, default_gateway_mac, dns_suffix TEXT, GUID TEXT, profile_name TEXT, description TEXT, created_time TEXT, last_connected_time TEXT)"
+            conn.execute('DROP TABLE IF EXISTS Wireless')
+            query = "CREATE TABLE Wireless(id TEXT, default_gateway_mac TEXT, dns_suffix TEXT, GUID TEXT, profile_name TEXT, description TEXT, created_time TEXT, last_connected_time TEXT)"
             conn.execute(query)
-            cur.executemany("INSERT INTO Network VALUES(?, ?, ?, ?, ?, ?, ?, ?)", data_list)
+            cur.executemany("INSERT INTO Wireless VALUES(?, ?, ?, ?, ?, ?, ?, ?)", data_list)
+            conn.commit()
+        except:
+            print("Error while making Wireless table")
+        conn.close()
+
+
+def Reg_Network(data_list):
+    if data_list is not None:
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        try:
+            conn.execute("DROP TABLE IF EXISTS Network")
+            query = "CREATE TABLE Network(description TEXT, GUID TEXT, ip TEXT, subnet_mask TEXT, default_gateway TEXT, " \
+                    "dhcp_use INTEGER, dhcp_server TEXT, dns_server TEXT, domain TEXT, lease_obtained_time TEXT, lease_terminates_time TEXT)"
+            conn.execute(query)
+            cur.executemany("INSERT INTO Network VALUES(?, ?, ?, ?, ?, "
+                            "?, ?, ?, ?, ?, ?)", data_list)
             conn.commit()
         except:
             print("Error while making Network table")
