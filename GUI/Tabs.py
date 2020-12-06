@@ -1075,10 +1075,15 @@ class MyWidget(QWidget):
         self.set_program_firstfolder()
         self.tab4.layout.addWidget(self.program_firstfolder)
         self.tab4.layout.itemAt(1).widget().setParent(None)
-        # item5_1_5 프로그램 실행 흔적 - 레지스트리 - CIDSizeMRU
+        # item5_1_6 프로그램 실행 흔적 - 레지스트리 - CIDSizeMRU
         self.program_cidsizemru = QTableWidget(self)
         self.set_program_cidsizemru()
         self.tab4.layout.addWidget(self.program_cidsizemru)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
+        # item5_1_7 프로그램 실행 흔적 - 레지스트리 - Legacy
+        self.etc_dialog_table = QTableWidget(self)
+        self.set_etc_dialog()
+        self.tab4.layout.addWidget(self.etc_dialog_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item5_2 프로그램 실행 흔적 - 프리패치
         self.program_pre = QTableWidget(self)
@@ -1116,11 +1121,6 @@ class MyWidget(QWidget):
         self.etc_pre_table = QTableWidget(self)
         self.set_etc_pre()
         self.tab4.layout.addWidget(self.etc_pre_table)
-        self.tab4.layout.itemAt(1).widget().setParent(None)
-        # item7_3 기타실행 흔적 - 대화상자
-        self.etc_dialog_table = QTableWidget(self)
-        self.set_etc_dialog()
-        self.tab4.layout.addWidget(self.etc_dialog_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
 
         # item8_1 이벤트 로그 삭제
@@ -1258,6 +1258,8 @@ class MyWidget(QWidget):
         self.item5_1_5.setText(0, "FirstFolder")
         self.item5_1_6 = QTreeWidgetItem(self.item5_1)
         self.item5_1_6.setText(0, "CIDSizeMRU")
+        self.item5_1_7 = QTreeWidgetItem(self.item5_1)
+        self.item5_1_7.setText(0, "Legacy")
         self.item5_2 = QTreeWidgetItem(self.item5)
         self.item5_2.setText(0, "프리패치")
 
@@ -1278,8 +1280,6 @@ class MyWidget(QWidget):
         self.item7_1.setText(0, "링크 파일")
         self.item7_2 = QTreeWidgetItem(self.item7)
         self.item7_2.setText(0, "프리패치")
-        self.item7_3 = QTreeWidgetItem(self.item7)
-        self.item7_3.setText(0, "대화상자")
 
         self.item8 = QTreeWidgetItem(self.tree)
         self.item8.setText(0, "이벤트 로그")
@@ -1395,6 +1395,9 @@ class MyWidget(QWidget):
         if it is self.item5_1_6:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.program_cidsizemru)
+        if it is self.item5_1_7:
+            delete.setParent(None)
+            self.tab4.layout.addWidget(self.etc_dialog_table)
         if it is self.item5_2:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.program_pre)
@@ -1416,9 +1419,6 @@ class MyWidget(QWidget):
         if it is self.item7_2:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.etc_pre_table)
-        if it is self.item7_3:
-            delete.setParent(None)
-            self.tab4.layout.addWidget(self.etc_dialog_table)
         if it is self.item8_1:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.eventlog_delete_table)
@@ -2188,6 +2188,28 @@ class MyWidget(QWidget):
         except:
             pass
 
+    # item5_1_7 프로그램 실행 흔적 - 레지스트리 - Legacy
+    def set_etc_dialog(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT program, mru, datetime(opened_on, " + self.UTC + ") FROM Legacy"
+            cur.execute(query)
+            rows = cur.fetchall()
+            count = len(rows)
+            self.etc_dialog_table.setRowCount(count)
+            self.etc_dialog_table.setColumnCount(3)
+            column_headers = ["프로그램", "최근 실행 순서", "시간"]
+            self.etc_dialog_table.setHorizontalHeaderLabels(column_headers)
+
+            for i in range(count):
+                program, mru, opened_on = rows[i]
+                self.etc_dialog_table.setItem(i, 0, QTableWidgetItem(program))
+                self.etc_dialog_table.setItem(i, 1, QTableWidgetItem(str(mru)))
+                self.etc_dialog_table.setItem(i, 2, QTableWidgetItem(opened_on))
+        except:
+            pass
+
     # item5_2 프로그램 실행 흔적 - 프리패치
     def set_program_pre(self):
         try:
@@ -2435,28 +2457,6 @@ class MyWidget(QWidget):
                 file_name, path = rows[i]
                 self.etc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
                 self.etc_pre_table.setItem(i, 1, QTableWidgetItem(path))
-        except:
-            pass
-
-    # item7_3 기타실행 흔적 - 대화상자
-    def set_etc_dialog(self):
-        try:
-            conn = sqlite3.connect("Believe_Me_Sister.db")
-            cur = conn.cursor()
-            query = "SELECT program, mru, datetime(opened_on, " + self.UTC + ") FROM Legacy"
-            cur.execute(query)
-            rows = cur.fetchall()
-            count = len(rows)
-            self.etc_dialog_table.setRowCount(count)
-            self.etc_dialog_table.setColumnCount(3)
-            column_headers = ["프로그램", "최근 실행 순서", "시간"]
-            self.etc_dialog_table.setHorizontalHeaderLabels(column_headers)
-
-            for i in range(count):
-                program, mru, opened_on = rows[i]
-                self.etc_dialog_table.setItem(i, 0, QTableWidgetItem(program))
-                self.etc_dialog_table.setItem(i, 1, QTableWidgetItem(str(mru)))
-                self.etc_dialog_table.setItem(i, 2, QTableWidgetItem(opened_on))
         except:
             pass
 
@@ -2724,6 +2724,7 @@ class MyWidget(QWidget):
                 self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
         except:
             pass
+
     # item9_2 삭제된 파일 및 폴더
     def set_del_file_and_folder(self):
         try:
@@ -2753,25 +2754,25 @@ class MyWidget(QWidget):
                 SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
                 FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
                 mft_ref_num, LSN, ADS_list = rows[i]
-                self.file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
-                self.file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
-                self.file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
-                self.file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
-                self.file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
-                self.file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
-                self.file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
-                self.file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
-                self.file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
-                self.file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
-                self.file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
-                self.file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
-                self.file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
-                self.file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
-                self.file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
-                self.file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
-                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
-                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
-                self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
+                self.del_file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
+                self.del_file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
+                self.del_file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
+                self.del_file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
+                self.del_file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
+                self.del_file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
+                self.del_file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
+                self.del_file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
+                self.del_file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
+                self.del_file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
+                self.del_file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
+                self.del_file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
+                self.del_file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
+                self.del_file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
+                self.del_file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
+                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
+                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
+                self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
+                self.del_file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
         except:
             pass
 
@@ -2804,6 +2805,7 @@ class MyWidget(QWidget):
                 self.modified_file_table.setItem(i, 7, QTableWidgetItem(time_stamp))
         except:
             pass
+
     # item9_4 폴더 열람 흔적
     def set_recent_folder(self):
         try:
