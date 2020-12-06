@@ -1,7 +1,7 @@
 from EventLogParse import Save_Event
 from LnkParse import Lnk_Parse
 from BrowserParse import BrowserParser
-from PretchParse import Prefetch_Parse
+from PrefetchParse import Prefetch_Parse
 from NTFSParse import MFT_Parser, UsnJrnl_Parser
 from JumpListParse import Jump_Parse
 import os
