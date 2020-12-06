@@ -239,6 +239,8 @@ class MyWidget(QWidget):
             string2 = "윈도우 설치 시간:\t" + rows[6]
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
+        except:
+            pass
 
             self.text1 = QTreeWidgetItem(self.tab2_tree)
             self.text1.setText(0, string1)
@@ -254,10 +256,8 @@ class MyWidget(QWidget):
             self.text6.setText(0, "계정")
             self.text7 = QTreeWidgetItem(self.tab2_tree)
             self.text7.setText(0, "USB")
-            # self.text8 = QTreeWidgetItem(self.tab2_tree)
-            # self.text8.setText(0, "네트워`크")                 ################# 네트워크 파싱하고 주석 해제하기!!
-        except:
-            pass
+            self.text8 = QTreeWidgetItem(self.tab2_tree)
+            self.text8.setText(0, "네트워크")
 
         # MFT 생성 시간
         try:
@@ -272,7 +272,6 @@ class MyWidget(QWidget):
                 self.text3_content[i].setText(0, drive + "드라이브: " + m_time)
         except:
             pass
-
 
         # 계정
         try:
@@ -313,16 +312,20 @@ class MyWidget(QWidget):
                 self.text7_content[i].setText(0, "")
         except:
             pass
-        #
-        # # 네트워크
-        # # query =
-        # # cur.execute(query)
-        # # fors = cur.fetchall()
-        # # self.text8_content = []
-        # # for i in range(len(rows)):
-        # #     ## = rows[i]
-        # #     self.text8_content.append(QTreeWidgetItem(self.text8))
-        # #     self.text8_content[i].setText(0, "##")
+
+        # 네트워크
+        try:
+            query = "SELECT description, ip, default_gateway, lease_obtained_time, lease_terminates_time FROM Network"
+            cur.execute(query)
+            rows = cur.fetchall()
+            self.text8_content = []
+            for i in range(len(rows)):
+                description, ip, default_gateway, obtained, terminates = rows[i]
+                self.text8_content.append(QTreeWidgetItem(self.text8))
+                string = description + ", ip: " + ip + ", 게이트웨이: " + default_gateway + ", 할당: " + obtained + ", 만료: " + terminates
+                self.text8_content[i].setText(0, string)
+        except:
+            pass
 
         self.vbox2.addWidget(self.tab2_tree)
         self.groupbox2.setLayout(self.vbox2)
