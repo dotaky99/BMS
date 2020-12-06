@@ -230,39 +230,6 @@ def Reg_Uninstall(data_list):
         conn.close()
 
 
-def Reg_BAM(data_list):
-    if data_list is not None:
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        try:
-            conn.execute('DROP TABLE IF EXISTS BAM')
-            query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
-            conn.execute(query)
-            cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
-            conn.commit()
-        except:
-            print("Error while making BAM table")
-        conn.close()
-
-
-def Reg_UserAccounts(data_list):
-    if data_list is not None:
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        try:
-            conn.execute('DROP TABLE IF EXISTS UserAccounts')
-            query = "CREATE TABLE UserAccounts(RID TEXT, RID_int INTEGER, last_login_time TEXT, last_password_change_time TEXT," \
-                "expires_on TEXT, last_incorrect_password_time TEXT, logon_failure_count INTEGER, logon_success_count INTEGER," \
-                "account_name TEXT, complete_account_name TEXT, comment TEXT, homedir TEXT, created_on TEXT)"
-            conn.execute(query)
-            cur.executemany("INSERT INTO UserAccounts VALUES(?, ?, ?, "
-                         "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
-            conn.commit()
-        except:
-            print("Error while making UserAccounts table")
-        conn.close()
-
-
 def Reg_MuiCache(data_list):
     if data_list is not None:
         conn = sqlite3.connect("Believe_Me_Sister.db")
@@ -308,6 +275,21 @@ def Reg_UserAssist_F4E(data_list):
         conn.close()
 
 
+def Reg_BAM(data_list):
+    if data_list is not None:
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        try:
+            conn.execute('DROP TABLE IF EXISTS BAM')
+            query = "CREATE TABLE BAM(SID TEXT, program_path TEXT, last_executed TEXT)"
+            conn.execute(query)
+            cur.executemany("INSERT INTO BAM VALUES(?, ?, ?)", data_list)
+            conn.commit()
+        except:
+            print("Error while making BAM table")
+        conn.close()
+
+
 def Reg_UserAssist_CIDSizeMRU(data_list):
     if data_list is not None:
         conn = sqlite3.connect("Believe_Me_Sister.db")
@@ -335,22 +317,6 @@ def Reg_FirstFolder(data_list):
             conn.commit()
         except:
             print("Error while making FirstFolder table")
-        conn.close()
-
-
-def Reg_Connected_USB(data_list):
-    if data_list is not None:
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        try:
-            conn.execute('DROP TABLE IF EXISTS Connected_USB')
-            query = "CREATE TABLE Connected_USB(DCID TEXT, UIID TEXT, GUID TEXT, label TEXT, " \
-                    "first_connected TEXT, last_connected TEXT, vendor_name TEXT, product_name TEXT, version TEXT, serial_num TEXT, random_yn INTEGER)"
-            conn.execute(query)
-            cur.executemany("INSERT INTO Connected_USB VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
-            conn.commit()
-        except:
-            print("Error while making Connected_USB table")
         conn.close()
 
 
@@ -414,6 +380,24 @@ def Reg_OpenSavePidl(data_list):
         conn.close()
 
 
+def Reg_UserAccounts(data_list):
+    if data_list is not None:
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        try:
+            conn.execute('DROP TABLE IF EXISTS UserAccounts')
+            query = "CREATE TABLE UserAccounts(RID TEXT, RID_int INTEGER, last_login_time TEXT, last_password_change_time TEXT," \
+                    "expires_on TEXT, last_incorrect_password_time TEXT, logon_failure_count INTEGER, logon_success_count INTEGER," \
+                    "account_name TEXT, complete_account_name TEXT, comment TEXT, homedir TEXT, created_on TEXT)"
+            conn.execute(query)
+            cur.executemany("INSERT INTO UserAccounts VALUES(?, ?, ?, "
+                            "?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
+            conn.commit()
+        except:
+            print("Error while making UserAccounts table")
+        conn.close()
+
+
 def Reg_Run(data_list):
     if data_list is not None:
         conn = sqlite3.connect("Believe_Me_Sister.db")
@@ -426,6 +410,22 @@ def Reg_Run(data_list):
             conn.commit()
         except:
             print("Error while making Run table")
+        conn.close()
+
+
+def Reg_Connected_USB(data_list):
+    if data_list is not None:
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        try:
+            conn.execute('DROP TABLE IF EXISTS Connected_USB')
+            query = "CREATE TABLE Connected_USB(DCID TEXT, UIID TEXT, GUID TEXT, label TEXT, " \
+                    "first_connected TEXT, last_connected TEXT, vendor_name TEXT, product_name TEXT, version TEXT, serial_num TEXT, random_yn INTEGER)"
+            conn.execute(query)
+            cur.executemany("INSERT INTO Connected_USB VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data_list)
+            conn.commit()
+        except:
+            print("Error while making Connected_USB table")
         conn.close()
 
 
