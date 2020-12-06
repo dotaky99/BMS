@@ -239,25 +239,25 @@ class MyWidget(QWidget):
             string2 = "윈도우 설치 시간:\t" + rows[6]
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
-
-            self.text1 = QTreeWidgetItem(self.tab2_tree)
-            self.text1.setText(0, string1)
-            self.text2 = QTreeWidgetItem(self.tab2_tree)
-            self.text2.setText(0, string2)
-            self.text3 = QTreeWidgetItem(self.tab2_tree)
-            self.text3.setText(0, string3)
-            self.text4 = QTreeWidgetItem(self.tab2_tree)
-            self.text4.setText(0, string4)
-            self.text5 = QTreeWidgetItem(self.tab2_tree)
-            self.text5.setText(0, "MFT 생성 시간")
-            self.text6 = QTreeWidgetItem(self.tab2_tree)
-            self.text6.setText(0, "계정")
-            self.text7 = QTreeWidgetItem(self.tab2_tree)
-            self.text7.setText(0, "USB")
-            # self.text8 = QTreeWidgetItem(self.tab2_tree)
-            # self.text8.setText(0, "네트워`크")                 ################# 네트워크 파싱하고 주석 해제하기!!
         except:
             pass
+
+        self.text1 = QTreeWidgetItem(self.tab2_tree)
+        self.text1.setText(0, string1)
+        self.text2 = QTreeWidgetItem(self.tab2_tree)
+        self.text2.setText(0, string2)
+        self.text3 = QTreeWidgetItem(self.tab2_tree)
+        self.text3.setText(0, string3)
+        self.text4 = QTreeWidgetItem(self.tab2_tree)
+        self.text4.setText(0, string4)
+        self.text5 = QTreeWidgetItem(self.tab2_tree)
+        self.text5.setText(0, "MFT 생성 시간")
+        self.text6 = QTreeWidgetItem(self.tab2_tree)
+        self.text6.setText(0, "계정")
+        self.text7 = QTreeWidgetItem(self.tab2_tree)
+        self.text7.setText(0, "USB")
+        self.text8 = QTreeWidgetItem(self.tab2_tree)
+        self.text8.setText(0, "네트워크")
 
         # MFT 생성 시간
         try:
@@ -272,7 +272,6 @@ class MyWidget(QWidget):
                 self.text3_content[i].setText(0, drive + "드라이브: " + m_time)
         except:
             pass
-
 
         # 계정
         try:
@@ -313,16 +312,20 @@ class MyWidget(QWidget):
                 self.text7_content[i].setText(0, "")
         except:
             pass
-        #
-        # # 네트워크
-        # # query =
-        # # cur.execute(query)
-        # # fors = cur.fetchall()
-        # # self.text8_content = []
-        # # for i in range(len(rows)):
-        # #     ## = rows[i]
-        # #     self.text8_content.append(QTreeWidgetItem(self.text8))
-        # #     self.text8_content[i].setText(0, "##")
+
+        # 네트워크
+        try:
+            query = "SELECT description, ip, default_gateway, lease_obtained_time, lease_terminates_time FROM Network"
+            cur.execute(query)
+            rows = cur.fetchall()
+            self.text8_content = []
+            for i in range(len(rows)):
+                description, ip, default_gateway, obtained, terminates = rows[i]
+                self.text8_content.append(QTreeWidgetItem(self.text8))
+                string = description + ", ip: " + ip + ", 게이트웨이: " + default_gateway + ", 할당: " + obtained + ", 만료: " + terminates
+                self.text8_content[i].setText(0, string)
+        except:
+            pass
 
         self.vbox2.addWidget(self.tab2_tree)
         self.groupbox2.setLayout(self.vbox2)
@@ -969,7 +972,16 @@ class MyWidget(QWidget):
         self.set_PC_update()
         self.tab4.layout.addWidget(self.PC_update_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
-
+        # item2_1 네트워크 - 무선랜 접속 기록
+        self.network_wireless = QTableWidget(self)
+        self.set_network_wireless()
+        self.tab4.layout.addWidget(self.network_wireless)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
+        # item2_1_2 네트워크 - 인터페이스
+        self.network_interface = QTableWidget(self)
+        self.set_network_interface()
+        self.tab4.layout.addWidget(self.network_interface)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
         # item2_2 네트워크 - 이벤트로그
         self.network_evt_table = QTableWidget(self)
         self.set_network_evt()
@@ -1178,8 +1190,10 @@ class MyWidget(QWidget):
 
         self.item2 = QTreeWidgetItem(self.tree)
         self.item2.setText(0, "네트워크")
-        # self.item2_1 = QTreeWidgetItem(self.item2)
-        # self.item2_1.setText(0, "레지스트리")
+        self.item2_1 = QTreeWidgetItem(self.item2)
+        self.item2_1.setText(0, "무선랜 접속 기록")
+        self.item2_1_2 = QTreeWidgetItem(self.item2)
+        self.item2_1_2.setText(0, "인터페이스")
         self.item2_2 = QTreeWidgetItem(self.item2)
         self.item2_2.setText(0, "이벤트로그")
 
@@ -1295,6 +1309,12 @@ class MyWidget(QWidget):
         if it is self.item1_3:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.PC_update_table)
+        if it is self.item2_1:
+            delete.setParent(None)
+            self.tab4.layout.addWidget(self.network_wireless)
+        if it is self.item2_1_2:
+            delete.setParent(None)
+            self.tab4.layout.addWidget(self.network_interface)
         if it is self.item2_2:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.network_evt_table)
@@ -1547,6 +1567,73 @@ class MyWidget(QWidget):
                 self.PC_update_table.setItem(i, 3, QTableWidgetItem(computer))
                 self.PC_update_table.setItem(i, 4, QTableWidgetItem(package))
                 self.PC_update_table.setItem(i, 5, QTableWidgetItem(source))
+        except:
+            pass
+
+    # item2_1 네트워크 - 무선랜 접속 기록
+    def set_network_wireless(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT profile_name, description, GUID, default_gateway_mac, dns_suffix, " \
+                    "datetime(created_time, " + self.UTC + "), datetime(last_connected_time, " + self.UTC + ") FROM Wireless;"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+
+            count = len(rows)
+            self.network_wireless.setRowCount(count)
+            self.network_wireless.setColumnCount(7)
+            column_headers = ["프로필", "상세", "GUID", "게이트웨이 맥주소", "DNS 접미사", "최초 연결", "마지막 연결"]
+            self.network_wireless.setHorizontalHeaderLabels(column_headers)
+
+            for i in range(count):
+                profile_name, description, GUID, default_gateway_mac, dns_suffix, created, last_connected = rows[i]
+                self.network_wireless.setItem(i, 0, QTableWidgetItem(profile_name))
+                self.network_wireless.setItem(i, 1, QTableWidgetItem(description))
+                self.network_wireless.setItem(i, 2, QTableWidgetItem(GUID))
+                self.network_wireless.setItem(i, 3, QTableWidgetItem(default_gateway_mac))
+                self.network_wireless.setItem(i, 4, QTableWidgetItem(dns_suffix))
+                self.network_wireless.setItem(i, 5, QTableWidgetItem(created))
+                self.network_wireless.setItem(i, 6, QTableWidgetItem(last_connected))
+        except:
+            pass
+
+    # item2_1_2 네트워크 - 인터페이스
+    def set_network_interface(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT description, GUID, ip, subnet_mask, default_gateway, dhcp_use, dhcp_server, dns_server, domain, " \
+                    "datetime(lease_obtained_time, " + self.UTC + "), datetime(lease_terminates_time, " + self.UTC + ") FROM Network;"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+
+            count = len(rows)
+            self.network_interface.setRowCount(count)
+            self.network_interface.setColumnCount(11)
+            column_headers = ["설명", "GUID", "ip", "서브넷 마스크", "기본 게이트웨이", "DHCP 사용", "DHCP 서버", "DNS 서버", "도메인", "할당 시간", "만료 시간"]
+            self.network_interface.setHorizontalHeaderLabels(column_headers)
+
+            for i in range(count):
+                description, GUID, ip, subnet_mask, default_gateway, dhcp_use, dhcp_server, dns_server, domain, \
+                lease_obtained_time, lease_terminates_time = rows[i]
+                if dhcp_use == 1:
+                    dhcp_use = "사용"
+                elif dhcp_use == 0:
+                    dhcp_use = "사용 안 함"
+                self.network_interface.setItem(i, 0, QTableWidgetItem(description))
+                self.network_interface.setItem(i, 1, QTableWidgetItem(GUID))
+                self.network_interface.setItem(i, 2, QTableWidgetItem(ip))
+                self.network_interface.setItem(i, 3, QTableWidgetItem(subnet_mask))
+                self.network_interface.setItem(i, 4, QTableWidgetItem(default_gateway))
+                self.network_interface.setItem(i, 5, QTableWidgetItem(dhcp_use))
+                self.network_interface.setItem(i, 6, QTableWidgetItem(dhcp_server))
+                self.network_interface.setItem(i, 7, QTableWidgetItem(dns_server))
+                self.network_interface.setItem(i, 8, QTableWidgetItem(domain))
+                self.network_interface.setItem(i, 9, QTableWidgetItem(lease_obtained_time))
+                self.network_interface.setItem(i, 10, QTableWidgetItem(lease_terminates_time))
         except:
             pass
 
