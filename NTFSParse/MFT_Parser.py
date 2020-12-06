@@ -106,12 +106,14 @@ def mft_parse(mft_file, data_list):
             si_ctime = Format.format_timestamp(attr_standard_information.get_ctime())
             si_etime = Format.format_timestamp(attr_standard_information.get_etime())
             si_usn = attr_standard_information.get_usn()
+            si_flag = MFT.ResolveFlagCodes(attr_standard_information.get_file_attributes())
         else:
             si_mtime = ''
             si_atime = ''
             si_ctime = ''
             si_etime = ''
             si_usn = ''
+            si_flag = ''
 
         fr_lsn = file_record.get_logfile_sequence_number()
 
@@ -122,7 +124,7 @@ def mft_parse(mft_file, data_list):
 
         if file_record.get_flags() & 2 > 0:  # MFT.FILE_FILE_NAME_INDEX_PRESENT > 0:
             fr_directory = 'Y'
-            if file_record.get_flags() & 2:  # 추가. 디렉토리이면서 비할당 (https://zzunsik.tistory.com/29)
+            if file_record.get_flags() & 2:  # 추가. 디렉토리이면서 비할당
                 fr_in_use = 'N'
         else:
             fr_directory = 'N'
@@ -136,18 +138,17 @@ def mft_parse(mft_file, data_list):
                 fn_atime = Format.format_timestamp(attr_file_name.get_atime())
                 fn_ctime = Format.format_timestamp(attr_file_name.get_ctime())
                 fn_etime = Format.format_timestamp(attr_file_name.get_etime())
+                fn_flag = MFT.ResolveFlagCodes(attr_file_name.get_file_attributes())
 
                 t = (
-                drive_name, Format.format_source('File record', source_tag), fr_number, fr_in_use, fr_directory, fr_lsn, file_path, si_mtime,
-                si_atime, si_ctime, si_etime, si_usn, fn_mtime, fn_atime, fn_ctime, fn_etime, objid_time, file_size,
+                drive_name, Format.format_source('File record', source_tag), fr_number, fr_in_use, fr_directory, fr_lsn, file_path, si_flag, fn_flag,
+                si_mtime, si_atime, si_ctime, si_etime, si_usn, fn_mtime, fn_atime, fn_ctime, fn_etime, objid_time, file_size,
                 ads_list, wsl_mtime, wsl_atime, wsl_chtime)
-                # print(t)
                 data_list.append(t)
         else:
             t = (
-            drive_name, Format.format_source('File record', source_tag), fr_number, fr_in_use, fr_directory, fr_lsn, '', si_mtime, si_atime,
+            drive_name, Format.format_source('File record', source_tag), fr_number, fr_in_use, fr_directory, fr_lsn, '', si_flag, '', si_mtime, si_atime,
             si_ctime, si_etime, si_usn, '', '', '', '', objid_time, file_size, ads_list, wsl_mtime, wsl_atime, wsl_chtime)
-            # print(t)
             data_list.append(t)
 
         # Parse a file name index in this file record (if present).
@@ -192,11 +193,12 @@ def mft_parse(mft_file, data_list):
                     fn_atime = Format.format_timestamp(attr_file_name.get_atime())
                     fn_ctime = Format.format_timestamp(attr_file_name.get_ctime())
                     fn_etime = Format.format_timestamp(attr_file_name.get_etime())
+                    fn_flag = MFT.ResolveFlagCodes(attr_file_name.get_file_attributes())
 
                     file_size = attr_file_name.get_file_size()
 
                     t = (
-                    drive_name, Format.format_source('Index record', source_tag), fr_number, '?', fr_directory, '', file_path, '', '', '', '',
+                    drive_name, Format.format_source('Index record', source_tag), fr_number, '?', fr_directory, '', file_path, '', fn_flag, '', '', '', '',
                     '', fn_mtime, fn_atime, fn_ctime, fn_etime, '', file_size, '', '', '', '')
                     data_list.append(t)
 
@@ -238,11 +240,12 @@ def mft_parse(mft_file, data_list):
                     fn_atime = Format.format_timestamp(attr_file_name.get_atime())
                     fn_ctime = Format.format_timestamp(attr_file_name.get_ctime())
                     fn_etime = Format.format_timestamp(attr_file_name.get_etime())
+                    fn_flag = MFT.ResolveFlagCodes(attr_file_name.get_file_attributes())
 
                     file_size = attr_file_name.get_file_size()
 
                     t = (
-                    drive_name, Format.format_source('Slack', source_tag), '?', '?', fr_directory, '', file_path, '', '', '', '', '', fn_mtime,
+                    drive_name, Format.format_source('Slack', source_tag), '?', '?', fr_directory, '', file_path, '', fn_flag, '', '', '', '', '', fn_mtime,
                     fn_atime, fn_ctime, fn_etime, '', file_size, '', '', '', '')
                     data_list.append(t)
 
@@ -251,6 +254,6 @@ def mft_parse(mft_file, data_list):
                     file_path = MFT.PATH_SEPARATOR.join(['<Unknown, likely the same as above>',
                                                          '<Can be partially overwritten or start with a wrong character>' + item])
                     t = (
-                    drive_name, Format.format_source('Slack', source_tag), '?', '?', '?', '', file_path, '', '', '', '', '', '?', '?', '?',
+                    drive_name, Format.format_source('Slack', source_tag), '?', '?', '?', '', file_path, '', '', '', '', '', '', '', '?', '?', '?',
                     '?', '', '?', '', '', '', '')
                     data_list.append(t)
