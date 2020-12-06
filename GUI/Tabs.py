@@ -130,7 +130,7 @@ class MyWidget(QWidget):
         self.color_tab2_table("DRM", tab2_accum)
         try:
             for i in range(len(rows1)):
-                program, install, execute, delete = rows1[i]
+                program, install, execute, delete= rows1[i]
                 self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
                 self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
                 self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
@@ -183,7 +183,7 @@ class MyWidget(QWidget):
         self.color_tab2_table("VM", tab2_accum)
         try:
             for i in range(len(rows5)):
-                name, version, Full_Path, publisher, install_date, Last_Executed1 = rows5[i]
+                name, version, Full_Path, publisher, install_date, Last_Executed1= rows5[i]
                 self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(name))
                 self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(version))
                 self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
@@ -1159,10 +1159,25 @@ class MyWidget(QWidget):
         self.tab4.layout.addWidget(self.eventlog_time_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
 
-        # item9 폴더 열람 흔적
-        self.folder_table = QTableWidget(self)
-        self.set_folder()
-        self.tab4.layout.addWidget(self.folder_table)
+        # item9_1 전체 파일 및 폴더
+        self.file_and_folder_table = QTableWidget(self)
+        self.set_file_and_folder()
+        self.tab4.layout.addWidget(self.file_and_folder_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
+        # item9_2 삭제된 파일 및 폴더
+        self.del_file_and_folder_table = QTableWidget(self)
+        self.set_del_file_and_folder()
+        self.tab4.layout.addWidget(self.del_file_and_folder_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
+        # item9_3 파일 변경 사항
+        self.modified_file_table = QTableWidget(self)
+        self.set_modified_file()
+        self.tab4.layout.addWidget(self.modified_file_table)
+        self.tab4.layout.itemAt(1).widget().setParent(None)
+        # item9_4 최근 폴더 열람 흔적
+        self.recent_folder_table = QTableWidget(self)
+        self.set_recent_folder()
+        self.tab4.layout.addWidget(self.recent_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
 
         self.tab4_table = QTableWidget(self)
@@ -1288,7 +1303,15 @@ class MyWidget(QWidget):
         self.item8_5.setText(0, "시스템 시간 변경 기록")
 
         self.item9 = QTreeWidgetItem(self.tree)
-        self.item9.setText(0, "폴더 열람 흔적")
+        self.item9.setText(0, "파일 및 폴더")
+        self.item9_1 = QTreeWidgetItem(self.item9)
+        self.item9_1.setText(0, "전체 파일 및 폴더")
+        self.item9_2 = QTreeWidgetItem(self.item9)
+        self.item9_2.setText(0, "삭제된 파일 및 폴더")
+        self.item9_3 = QTreeWidgetItem(self.item9)
+        self.item9_3.setText(0, "파일 변경 사항")
+        self.item9_4 = QTreeWidgetItem(self.item9)
+        self.item9_4.setText(0, "최근 열람 폴더 흔적")
 
         self.tab4.layout.addWidget(self.tree)
         self.tree.itemClicked.connect(self.tab4_onItemClicked)
@@ -1417,9 +1440,18 @@ class MyWidget(QWidget):
         if it is self.item8_5:
             delete.setParent(None)
             self.tab4.layout.addWidget(self.eventlog_time_table)
-        if it is self.item9:
+        if it is self.item9_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.folder_table)
+            self.tab4.layout.addWidget(self.file_and_folder_table)
+        if it is self.item9_2:
+            delete.setParent(None)
+            self.tab4.layout.addWidget(self.del_file_and_folder_table)
+        if it is self.item9_3:
+            delete.setParent(None)
+            self.tab4.layout.addWidget(self.modified_file_table)
+        if it is self.item9_4:
+            delete.setParent(None)
+            self.tab4.layout.addWidget(self.recent_folder_table)
 
 #################################################
 #   tab4의 테이블 구성                            #
@@ -2642,8 +2674,138 @@ class MyWidget(QWidget):
         except:
             pass
 
-    # item9 폴더 열람 흔적
-    def set_folder(self):
+    # item9_1 전체 파일 및 폴더
+    def set_file_and_folder(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "select src, drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, " \
+                    "datetime(SI_M_timestamp, " + self.UTC + "), datetime(SI_A_timestamp, " + self.UTC + "), " \
+                    "datetime(SI_C_timestamp, " + self.UTC + "), datetime(SI_E_timestamp, " + self.UTC + "), " \
+                    "datetime(FN_M_timestamp, " + self.UTC + "), datetime(FN_A_timestamp, " + self.UTC + "), " \
+                    "datetime(FN_C_timestamp, " + self.UTC + "), datetime(FN_E_timestamp, " + self.UTC + "), " \
+                    "mft_ref_num, LSN, ADS_list FROM parsed_MFT"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+
+            count = len(rows)
+            self.file_and_folder_table.setRowCount(count)
+            self.file_and_folder_table.setColumnCount(19)
+            column_headers = ["출처", "볼륨", "파일경로", "폴더여부", "할당여부", "파일크기", "$SI Flag", "$FN Flag",
+                              "$SI 생성 시각", "$SI 접근 시간", "$SI 수정 시간", "$SI mft변경 시간",
+                              "$FN 생성 시각", "$FN 접근 시간", "$FN 수정 시간", "$FN mft변경 시간",
+                              "MFT 참조", "LSN", "ADS 목록"]
+            self.file_and_folder_table.setHorizontalHeaderLabels(column_headers)
+
+            for i in range(count):
+                src, drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, \
+                SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
+                FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
+                mft_ref_num, LSN, ADS_list = rows[i]
+                self.file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
+                self.file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
+                self.file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
+                self.file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
+                self.file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
+                self.file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
+                self.file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
+                self.file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
+                self.file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
+                self.file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
+                self.file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
+                self.file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
+                self.file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
+                self.file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
+                self.file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
+                self.file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
+                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
+                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
+                self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
+        except:
+            pass
+    # item9_2 삭제된 파일 및 폴더
+    def set_del_file_and_folder(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "select src, drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, " \
+                    "datetime(SI_M_timestamp, " + self.UTC + "), datetime(SI_A_timestamp, " + self.UTC + "), " \
+                    "datetime(SI_C_timestamp, " + self.UTC + "), datetime(SI_E_timestamp, " + self.UTC + "), " \
+                    "datetime(FN_M_timestamp, " + self.UTC + "), datetime(FN_A_timestamp, " + self.UTC + "), " \
+                    "datetime(FN_C_timestamp, " + self.UTC + "), datetime(FN_E_timestamp, " + self.UTC + "), " \
+                    "mft_ref_num, LSN, ADS_list FROM parsed_MFT WHERE is_in_use LIKE 'Y' and src LIKE 'File record'"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+
+            count = len(rows)
+            self.del_file_and_folder_table.setRowCount(count)
+            self.del_file_and_folder_table.setColumnCount(19)
+            column_headers = ["출처", "볼륨", "파일경로", "폴더여부", "할당여부", "파일크기", "$SI Flag", "$FN Flag, "
+                              "$SI 생성 시각", "$SI 접근 시간", "$SI 수정 시간", "$SI mft변경 시간",
+                              "$FN 생성 시각", "$FN 접근 시간", "$FN 수정 시간", "$FN mft변경 시간",
+                              "MFT 참조", "LSN", "ADS 목록"]
+            self.del_file_and_folder_table.setHorizontalHeaderLabels(column_headers)
+
+            for i in range(count):
+                src, drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, \
+                SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
+                FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
+                mft_ref_num, LSN, ADS_list = rows[i]
+                self.file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
+                self.file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
+                self.file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
+                self.file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
+                self.file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
+                self.file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
+                self.file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
+                self.file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
+                self.file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
+                self.file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
+                self.file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
+                self.file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
+                self.file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
+                self.file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
+                self.file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
+                self.file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
+                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
+                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
+                self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
+        except:
+            pass
+
+    # item9_3 파일 변경 사항
+    def set_modified_file(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "select USN, src, reason, file_name, file_path, MFT_refer_num, parent_MFT_refer_num, " \
+                    "datetime(time_stamp, " + self.UTC + ") FROM parsed_usn"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+
+            count = len(rows)
+            self.modified_file_table.setRowCount(count)
+            self.modified_file_table.setColumnCount(8)
+            column_headers = ["USN", "주체", "변경 이벤트", "파일이름", "파일경로", "MFT 참조주소", "부모 MFT 참조주소", "변경시각"]
+            self.modified_file_table.setHorizontalHeaderLabels(column_headers)
+
+            for i in range(count):
+                USN, src, reason, file_name, file_path, MFT_refer_num, parent_MFT_refer_num, time_stamp = rows[i]
+                self.modified_file_table.setItem(i, 0, QTableWidgetItem(USN))
+                self.modified_file_table.setItem(i, 1, QTableWidgetItem(src))
+                self.modified_file_table.setItem(i, 2, QTableWidgetItem(reason))
+                self.modified_file_table.setItem(i, 3, QTableWidgetItem(file_name))
+                self.modified_file_table.setItem(i, 4, QTableWidgetItem(file_path))
+                self.modified_file_table.setItem(i, 5, QTableWidgetItem(MFT_refer_num))
+                self.modified_file_table.setItem(i, 6, QTableWidgetItem(parent_MFT_refer_num))
+                self.modified_file_table.setItem(i, 7, QTableWidgetItem(time_stamp))
+        except:
+            pass
+    # item9_4 폴더 열람 흔적
+    def set_recent_folder(self):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
@@ -2656,35 +2818,35 @@ class MyWidget(QWidget):
             conn.close()
 
             count = len(rows)
-            self.folder_table.setRowCount(count)
-            self.folder_table.setColumnCount(17)
+            self.recent_folder_table.setRowCount(count)
+            self.recent_folder_table.setColumnCount(17)
             column_headers = ["파일", "링크 파일 경로", "플래그", "크기", "원본 파일 경로", "Show_Command", \
                               "원본 생성 시간", "원본 수정 시간", "원본 접근 시간",
                               "드라이브 시리얼 번호",
                               "드라이브 타입", "볼륨 라벨", "아이콘 경로", "NetBIOS 이름", "Droid_File", "Droid_Vol",
                               "Known_GUID"]
-            self.folder_table.setHorizontalHeaderLabels(column_headers)
+            self.recent_folder_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
                 file_name, lnk_file_full_path, file_flags, file_size, local_base_path, show_command, \
                 drive_serial_number, drive_type, volume_label, icon_location, machine_info, droid_file, droid_vol, known_guid, \
                 target_creation_time, target_modified_time, target_accessed_time = rows[i]
-                self.folder_table.setItem(i, 0, QTableWidgetItem(file_name))
-                self.folder_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
-                self.folder_table.setItem(i, 2, QTableWidgetItem(file_flags))
-                self.folder_table.setItem(i, 3, QTableWidgetItem(file_size))
-                self.folder_table.setItem(i, 4, QTableWidgetItem(local_base_path))
-                self.folder_table.setItem(i, 5, QTableWidgetItem(show_command))
-                self.folder_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
-                self.folder_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
-                self.folder_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
-                self.folder_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
-                self.folder_table.setItem(i, 10, QTableWidgetItem(drive_type))
-                self.folder_table.setItem(i, 11, QTableWidgetItem(volume_label))
-                self.folder_table.setItem(i, 12, QTableWidgetItem(icon_location))
-                self.folder_table.setItem(i, 13, QTableWidgetItem(machine_info))
-                self.folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
-                self.folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
-                self.folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
+                self.recent_folder_table.setItem(i, 0, QTableWidgetItem(file_name))
+                self.recent_folder_table.setItem(i, 1, QTableWidgetItem(lnk_file_full_path))
+                self.recent_folder_table.setItem(i, 2, QTableWidgetItem(file_flags))
+                self.recent_folder_table.setItem(i, 3, QTableWidgetItem(file_size))
+                self.recent_folder_table.setItem(i, 4, QTableWidgetItem(local_base_path))
+                self.recent_folder_table.setItem(i, 5, QTableWidgetItem(show_command))
+                self.recent_folder_table.setItem(i, 6, QTableWidgetItem(target_creation_time))
+                self.recent_folder_table.setItem(i, 7, QTableWidgetItem(target_modified_time))
+                self.recent_folder_table.setItem(i, 8, QTableWidgetItem(target_accessed_time))
+                self.recent_folder_table.setItem(i, 9, QTableWidgetItem(drive_serial_number))
+                self.recent_folder_table.setItem(i, 10, QTableWidgetItem(drive_type))
+                self.recent_folder_table.setItem(i, 11, QTableWidgetItem(volume_label))
+                self.recent_folder_table.setItem(i, 12, QTableWidgetItem(icon_location))
+                self.recent_folder_table.setItem(i, 13, QTableWidgetItem(machine_info))
+                self.recent_folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
+                self.recent_folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
+                self.recent_folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
         except:
             pass
