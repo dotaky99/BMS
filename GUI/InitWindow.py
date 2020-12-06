@@ -1,9 +1,10 @@
-import sys, os
+import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from GUI import SecondWindow
 import Dialogs
+
 
 form_class = uic.loadUiType("Initial Window.ui")[0]
 class InitWindow(QMainWindow, form_class) :
@@ -12,10 +13,6 @@ class InitWindow(QMainWindow, form_class) :
         self.setupUi(self)
         self.setWindowTitle("Believe Me Sister")
         self.pushButton.clicked.connect(self.buttonFunction)
-
-        # self.window2 = SecondWindow.MainWindow()
-        # self.window2.hide()
-
         self.qPixmap = QPixmap()
         self.qPixmap.load("BoB.png")
         self.logo.setPixmap(self.qPixmap)
@@ -28,6 +25,7 @@ class InitWindow(QMainWindow, form_class) :
         self.hide()
         self.window2 = SecondWindow.MainWindow()
         self.window2.show()
+
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)

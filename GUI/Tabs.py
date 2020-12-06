@@ -6,6 +6,7 @@ from PyQt5.QtCore import *
 import sqlite3
 from datetime import timedelta
 
+
 class MyWidget(QWidget):
     def __init__(self, parent, UTC):
         super(MyWidget, self).__init__(parent)

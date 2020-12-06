@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 import Tabs
 import Dialogs
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -81,6 +82,7 @@ class MainWindow(QMainWindow):
         dlg = Dialogs.UTCDialog(self)
         dlg.exec()
         self.UTC = dlg.UTC
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
