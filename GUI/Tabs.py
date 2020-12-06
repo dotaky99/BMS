@@ -1,4 +1,3 @@
-import sys
 import os
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
@@ -63,8 +62,8 @@ class MyWidget(QWidget):
             pass
         # 매체제어
         # Symantec이 설치되었는지 확인
+        symantec = []
         try:
-            symantec = []
             GetRegKey_command = "python ..\RegistryParse\GetRegKey.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
             GetRegValue_command = "python ..\RegistryParse\GetRegValue.py ..\COPY\REGHIVE\\SYSTEM ..\COPY\REGHIVE\\SOFTWARE ..\COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT "
             input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion"
@@ -228,6 +227,10 @@ class MyWidget(QWidget):
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
 
+        string1 = None
+        string2 = None
+        string3 = None
+        string4 = None
         # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대
         try:
             query = "SELECT product_name, product_ID, build_lab, computer_name, " \
@@ -241,6 +244,10 @@ class MyWidget(QWidget):
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
         except:
+            string1 = "윈도우 버전"
+            string2 = "윈도우 설치 시간"
+            string3 = "컴퓨터 이름"
+            string4 = "표준 시간대"
             pass
 
         self.text1 = QTreeWidgetItem(self.tab2_tree)
@@ -294,23 +301,21 @@ class MyWidget(QWidget):
 
         # USB
         try:
-            query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
-                    "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
-            # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
+            # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
+            #         "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
+            query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
             cur.execute(query)
             rows = cur.fetchall()
             self.text7_content = []
-            try:
-                for i in range(len(rows)):
-                    serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
-                    self.text7_content.append(QTreeWidgetItem(self.text7))
-                    if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
-                        string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + serial_num + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
-                    elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
-                        string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
-                    self.text7_content[i].setText(0, string)
-            except:
-                self.text7_content[i].setText(0, "")
+            for i in range(len(rows)):
+                serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
+                self.text7_content.append(QTreeWidgetItem(self.text7))
+                string = None
+                if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
+                    string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + serial_num + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+                elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
+                    string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+                self.text7_content[i].setText(0, string)
         except:
             pass
 
