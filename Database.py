@@ -176,7 +176,8 @@ def MFT_Databases(data_list):
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS parsed_MFT')
     cur.execute(
-        "CREATE TABLE parsed_MFT(drive, src, mft_ref_num, is_in_use, is_dir, LSN, file_path, SI_flag, FN_flag, SI_M_timestamp, SI_A_timestamp, SI_C_timestamp, SI_E_timestamp, SI_USN, FN_M_timestamp, FN_A_timestamp, FN_C_timestamp, FN_E_timestamp, OBJID_timestamp, File_size, ADS_list, WSL_M_timestamp, WSL_A_timestamp, WSL_CH_timestamp);")
+        "CREATE TABLE parsed_MFT(drive TEXT, src TEXT, mft_ref_num TEXT, is_in_use TEXT, is_dir TEXT, LSN TEXT, file_path TEXT, SI_flag TEXT, FN_flag TEXT, SI_M_timestamp DATETIME, SI_A_timestamp DATETIME, SI_C_timestamp DATETIME, SI_E_timestamp DATETIME"
+        ", SI_USN TEXT, FN_M_timestamp DATETIME, FN_A_timestamp DATETIME, FN_C_timestamp DATETIME, FN_E_timestamp DATETIME, OBJID_timestamp DATETIME, File_size TEXT, ADS_list TEXT, WSL_M_timestamp DATETIME, WSL_A_timestamp DATETIME, WSL_CH_timestamp DATETIME);")
     cur.executemany('INSERT INTO parsed_MFT VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', data_list)
     conn.commit()
     conn.close()
@@ -187,7 +188,7 @@ def Usn_Databases(data_list):
     cur = conn.cursor()
     conn.execute('DROP TABLE IF EXISTS parsed_usn')
     cur.execute(
-        "CREATE TABLE parsed_usn(USN, src, reason, MFT_refer_num, parent_MFT_refer_num, time_stamp, file_name, file_path);")
+        "CREATE TABLE parsed_usn(USN TEXT, src TEXT, reason TEXT, MFT_refer_num TEXT, parent_MFT_refer_num TEXT, time_stamp DATETIME, file_name TEXT, file_path TEXT);")
     cur.executemany('INSERT INTO parsed_usn VALUES (?, ?, ?, ?, ?, ?, ?, ?);', data_list)
     conn.commit()
     conn.close()
