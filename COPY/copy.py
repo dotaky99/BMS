@@ -45,8 +45,8 @@ def file_copy():
         os.mkdir(nt_dir)
     for drive in drive_list:
         os.system(r'COPY\RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\COPY\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
-    data = os.popen(r'COPY\fls.exe \\.\c: 11 | find "$UsnJrnl:$J"').read().strip().split(' ')[1].split(':')[0]
-    os.system(r'COPY\icat.exe -f ntfs \\.\c: {} > {}\COPY\NTFS\$UsnJrnl'.format(data, cur_path))
+    data = os.popen(r'COPY\usncopy\fls.exe \\.\c: 11 | find "$UsnJrnl:$J"').read().strip().split(' ')[1].split(':')[0]
+    os.system(r'COPY\usncopy\icat.exe -f ntfs \\.\c: {} > {}\COPY\NTFS\$UsnJrnl'.format(data, cur_path))
 
     # Event Log BMS/COPY/eventlogs/Logs
     os.system(r'COPY\forecopy_handy.exe -e COPY')
