@@ -1,6 +1,3 @@
-# https://github.com/jschicht/RawCopy
-# https://github.com/jschicht/ExtractUsnJrnl
-# http://forensic-proof.com/archives/3757
 import os
 import string
 from ctypes  import windll
