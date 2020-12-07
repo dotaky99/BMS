@@ -30,6 +30,6 @@ def main():
     UsnJrnl_Parser.usn_parse()
 
     print("[*] Parsing Registry")
-    os.system('python ../RegistryParse\REGParse.py ..\COPY\REGHIVE\SYSTEM ..\COPY\REGHIVE\SOFTWARE ..\COPY\REGHIVE\SAM ..\COPY\REGHIVE\\NTUSER.DAT ..\COPY\REGHIVE\\USRCLASS.DAT')
+    os.system('python RegistryParse\REGParse.py COPY\REGHIVE\SYSTEM COPY\REGHIVE\SOFTWARE COPY\REGHIVE\SAM COPY\REGHIVE\\NTUSER.DAT COPY\REGHIVE\\USRCLASS.DAT')
 
     print("THE END Parsing")

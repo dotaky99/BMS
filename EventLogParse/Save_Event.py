@@ -3,68 +3,68 @@ import Database
 import os
 
 def Save_Event():
-    if os.path.isfile('../COPY/eventlogs/Logs/System.evtx'):
-        system_et = '../COPY/eventlogs/Logs/System.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/System.evtx'):
+        system_et = 'COPY/eventlogs/Logs/System.evtx'
     else:
         system_et = 'system_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Security.evtx'):
-        security_et = '../COPY/eventlogs/Logs/Security.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Security.evtx'):
+        security_et = 'COPY/eventlogs/Logs/Security.evtx'
     else:
         security_et = 'security_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Application.evtx'):
-        application_et = '../COPY/eventlogs/Logs/Application.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Application.evtx'):
+        application_et = 'COPY/eventlogs/Logs/Application.evtx'
     else:
         application_et = 'application_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/setup.evtx'):
-        setup_et = '../COPY/eventlogs/Logs/Setup.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/setup.evtx'):
+        setup_et = 'COPY/eventlogs/Logs/Setup.evtx'
     else:
         setup_et = 'setup_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'):
-        compat_assistant_et = '../COPY/eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'):
+        compat_assistant_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Application-Experience%4Program-Compatibility-Assistant.evtx'
     else:
         compat_assistant_et = 'compat_assistant_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'):
-        terminal_local_et = '../COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'):
+        terminal_local_et = 'COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx'
     else:
         terminal_local_et = 'terminal_local_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'):
-        terminal_remote_et = '../COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'):
+        terminal_remote_et = 'COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RemoteConnectionManager%4Operational.evtx'
     else:
         terminal_remote_et = 'terminal_remote_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'):
-        terminal_rdp_et = '../COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'):
+        terminal_rdp_et = 'COPY/eventlogs/Logs/Microsoft-Windows-TerminalServices-RDPClient%4Operational.evtx'
     else:
         terminal_rdp_et = 'terminal_rdp_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'):
-        wlan_config_et = '../COPY/eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'):
+        wlan_config_et = 'COPY/eventlogs/Logs/Microsoft-Windows-WLAN-AutoConfig%4Operational.evtx'
     else:
         wlan_config_et = 'wlan_config_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'):
-        net_profile_et = '../COPY/eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'):
+        net_profile_et = 'COPY/eventlogs/Logs/Microsoft-Windows-NetworkProfile%4Operational.evtx'
     else:
         net_profile_et = 'net_profile_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'):
-        kernel_boot_et = '../COPY/eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'):
+        kernel_boot_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Kernel-Boot%4Operational.evtx'
     else:
         kernel_boot_et = 'kernel_boot_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'):
-        partition_et = '../COPY/eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'):
+        partition_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Partition%4Diagnostic.evtx'
     else:
         partition_et = 'partition_et'
 
-    if os.path.isfile('../COPY/eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'):
-        biometrics_et = '../COPY/eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'
+    if os.path.isfile('COPY/eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'):
+        biometrics_et = 'COPY/eventlogs/Logs/Microsoft-Windows-Biometrics%4Operational.evtx'
     else:
         biometrics_et = 'biometrics_et'
 
