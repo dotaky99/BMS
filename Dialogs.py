@@ -128,5 +128,4 @@ class FileCopy(QDialog):
 
     def pushButtonCopy(self):
         copy.main()
-        print("Copy Complete")
         self.close()

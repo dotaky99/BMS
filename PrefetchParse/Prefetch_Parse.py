@@ -12,8 +12,6 @@ import Database
 second_data_list1 = []
 second_data_list2 = []
 
-path_dir = 'COPY\PREFETCH/'
-file_list = os.listdir(path_dir)
 
 class Prefetch(object):
 
@@ -236,6 +234,7 @@ class Prefetch(object):
             data_list2 = [i.split("\\")[-1], i]
             second_data_list2.append(data_list2)
 
+
 class DecompressWin10(object):
     def __init__(self):
         pass
@@ -320,8 +319,12 @@ class DecompressWin10(object):
 
         return bytearray(ntDecompressed)
 
+
 #Execute
 def main():
+    path_dir = 'COPY\PREFETCH/'
+    file_list = os.listdir(path_dir)
+
     for i in file_list:
         if i.endswith(".pf"):
             try:

@@ -75,4 +75,5 @@ def file_copy():
 
 def main():
     file_copy()
+    print("THE END Copy")
     Parse.main()
