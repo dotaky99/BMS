@@ -45,7 +45,8 @@ def file_copy():
         os.mkdir(nt_dir)
     for drive in drive_list:
         os.system(r'COPY\RawCopy.exe /FileNamePath:{}:\$mft /OutputPath:{}\COPY\NTFS /OutputName:{}_mft'.format(drive,cur_path,drive))
-    os.system(r'COPY\ExtractUsnJrnl.exe /DevicePath:C: /OutputPath:{}\COPY\NTFS /OutputName:$UsnJrnl'.format(cur_path))
+    data = os.popen(r'COPY\fls.exe \\.\c: 11 | find "$UsnJrnl:$J"').read().strip().split(' ')[1].split(':')[0]
+    os.system(r'COPY\icat.exe -f ntfs \\.\c: {} > {}\COPY\NTFS\$UsnJrnl'.format(data, cur_path))
 
     # Event Log BMS/COPY/eventlogs/Logs
     os.system(r'COPY\forecopy_handy.exe -e COPY')
@@ -71,7 +72,6 @@ def file_copy():
     # JMPLIST BMS/COPY/JUMPLIST
     os.system(r'robocopy "%UserProfile%\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations" COPY/JUMPLIST')
     os.system(r'robocopy "%UserProfile%\AppData\Roaming\Microsoft\Windows\Recent\CustomDestinations" COPY/JUMPLIST')
-
 
 def main():
     file_copy()
