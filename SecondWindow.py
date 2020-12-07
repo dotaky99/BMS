@@ -4,27 +4,23 @@ from PyQt5.QtGui import *
 import Tabs
 import Dialogs
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Believe Me Sister' # 실행 프로그램의 이름
-        # 실행 프로그램의 시작 위치 설정
-        # self.left = 100
-        # self.top = 100
-        # self.width = 1000
-        # self.height = 700
         self.showMaximized();
         self.initUI()
         # UTC 변환
         self.UTC = None
         self.init_UTC()
+        # Widget 띄우기
         self.widget = Tabs.MyWidget(self, self.UTC)
         self.setCentralWidget(self.widget)
 
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('bob.png')) # 실행 프로그램 대표 이미지
-        # self.setGeometry(self.left, self.top, self.width, self.height) # 실행 프로그램의 시작 위치
         self.make_menubar() # 메뉴바 만들기
         self.show()
 
@@ -81,6 +77,7 @@ class MainWindow(QMainWindow):
         dlg = Dialogs.UTCDialog(self)
         dlg.exec()
         self.UTC = dlg.UTC
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
