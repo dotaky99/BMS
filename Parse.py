@@ -6,7 +6,8 @@ from NTFSParse import MFT_Parser, UsnJrnl_Parser
 from JumpListParse import Jump_Parse
 import os
 
-if __name__ == "__main__":
+
+def main():
     print("[*] Parsing Event Log")
     Save_Event.Save_Event()
 
