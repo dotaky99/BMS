@@ -956,6 +956,7 @@ class MyWidget(QWidget):
     # tab4 구성
     def set_tab4(self):
         self.tab4.layout = QHBoxLayout(self)
+        self.rightlayout = QVBoxLayout(self)
         self.set_tab4_tree()
 
         # item1_1 시스템 정보
@@ -1186,9 +1187,24 @@ class MyWidget(QWidget):
         self.tab4.layout.addWidget(self.recent_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
 
+        self.search = QLineEdit(self)
+        self.search.setPlaceholderText("Search ...")
+        self.rightlayout.addWidget(self.search)
         self.tab4_table = QTableWidget(self)
-        self.tab4.layout.addWidget(self.tab4_table)
+        self.rightlayout.addWidget(self.tab4_table)
+        self.tab4.layout.addLayout(self.rightlayout)
         self.tab4.setLayout(self.tab4.layout)
+
+        self.search.textChanged.connect(self.search_keyword)
+
+    def search_keyword(self, s):
+        items = self.rightlayout.itemAt(1).widget().findItems(s, Qt.MatchContains)
+
+        for i in range(self.rightlayout.itemAt(1).widget().rowCount()):
+            self.rightlayout.itemAt(1).widget().hideRow(i)
+
+        for item in items:
+            self.rightlayout.itemAt(1).widget().showRow(item.row())
 
     # tab4의 tree 구성
     def set_tab4_tree(self):
@@ -1324,140 +1340,184 @@ class MyWidget(QWidget):
 
     # tab4의 tree의 아이템을 클릭할 시 레이아웃에서 현재 테이블을 클릭한 아이템의 테이블로 교체
     def tab4_onItemClicked(self, it, col):
-        delete = self.tab4.layout.itemAt(1).widget()
+        delete = self.rightlayout.itemAt(1).widget()
 
         if it is self.item1_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.PC_system_table)
+            self.rightlayout.addWidget(self.PC_system_table)
+            self.search.clear()
         if it is self.item1_2_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.PC_user_reg_table)
+            self.rightlayout.addWidget(self.PC_user_reg_table)
+            self.search.clear()
         if it is self.item1_2_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.PC_user_evt_table)
+            self.rightlayout.addWidget(self.PC_user_evt_table)
+            self.search.clear()
         if it is self.item1_3:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.PC_update_table)
+            self.rightlayout.addWidget(self.PC_update_table)
+            self.search.clear()
         if it is self.item2_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.network_wireless)
+            self.rightlayout.addWidget(self.network_wireless)
+            self.search.clear()
         if it is self.item2_1_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.network_interface)
+            self.rightlayout.addWidget(self.network_interface)
+            self.search.clear()
         if it is self.item2_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.network_evt_table)
+            self.rightlayout.addWidget(self.network_evt_table)
+            self.search.clear()
         if it is self.item3_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.storage_reg_table)
+            self.rightlayout.addWidget(self.storage_reg_table)
+            self.search.clear()
         if it is self.item3_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.storage_evt_table)
+            self.rightlayout.addWidget(self.storage_evt_table)
+            self.search.clear()
         if it is self.item4_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_search_table)
+            self.rightlayout.addWidget(self.browser_search_table)
+            self.search.clear()
         if it is self.item4_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_dowload_table)
+            self.rightlayout.addWidget(self.browser_dowload_table)
+            self.search.clear()
         if it is self.item4_3:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_url_table)
+            self.rightlayout.addWidget(self.browser_url_table)
+            self.search.clear()
         if it is self.item4_4:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_login_table)
+            self.rightlayout.addWidget(self.browser_login_table)
+            self.search.clear()
         if it is self.item4_5:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_cookies_table)
+            self.rightlayout.addWidget(self.browser_cookies_table)
+            self.search.clear()
         if it is self.item4_6:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_cache_table)
+            self.rightlayout.addWidget(self.browser_cache_table)
+            self.search.clear()
         if it is self.item4_7:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_bookmark_table)
+            self.rightlayout.addWidget(self.browser_bookmark_table)
+            self.search.clear()
         if it is self.item4_8:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_autofill_table)
+            self.rightlayout.addWidget(self.browser_autofill_table)
+            self.search.clear()
         if it is self.item4_9:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_preference_table)
+            self.rightlayout.addWidget(self.browser_preference_table)
+            self.search.clear()
         if it is self.item4_10:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.browser_cloud_table)
+            self.rightlayout.addWidget(self.browser_cloud_table)
+            self.search.clear()
         if it is self.item5_1_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_bam)
+            self.rightlayout.addWidget(self.program_bam)
+            self.search.clear()
         if it is self.item5_1_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_userassist)
+            self.rightlayout.addWidget(self.program_userassist)
+            self.search.clear()
         if it is self.item5_1_3:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_uninstall)
+            self.rightlayout.addWidget(self.program_uninstall)
+            self.search.clear()
         if it is self.item5_1_4:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_muicache)
+            self.rightlayout.addWidget(self.program_muicache)
+            self.search.clear()
         if it is self.item5_1_5:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_firstfolder)
+            self.rightlayout.addWidget(self.program_firstfolder)
+            self.search.clear()
         if it is self.item5_1_6:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_cidsizemru)
+            self.rightlayout.addWidget(self.program_cidsizemru)
+            self.search.clear()
         if it is self.item5_1_7:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.etc_dialog_table)
+            self.rightlayout.addWidget(self.etc_dialog_table)
+            self.search.clear()
         if it is self.item5_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.program_pre)
+            self.rightlayout.addWidget(self.program_pre)
+            self.search.clear()
         if it is self.item6_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.doc_reg_table)
+            self.rightlayout.addWidget(self.doc_reg_table)
+            self.search.clear()
         if it is self.item6_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.doc_lnk_table)
+            self.rightlayout.addWidget(self.doc_lnk_table)
+            self.search.clear()
         if it is self.item6_3:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.doc_jmp_table)
+            self.rightlayout.addWidget(self.doc_jmp_table)
+            self.search.clear()
         if it is self.item6_4:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.doc_pre_table)
+            self.rightlayout.addWidget(self.doc_pre_table)
+            self.search.clear()
         if it is self.item7_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.etc_lnk_table)
+            self.rightlayout.addWidget(self.etc_lnk_table)
+            self.search.clear()
         if it is self.item7_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.etc_pre_table)
+            self.rightlayout.addWidget(self.etc_pre_table)
+            self.search.clear()
         if it is self.item8_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_delete_table)
+            self.rightlayout.addWidget(self.eventlog_delete_table)
+            self.search.clear()
         if it is self.item8_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_terminate_table)
+            self.rightlayout.addWidget(self.eventlog_terminate_table)
+            self.search.clear()
         if it is self.item8_3_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_onoff_table)
+            self.rightlayout.addWidget(self.eventlog_onoff_table)
+            self.search.clear()
         if it is self.item8_3_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_powersaving_table)
+            self.rightlayout.addWidget(self.eventlog_powersaving_table)
+            self.search.clear()
         if it is self.item8_4_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_access1_table)
+            self.rightlayout.addWidget(self.eventlog_access1_table)
+            self.search.clear()
         if it is self.item8_4_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_access2_table)
+            self.rightlayout.addWidget(self.eventlog_access2_table)
+            self.search.clear()
         if it is self.item8_5:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.eventlog_time_table)
+            self.rightlayout.addWidget(self.eventlog_time_table)
+            self.search.clear()
         if it is self.item9_1:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.file_and_folder_table)
+            self.rightlayout.addWidget(self.file_and_folder_table)
+            self.search.clear()
         if it is self.item9_2:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.del_file_and_folder_table)
+            self.rightlayout.addWidget(self.del_file_and_folder_table)
+            self.search.clear()
         if it is self.item9_3:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.modified_file_table)
+            self.rightlayout.addWidget(self.modified_file_table)
+            self.search.clear()
         if it is self.item9_4:
             delete.setParent(None)
-            self.tab4.layout.addWidget(self.recent_folder_table)
+            self.rightlayout.addWidget(self.recent_folder_table)
+            self.search.clear()
 
 #################################################
 #   tab4의 테이블 구성                            #
