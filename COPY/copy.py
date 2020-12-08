@@ -1,16 +1,21 @@
 import os
-import string
-from ctypes import windll
+import win32com.client
 import getpass
 import Parse
 
 def get_drives():
     drives = []
-    bitmask = windll.kernel32.GetLogicalDrives()
-    for letter in string.ascii_uppercase:
-        if bitmask & 1:
+
+    strComputer = "."
+    objWMIService = win32com.client.Dispatch("WbemScripting.SWbemLocator")
+    objSWbemServices = objWMIService.ConnectServer(strComputer, "root\cimv2")
+    colItems = objSWbemServices.ExecQuery("Select * from Win32_LogicalDisk")
+
+    for obj in colItems:
+        if obj.FileSystem =="NTFS":
+            letter = obj.Name.split(':')[0]
             drives.append(letter)
-        bitmask >>= 1
+
     return drives
 
 def file_copy():
