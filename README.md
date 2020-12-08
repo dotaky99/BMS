@@ -24,6 +24,9 @@
 - lxml
 - olefile
 - pycryptodomex
+- PyQt5
+- six
+- hexdump
 - 등등 더 있음
 
 ### 프로그램 실행순서
