@@ -768,7 +768,7 @@ class FileRecordSegment(object):
     def is_in_use(self):
         """Check if a file record segment (FRS) is in use (according to its flags)."""
 
-        return self.get_flags() & FILE_RECORD_SEGMENT_IN_USE > 0  # 0이면 false, 그 외 true임 -> 디렉토리이면서 비할당인 02도
+        return self.get_flags() & FILE_RECORD_SEGMENT_IN_USE > 0
 
     def get_first_free_byte_offset(self):
         """Get and return a relative offset to the first free byte in this file record segment (FRS)."""

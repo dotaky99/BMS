@@ -122,10 +122,8 @@ def mft_parse(mft_file, data_list):
         else:
             fr_in_use = 'N'
 
-        if file_record.get_flags() & 2 > 0:  # MFT.FILE_FILE_NAME_INDEX_PRESENT > 0:
+        if file_record.get_flags() & 2 > 0:
             fr_directory = 'Y'
-            if file_record.get_flags() & 2:  # 추가. 디렉토리이면서 비할당
-                fr_in_use = 'N'
         else:
             fr_directory = 'N'
 

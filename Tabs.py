@@ -1173,7 +1173,7 @@ class MyWidget(QWidget):
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_2 삭제된 파일 및 폴더
         self.del_file_and_folder_table = QTableWidget(self)
-        # self.set_del_file_and_folder()#######################################################################################################
+        self.set_del_file_and_folder()#######################################################################################################
         self.tab4.layout.addWidget(self.del_file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_3 파일 변경 사항
@@ -2796,49 +2796,48 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "select src, drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, " \
+            query = "select drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, " \
                     "datetime(SI_M_timestamp, " + self.UTC + "), datetime(SI_A_timestamp, " + self.UTC + "), " \
                     "datetime(SI_C_timestamp, " + self.UTC + "), datetime(SI_E_timestamp, " + self.UTC + "), " \
                     "datetime(FN_M_timestamp, " + self.UTC + "), datetime(FN_A_timestamp, " + self.UTC + "), " \
                     "datetime(FN_C_timestamp, " + self.UTC + "), datetime(FN_E_timestamp, " + self.UTC + "), " \
-                    "mft_ref_num, LSN, ADS_list FROM parsed_MFT WHERE is_in_use LIKE 'Y' and src LIKE 'File record'"
+                    "mft_ref_num, LSN, ADS_list FROM parsed_MFT WHERE is_in_use LIKE 'N' and src LIKE 'File record'"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
 
             count = len(rows)
             self.del_file_and_folder_table.setRowCount(count)
-            self.del_file_and_folder_table.setColumnCount(19)
-            column_headers = ["출처", "볼륨", "파일경로", "폴더여부", "할당여부", "파일크기", "$SI Flag", "$FN Flag, "
+            self.del_file_and_folder_table.setColumnCount(18)
+            column_headers = ["볼륨", "파일경로", "폴더여부", "할당여부", "파일크기", "$SI Flag", "$FN Flag",
                               "$SI 생성 시각", "$SI 접근 시간", "$SI 수정 시간", "$SI mft변경 시간",
                               "$FN 생성 시각", "$FN 접근 시간", "$FN 수정 시간", "$FN mft변경 시간",
                               "MFT 참조", "LSN", "ADS 목록"]
             self.del_file_and_folder_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                src, drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, \
+                drive, file_path, is_dir, is_in_use, file_size, SI_flag, FN_flag, \
                 SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
                 FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
                 mft_ref_num, LSN, ADS_list = rows[i]
-                self.del_file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
-                self.del_file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
-                self.del_file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
-                self.del_file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_dir))
-                self.del_file_and_folder_table.setItem(i, 4, QTableWidgetItem(is_in_use))
-                self.del_file_and_folder_table.setItem(i, 5, QTableWidgetItem(file_size))
-                self.del_file_and_folder_table.setItem(i, 6, QTableWidgetItem(SI_flag))
-                self.del_file_and_folder_table.setItem(i, 7, QTableWidgetItem(FN_flag))
-                self.del_file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_C_timestamp))
-                self.del_file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_A_timestamp))
-                self.del_file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_M_timestamp))
-                self.del_file_and_folder_table.setItem(i, 11, QTableWidgetItem(SI_E_timestamp))
-                self.del_file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_C_timestamp))
-                self.del_file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
-                self.del_file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
-                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
-                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
-                self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
-                self.del_file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
+                self.del_file_and_folder_table.setItem(i, 0, QTableWidgetItem(drive))
+                self.del_file_and_folder_table.setItem(i, 1, QTableWidgetItem(file_path))
+                self.del_file_and_folder_table.setItem(i, 2, QTableWidgetItem(is_dir))
+                self.del_file_and_folder_table.setItem(i, 3, QTableWidgetItem(is_in_use))
+                self.del_file_and_folder_table.setItem(i, 4, QTableWidgetItem(file_size))
+                self.del_file_and_folder_table.setItem(i, 5, QTableWidgetItem(SI_flag))
+                self.del_file_and_folder_table.setItem(i, 6, QTableWidgetItem(FN_flag))
+                self.del_file_and_folder_table.setItem(i, 7, QTableWidgetItem(SI_C_timestamp))
+                self.del_file_and_folder_table.setItem(i, 8, QTableWidgetItem(SI_A_timestamp))
+                self.del_file_and_folder_table.setItem(i, 9, QTableWidgetItem(SI_M_timestamp))
+                self.del_file_and_folder_table.setItem(i, 10, QTableWidgetItem(SI_E_timestamp))
+                self.del_file_and_folder_table.setItem(i, 11, QTableWidgetItem(FN_C_timestamp))
+                self.del_file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_A_timestamp))
+                self.del_file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_M_timestamp))
+                self.del_file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_E_timestamp))
+                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(mft_ref_num))
+                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(LSN))
+                self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(ADS_list))
         except:
             pass
 
