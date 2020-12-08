@@ -110,8 +110,8 @@ class MyWidget(QWidget):
         try:
             query5 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + "), " \
                      "datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, prefetch1 b " \
-                     "WHERE (a.name like '%vmware%' and b.Executable_Name like '%vmware%') " \
-                     "or (a.name like '%virtualbox%' and b.Executable_Name like '%virtualbox%')"
+                     "WHERE (a.name like '%vmware%' or b.Executable_Name like '%vmware%') " \
+                     "or (a.name like '%virtualbox%' or b.Executable_Name like '%virtualbox%')"
             cur.execute(query5)
             rows5 = cur.fetchall()
         except:
@@ -194,7 +194,15 @@ class MyWidget(QWidget):
             pass
 
         self.tab2_table.verticalHeader().hide()
-        self.tab2_table.resizeColumnsToContents()
+        self.tab2_table.setColumnWidth(0, self.width()*3/30)
+        self.tab2_table.setColumnWidth(1, self.width()*4/30)
+        self.tab2_table.setColumnWidth(2, self.width()*2/30)
+        self.tab2_table.setColumnWidth(3, self.width()*13/30)
+        self.tab2_table.setColumnWidth(4, self.width()*3/30)
+        self.tab2_table.setColumnWidth(5, self.width()*4/30)
+        self.tab2_table.setColumnWidth(6, self.width()*4/30)
+        self.tab2_table.setColumnWidth(7, self.width()*3/30)
+
         self.vbox1.addWidget(self.tab2_table)
         self.groupbox1.setLayout(self.vbox1)
         self.tab2.layout.addWidget(self.groupbox1)
