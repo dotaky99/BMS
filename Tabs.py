@@ -37,8 +37,8 @@ class MyWidget(QWidget):
     # tab2 구성
     def set_tab2(self):
         self.tab2.layout = QVBoxLayout()
-        self.set_checklist()
         self.set_PCinfo()
+        self.set_checklist()
         self.tab2.setLayout(self.tab2.layout)
 
     # tab2 수집 전 확인 사항
@@ -226,9 +226,9 @@ class MyWidget(QWidget):
         self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(229, 243, 255))
 
-    # tab2 PC 정보
+    # tab2 요약 정보
     def set_PCinfo(self):
-        self.groupbox2 = QGroupBox("PC 정보")
+        self.groupbox2 = QGroupBox("요약 정보")
         self.vbox2 = QVBoxLayout()
         self.tab2_tree = QTreeWidget()
         self.tab2_tree.header().setVisible(False)
@@ -248,7 +248,7 @@ class MyWidget(QWidget):
             rows = cur.fetchall()[0]
 
             string1 = "윈도우 버전:\t" + rows[0] + ", " + rows[1] + ", " + rows[2]
-            string2 = "윈도우 설치 시간:\t" + rows[6]
+            string2 = "윈도우 설치 시간: " + rows[6]
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
         except:
@@ -258,13 +258,15 @@ class MyWidget(QWidget):
             string4 = "표준 시간대"
             pass
 
-        self.text1 = QTreeWidgetItem(self.tab2_tree)
+        self.text0 = QTreeWidgetItem(self.tab2_tree)
+        self.text0.setText(0, "PC 정보")
+        self.text1 = QTreeWidgetItem(self.text0)
         self.text1.setText(0, string1)
-        self.text2 = QTreeWidgetItem(self.tab2_tree)
+        self.text2 = QTreeWidgetItem(self.text0)
         self.text2.setText(0, string2)
-        self.text3 = QTreeWidgetItem(self.tab2_tree)
+        self.text3 = QTreeWidgetItem(self.text0)
         self.text3.setText(0, string3)
-        self.text4 = QTreeWidgetItem(self.tab2_tree)
+        self.text4 = QTreeWidgetItem(self.text0)
         self.text4.setText(0, string4)
         self.text5 = QTreeWidgetItem(self.tab2_tree)
         self.text5.setText(0, "MFT 생성 시간")
@@ -285,7 +287,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 drive, m_time = rows[i]
                 self.text3_content.append(QTreeWidgetItem(self.text5))
-                self.text3_content[i].setText(0, drive + "드라이브: " + m_time)
+                self.text3_content[i].setText(0, drive + ":\ : " + m_time)
         except:
             pass
 
@@ -619,7 +621,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, FN_E_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(FN_E_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ MFT 생성"
                 string2 = " - FN_E_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -1192,12 +1194,12 @@ class MyWidget(QWidget):
 
         # item9_1 전체 파일 및 폴더
         self.file_and_folder_table = QTableWidget(self)
-        self.set_file_and_folder()
+        # self.set_file_and_folder()
         self.tab4.layout.addWidget(self.file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_2 삭제된 파일 및 폴더
         self.del_file_and_folder_table = QTableWidget(self)
-        self.set_del_file_and_folder()
+        # self.set_del_file_and_folder()
         self.tab4.layout.addWidget(self.del_file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_3 파일 변경 사항
@@ -1221,6 +1223,7 @@ class MyWidget(QWidget):
 
         self.search.textChanged.connect(self.search_keyword)
 
+    # tab4의 테이블 필터링 기능
     def search_keyword(self, s):
         items = self.rightlayout.itemAt(1).widget().findItems(s, Qt.MatchContains)
 
