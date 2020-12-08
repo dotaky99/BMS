@@ -110,8 +110,8 @@ class MyWidget(QWidget):
         try:
             query5 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + "), " \
                      "datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, prefetch1 b " \
-                     "WHERE (a.name like '%vmware%' or b.Executable_Name like '%vmware%') " \
-                     "or (a.name like '%virtualbox%' or b.Executable_Name like '%virtualbox%')"
+                     "WHERE (a.name like '%vmware%' and b.Executable_Name like '%vmware%') " \
+                     "or (a.name like '%virtualbox%' and b.Executable_Name like '%virtualbox%')"
             cur.execute(query5)
             rows5 = cur.fetchall()
         except:
