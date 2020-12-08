@@ -64,17 +64,17 @@ class MyWidget(QWidget):
         # Symantec이 설치되었는지 확인
         symantec = []
         try:
-            GetRegKey_command = "python RegistryParse\GetRegKey.py COPY\REGHIVE\\SYSTEM COPY\REGHIVE\\SOFTWARE COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT COPY\REGHIVE\\USRCLASS.DAT "
-            GetRegValue_command = "python RegistryParse\GetRegValue.py COPY\REGHIVE\\SYSTEM COPY\REGHIVE\\SOFTWARE COPY\REGHIVE\\SAM REGHIVE\\NTUSER.DAT COPY\REGHIVE\\USRCLASS.DAT "
-            input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion"
+            GetRegKey_command = 'RegistryParse\\GetRegKey.exe COPY\\REGHIVE\\SYSTEM COPY\\REGHIVE\\SOFTWARE COPY\\REGHIVE\\SAM REGHIVE\\NTUSER.DAT COPY\\REGHIVE\\USRCLASS.DAT '
+            GetRegValue_command = 'RegistryParse\\GetRegValue.exe COPY\\REGHIVE\\SYSTEM COPY\\REGHIVE\\SOFTWARE COPY\\REGHIVE\\SAM REGHIVE\\NTUSER.DAT COPY\\REGHIVE\\USRCLASS.DAT '
+            input = 'SOFTWARE "Symantec\\Symantec Endpoint Protection\\CurrentVersion"'
             result1 = os.popen(GetRegKey_command + input).read()
-            input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion"
+            input = 'SOFTWARE "Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion"'
             result2 = os.popen(GetRegKey_command + input).read()
             if result1 == 1 or result2 == 1:    # 시만텍이 있는 경우
                 symantec.append("Symantec")
-                input = "SOFTWARE Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
+                input = 'SOFTWARE "Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate" ASRunningStatus'
                 result1 = os.popen(GetRegValue_command + input).read()
-                input = "SOFTWARE Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate ASRunningStatus"
+                input = 'SOFTWARE "Wow6432Node\\Symantec\\Symantec Endpoint Protection\\CurrentVersion\\public-opstate" ASRunningStatus'
                 result2 = os.popen(GetRegValue_command + input).read()
                 if result1 == 1 or result2 == 2:    # 시만텍이 실행중인 경우
                     symantec.append("실행중")
