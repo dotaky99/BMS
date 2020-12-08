@@ -397,15 +397,24 @@ class MyWidget(QWidget):
         self.box3.addWidget(self.input_datetime2)
         self.box3.addWidget(self.timebutton)
 
+        self.timeline_search = QLineEdit(self)
+        self.timeline_search.setPlaceholderText("Search ...")
+        self.timeline_search.textChanged.connect(self.search_timeline)
+
         self.timeline = QTableWidget(self)
         self.timeline.setSortingEnabled(True)
         self.timeline.setColumnCount(4)
         headers = ["시간", "행위", "세부 사항", "경로"]
         self.timeline.setHorizontalHeaderLabels(headers)
+        self.timeline.setColumnWidth(0, self.width() * 3 / 20)
+        self.timeline.setColumnWidth(1, self.width() * 3 / 20)
+        self.timeline.setColumnWidth(2, self.width() * 8 / 20)
+        self.timeline.setColumnWidth(3, self.width() * 10 / 20)
 
         self.tab3.layout.addLayout(self.box3, 0, 0)
         self.tab3.layout.addLayout(self.box4, 1, 0)
-        self.tab3.layout.addWidget(self.timeline, 2, 0)
+        self.tab3.layout.addWidget(self.timeline_search, 2, 0)
+        self.tab3.layout.addWidget(self.timeline, 3, 0)
         self.tab3.setLayout(self.tab3.layout)
 
     # tab3의 타임라인 구성
@@ -436,7 +445,14 @@ class MyWidget(QWidget):
         if self.checkbox2_5.isChecked():
             self.timeline_data2_5()
 
-        self.timeline.resizeColumnsToContents()
+    # tab3의 타임라인 필터링
+    def search_timeline(self, s):
+        for i in range(self.timeline.rowCount()):
+            self.timeline.hideRow(i)
+
+        items = self.timeline.findItems(s, Qt.MatchContains)
+        for item in items:
+            self.timeline.showRow(item.row())
 
     # 타임라인 - MFT 생성
     def timeline_data1_1(self):
