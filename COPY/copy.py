@@ -1,9 +1,8 @@
 import os
 import string
-from ctypes  import windll
+from ctypes import windll
 import getpass
 import Parse
-
 
 def get_drives():
     drives = []
@@ -13,7 +12,6 @@ def get_drives():
             drives.append(letter)
         bitmask >>= 1
     return drives
-
 
 def file_copy():
     # path
