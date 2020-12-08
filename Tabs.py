@@ -1173,7 +1173,7 @@ class MyWidget(QWidget):
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_2 삭제된 파일 및 폴더
         self.del_file_and_folder_table = QTableWidget(self)
-        self.set_del_file_and_folder()#######################################################################################################
+        # self.set_del_file_and_folder()#######################################################################################################
         self.tab4.layout.addWidget(self.del_file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_3 파일 변경 사항

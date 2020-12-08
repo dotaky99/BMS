@@ -98,7 +98,7 @@ class MemoryDialog(QDialog):
 
     def pushButtonClicked(self):
         if self.checkbox1.isChecked():
-            os.system("E:\파이참\MemoryDump\DumpIt.exe") ######################### 경로 수정
+            os.system("COPY\DumpIt.exe") ######################### 경로 수정
             self.yn = 1
         else:
             self.yn = 0
