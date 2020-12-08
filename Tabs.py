@@ -1176,12 +1176,12 @@ class MyWidget(QWidget):
 
         # item9_1 전체 파일 및 폴더
         self.file_and_folder_table = QTableWidget(self)
-        # self.set_file_and_folder()############################################################################################################
+        self.set_file_and_folder()
         self.tab4.layout.addWidget(self.file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_2 삭제된 파일 및 폴더
         self.del_file_and_folder_table = QTableWidget(self)
-        # self.set_del_file_and_folder()#######################################################################################################
+        self.set_del_file_and_folder()
         self.tab4.layout.addWidget(self.del_file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_3 파일 변경 사항
@@ -2777,6 +2777,7 @@ class MyWidget(QWidget):
                 SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
                 FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
                 mft_ref_num, LSN, ADS_list = rows[i]
+
                 self.file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
                 self.file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
                 self.file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
@@ -2793,8 +2794,8 @@ class MyWidget(QWidget):
                 self.file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
                 self.file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
                 self.file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
-                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
-                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
+                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(str(mft_ref_num)))
+                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(str(LSN)))
                 self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
         except:
             pass
@@ -2843,8 +2844,8 @@ class MyWidget(QWidget):
                 self.del_file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_A_timestamp))
                 self.del_file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_M_timestamp))
                 self.del_file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_E_timestamp))
-                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(mft_ref_num))
-                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(LSN))
+                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(str(mft_ref_num)))
+                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(str(LSN)))
                 self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(ADS_list))
         except:
             pass
@@ -2868,13 +2869,13 @@ class MyWidget(QWidget):
 
             for i in range(count):
                 USN, src, reason, file_name, file_path, MFT_refer_num, parent_MFT_refer_num, time_stamp = rows[i]
-                self.modified_file_table.setItem(i, 0, QTableWidgetItem(USN))
+                self.modified_file_table.setItem(i, 0, QTableWidgetItem(str(USN)))
                 self.modified_file_table.setItem(i, 1, QTableWidgetItem(src))
                 self.modified_file_table.setItem(i, 2, QTableWidgetItem(reason))
                 self.modified_file_table.setItem(i, 3, QTableWidgetItem(file_name))
                 self.modified_file_table.setItem(i, 4, QTableWidgetItem(file_path))
-                self.modified_file_table.setItem(i, 5, QTableWidgetItem(MFT_refer_num))
-                self.modified_file_table.setItem(i, 6, QTableWidgetItem(parent_MFT_refer_num))
+                self.modified_file_table.setItem(i, 5, QTableWidgetItem(str(MFT_refer_num)))
+                self.modified_file_table.setItem(i, 6, QTableWidgetItem(str(parent_MFT_refer_num)))
                 self.modified_file_table.setItem(i, 7, QTableWidgetItem(time_stamp))
         except:
             pass
