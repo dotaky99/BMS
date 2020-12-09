@@ -2928,7 +2928,7 @@ class MyWidget(QWidget):
             cur = conn.cursor()
             query = "SELECT event_id, detailed, computer, datetime(time_created, " + self.UTC + "), " \
                     "datetime(sleep_time, " + self.UTC + "), datetime(wake_time, " + self.UTC + "), source " \
-                    "FROM event_log WHERE event_id = '1' OR (event_id = '42' AND source IS 'System.evtx')"
+                    "FROM event_log WHERE (event_id = '1' AND sleep_time IS NOT '') OR (event_id = '42' AND source IS 'System.evtx')"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
