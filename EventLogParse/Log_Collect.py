@@ -121,6 +121,17 @@ def PC_Processing(file_et):
                             if 'OldBias' == data['name']:
                                 old_bias = data.string
 
+                    if eventid == '7040':
+                        if 'Windows Time' != str(soup.data.string) and '표준 시간대' not in str(soup.data.string):
+                            continue
+                        for i, data in enumerate(soup.findAll('data')):
+                            if 'param1' == data['name']:
+                                detailed = data.string + ' 서비스 시작 유형을 '
+                            if 'param2' == data['name']:
+                                detailed += data.string + '에서 '
+                            if 'param3' == data['name']:
+                                detailed += data.string + '(으)로 변경했습니다.'
+
                     if eventid == '7045':
                         detailed = file_et[each_et][eventid]
                         for data in soup.findAll('data'):
