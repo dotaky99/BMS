@@ -503,7 +503,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, SI_M_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(SI_M_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $SI 수정"
                 string2 = " - SI_M_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -523,7 +523,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, SI_A_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(SI_A_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $SI 접근"
                 string2 = " - SI_A_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -543,7 +543,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, SI_C_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(SI_C_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $SI 생성"
                 string2 = " - SI_C_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -564,7 +564,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, SI_E_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(SI_E_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $SI mft 접근"
                 string2 = " - SI_E_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -585,7 +585,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, FN_M_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(FN_M_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $FN 수정"
                 string2 = " - FN_M_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -606,7 +606,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, FN_A_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(FN_A_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $FN 접근"
                 string2 = " - FN_A_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -627,7 +627,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, FN_C_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(FN_C_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ $FN 생성"
                 string2 = " - FN_C_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -648,7 +648,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, FN_E_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(FN_E_timestamp))
-                string1 = drive + ":\ MFT 생성"
+                string1 = drive + ":\ $FN mft 변경"
                 string2 = " - FN_E_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -1002,6 +1002,7 @@ class MyWidget(QWidget):
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 255, 102))
                 elif self.timeline.item(i, 1).text() == "이벤트로그 삭제":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(51, 102, 225))
+
 
 #################################################
 #   tab4                                        #
@@ -1708,6 +1709,16 @@ class MyWidget(QWidget):
                 self.PC_user_evt_table.setItem(i, 6, QTableWidgetItem(display_name))
                 self.PC_user_evt_table.setItem(i, 7, QTableWidgetItem(mem_sid))
                 self.PC_user_evt_table.setItem(i, 8, QTableWidgetItem(source))
+
+            self.PC_user_evt_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.PC_user_evt_table.setColumnWidth(1, self.width() * 6 / 30)
+            self.PC_user_evt_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.PC_user_evt_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.PC_user_evt_table.setColumnWidth(4, self.width() * 5 / 30)
+            self.PC_user_evt_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.PC_user_evt_table.setColumnWidth(6, self.width() * 3 / 30)
+            self.PC_user_evt_table.setColumnWidth(7, self.width() * 3 / 30)
+            self.PC_user_evt_table.setColumnWidth(8, self.width() * 5 / 30)
         except:
             pass
 
@@ -1736,6 +1747,14 @@ class MyWidget(QWidget):
                 self.PC_update_table.setItem(i, 3, QTableWidgetItem(computer))
                 self.PC_update_table.setItem(i, 4, QTableWidgetItem(package))
                 self.PC_update_table.setItem(i, 5, QTableWidgetItem(source))
+
+            self.PC_update_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.PC_update_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.PC_update_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.PC_update_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.PC_update_table.setColumnWidth(4, self.width() * 3 / 30)
+            self.PC_update_table.setColumnWidth(5, self.width() * 3 / 30)
+
         except:
             pass
 
@@ -1834,6 +1853,17 @@ class MyWidget(QWidget):
                 self.network_evt_table.setItem(i, 6, QTableWidgetItem(conn_mode))
                 self.network_evt_table.setItem(i, 7, QTableWidgetItem(reason))
                 self.network_evt_table.setItem(i, 8, QTableWidgetItem(source))
+
+            self.network_evt_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.network_evt_table.setColumnWidth(1, self.width() * 5 / 30)
+            self.network_evt_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.network_evt_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.network_evt_table.setColumnWidth(4, self.width() * 6 / 30)
+            self.network_evt_table.setColumnWidth(5, self.width() * 8 / 30)
+            self.network_evt_table.setColumnWidth(6, self.width() * 5 / 30)
+            self.network_evt_table.setColumnWidth(7, self.width() * 12 / 30)
+            self.network_evt_table.setColumnWidth(8, self.width() * 3 / 30)
+
         except:
             pass
 
@@ -1907,6 +1937,16 @@ class MyWidget(QWidget):
                 self.storage_evt_table.setItem(i, 6, QTableWidgetItem(drive_serial))
                 self.storage_evt_table.setItem(i, 7, QTableWidgetItem(drive_model))
                 self.storage_evt_table.setItem(i, 8, QTableWidgetItem(drive_location))
+
+            self.storage_evt_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.storage_evt_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.storage_evt_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.storage_evt_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.storage_evt_table.setColumnWidth(4, self.width() * 3 / 30)
+            self.storage_evt_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.storage_evt_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.storage_evt_table.setColumnWidth(7, self.width() * 6 / 30)
+            self.storage_evt_table.setColumnWidth(8, self.width() * 3 / 30)
         except:
             pass
 
@@ -2490,6 +2530,18 @@ class MyWidget(QWidget):
                 self.program_pre.setItem(i, 7, QTableWidgetItem(last_executed6))
                 self.program_pre.setItem(i, 8, QTableWidgetItem(last_executed7))
                 self.program_pre.setItem(i, 9, QTableWidgetItem(last_executed8))
+
+            self.program_pre.setColumnWidth(0, self.width() * 7 / 30)
+            self.program_pre.setColumnWidth(1, self.width() * 2 / 30)
+            self.program_pre.setColumnWidth(2, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(3, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(4, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(5, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(6, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(7, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(8, self.width() * 4 / 30)
+            self.program_pre.setColumnWidth(9, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2566,6 +2618,17 @@ class MyWidget(QWidget):
                 self.doc_lnk_table.setItem(i, 11, QTableWidgetItem(volume_label))
                 self.doc_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
                 self.doc_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
+
+            self.doc_lnk_table.setColumnWidth(0, self.width() * 6 / 30)
+            self.doc_lnk_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.doc_lnk_table.setColumnWidth(2, self.width() * 5 / 30)
+            self.doc_lnk_table.setColumnWidth(3, self.width() * 2 / 30)
+            self.doc_lnk_table.setColumnWidth(4, self.width() * 8 / 30)
+            self.doc_lnk_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.doc_lnk_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.doc_lnk_table.setColumnWidth(7, self.width() * 4 / 30)
+            self.doc_lnk_table.setColumnWidth(8, self.width() * 4 / 30)
+            self.doc_lnk_table.setColumnWidth(9, self.width() * 4 / 30)
         except:
             pass
 
@@ -2608,6 +2671,22 @@ class MyWidget(QWidget):
                 self.doc_jmp_table.setItem(i, 11, QTableWidgetItem(description))
                 self.doc_jmp_table.setItem(i, 12, QTableWidgetItem(volume_label))
                 self.doc_jmp_table.setItem(i, 13, QTableWidgetItem(drive_type))
+
+            self.doc_jmp_table.setColumnWidth(0, self.width() * 6 / 30)
+            self.doc_jmp_table.setColumnWidth(1, self.width() * 6 / 30)
+            self.doc_jmp_table.setColumnWidth(2, self.width() * 2 / 30)
+            self.doc_jmp_table.setColumnWidth(3, self.width() * 8 / 30)
+            self.doc_jmp_table.setColumnWidth(4, self.width() * 2 / 30)
+            self.doc_jmp_table.setColumnWidth(5, self.width() * 2 / 30)
+            self.doc_jmp_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.doc_jmp_table.setColumnWidth(7, self.width() * 4 / 30)
+            self.doc_jmp_table.setColumnWidth(8, self.width() * 4 / 30)
+            self.doc_jmp_table.setColumnWidth(9, self.width() * 4 / 30)
+            self.doc_jmp_table.setColumnWidth(10, self.width() * 3 / 30)
+            self.doc_jmp_table.setColumnWidth(11, self.width() * 2 / 30)
+            self.doc_jmp_table.setColumnWidth(12, self.width() * 4 / 30)
+            self.doc_jmp_table.setColumnWidth(13, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2633,6 +2712,10 @@ class MyWidget(QWidget):
                 file_name, path = rows[i]
                 self.doc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
                 self.doc_pre_table.setItem(i, 1, QTableWidgetItem(path))
+
+            self.doc_pre_table.setColumnWidth(0, self.width() * 11 / 30)
+            self.doc_pre_table.setColumnWidth(1, self.width() * 18 / 30)
+
         except:
             pass
 
@@ -2680,6 +2763,22 @@ class MyWidget(QWidget):
                 self.etc_lnk_table.setItem(i, 11, QTableWidgetItem(volume_label))
                 self.etc_lnk_table.setItem(i, 12, QTableWidgetItem(icon_location))
                 self.etc_lnk_table.setItem(i, 13, QTableWidgetItem(machine_info))
+
+            self.etc_lnk_table.setColumnWidth(0, self.width() * 6 / 30)
+            self.etc_lnk_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.etc_lnk_table.setColumnWidth(2, self.width() * 5 / 30)
+            self.etc_lnk_table.setColumnWidth(3, self.width() * 2 / 30)
+            self.etc_lnk_table.setColumnWidth(4, self.width() * 8 / 30)
+            self.etc_lnk_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(7, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(8, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(9, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(10, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(11, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(12, self.width() * 4 / 30)
+            self.etc_lnk_table.setColumnWidth(13, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2708,6 +2807,9 @@ class MyWidget(QWidget):
                 file_name, path = rows[i]
                 self.etc_pre_table.setItem(i, 0, QTableWidgetItem(file_name))
                 self.etc_pre_table.setItem(i, 1, QTableWidgetItem(path))
+
+            self.etc_pre_table.setColumnWidth(0, self.width() * 11 / 30)
+            self.etc_pre_table.setColumnWidth(1, self.width() * 18 / 30)
         except:
             pass
 
@@ -2738,6 +2840,15 @@ class MyWidget(QWidget):
                 self.eventlog_delete_table.setItem(i, 4, QTableWidgetItem(sbt_usr_name))
                 self.eventlog_delete_table.setItem(i, 5, QTableWidgetItem(channel))
                 self.eventlog_delete_table.setItem(i, 6, QTableWidgetItem(source))
+
+            self.eventlog_delete_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_delete_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.eventlog_delete_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_delete_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_delete_table.setColumnWidth(4, self.width() * 3 / 30)
+            self.eventlog_delete_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.eventlog_delete_table.setColumnWidth(6, self.width() * 3 / 30)
+
         except:
             pass
 
@@ -2766,6 +2877,15 @@ class MyWidget(QWidget):
                 self.eventlog_terminate_table.setItem(i, 5, QTableWidgetItem(app_version))
                 self.eventlog_terminate_table.setItem(i, 6, QTableWidgetItem(app_path))
                 self.eventlog_terminate_table.setItem(i, 7, QTableWidgetItem(source))
+
+            self.eventlog_terminate_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_terminate_table.setColumnWidth(1, self.width() * 3 / 30)
+            self.eventlog_terminate_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_terminate_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_terminate_table.setColumnWidth(4, self.width() * 4 / 30)
+            self.eventlog_terminate_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.eventlog_terminate_table.setColumnWidth(6, self.width() * 10 / 30)
+            self.eventlog_terminate_table.setColumnWidth(7, self.width() * 3 / 30)
         except:
             pass
 
@@ -2791,6 +2911,13 @@ class MyWidget(QWidget):
                 self.eventlog_onoff_table.setItem(i, 2, QTableWidgetItem(computer))
                 self.eventlog_onoff_table.setItem(i, 3, QTableWidgetItem(time_created))
                 self.eventlog_onoff_table.setItem(i, 4, QTableWidgetItem(source))
+
+            self.eventlog_onoff_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_onoff_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.eventlog_onoff_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_onoff_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_onoff_table.setColumnWidth(4, self.width() * 3 / 30)
+
         except:
             pass
 
@@ -2821,6 +2948,14 @@ class MyWidget(QWidget):
                 self.eventlog_powersaving_table.setItem(i, 4, QTableWidgetItem(sleep_time))
                 self.eventlog_powersaving_table.setItem(i, 5, QTableWidgetItem(wake_time))
                 self.eventlog_powersaving_table.setItem(i, 6, QTableWidgetItem(source))
+
+            self.eventlog_powersaving_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_powersaving_table.setColumnWidth(1, self.width() * 5 / 30)
+            self.eventlog_powersaving_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_powersaving_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_powersaving_table.setColumnWidth(4, self.width() * 4 / 30)
+            self.eventlog_powersaving_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.eventlog_powersaving_table.setColumnWidth(6, self.width() * 3 / 30)
         except:
             pass
 
@@ -2853,6 +2988,16 @@ class MyWidget(QWidget):
                 self.eventlog_access1_table.setItem(i, 6, QTableWidgetItem(remo_conn_local))
                 self.eventlog_access1_table.setItem(i, 7, QTableWidgetItem(local_manager_sess_id))
                 self.eventlog_access1_table.setItem(i, 8, QTableWidgetItem(source))
+
+            self.eventlog_access1_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_access1_table.setColumnWidth(1, self.width() * 8 / 30)
+            self.eventlog_access1_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_access1_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_access1_table.setColumnWidth(4, self.width() * 3 / 30)
+            self.eventlog_access1_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.eventlog_access1_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.eventlog_access1_table.setColumnWidth(7, self.width() * 4 / 30)
+            self.eventlog_access1_table.setColumnWidth(8, self.width() * 6 / 30)
         except:
             pass
 
@@ -2888,6 +3033,18 @@ class MyWidget(QWidget):
                 self.eventlog_access2_table.setItem(i, 8, QTableWidgetItem(rdp_session))
                 self.eventlog_access2_table.setItem(i, 9, QTableWidgetItem(sec_id))
                 self.eventlog_access2_table.setItem(i, 10, QTableWidgetItem(source))
+
+            self.eventlog_access2_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_access2_table.setColumnWidth(1, self.width() * 6 / 30)
+            self.eventlog_access2_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_access2_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_access2_table.setColumnWidth(4, self.width() * 4 / 30)
+            self.eventlog_access2_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.eventlog_access2_table.setColumnWidth(6, self.width() * 3 / 30)
+            self.eventlog_access2_table.setColumnWidth(7, self.width() * 3 / 30)
+            self.eventlog_access2_table.setColumnWidth(8, self.width() * 3 / 30)
+            self.eventlog_access2_table.setColumnWidth(9, self.width() * 8 / 30)
+            self.eventlog_access2_table.setColumnWidth(10, self.width() * 4 / 30)
         except:
             pass
 
@@ -2922,6 +3079,18 @@ class MyWidget(QWidget):
                 self.eventlog_time_table.setItem(i, 8, QTableWidgetItem(sys_prv_time))
                 self.eventlog_time_table.setItem(i, 9, QTableWidgetItem(sys_new_time))
                 self.eventlog_time_table.setItem(i, 10, QTableWidgetItem(source))
+
+            self.eventlog_time_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.eventlog_time_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.eventlog_time_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.eventlog_time_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.eventlog_time_table.setColumnWidth(4, self.width() * 10 / 30)
+            self.eventlog_time_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.eventlog_time_table.setColumnWidth(6, self.width() * 3 / 30)
+            self.eventlog_time_table.setColumnWidth(7, self.width() * 3 / 30)
+            self.eventlog_time_table.setColumnWidth(8, self.width() * 4 / 30)
+            self.eventlog_time_table.setColumnWidth(9, self.width() * 4 / 30)
+            self.eventlog_time_table.setColumnWidth(10, self.width() * 4 / 30)
         except:
             pass
 
@@ -2974,6 +3143,27 @@ class MyWidget(QWidget):
                 self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(str(mft_ref_num)))
                 self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(str(LSN)))
                 self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
+
+            self.file_and_folder_table.setColumnWidth(0, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(1, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(2, self.width() * 6 / 30)
+            self.file_and_folder_table.setColumnWidth(3, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(4, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(5, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(7, self.width() * 6 / 30)
+            self.file_and_folder_table.setColumnWidth(8, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(9, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(10, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(11, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(12, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(13, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(14, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(15, self.width() * 4 / 30)
+            self.file_and_folder_table.setColumnWidth(16, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(17, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(18, self.width() * 3 / 30)
+
         except:
             pass
 
@@ -3101,5 +3291,23 @@ class MyWidget(QWidget):
                 self.recent_folder_table.setItem(i, 14, QTableWidgetItem(droid_file))
                 self.recent_folder_table.setItem(i, 15, QTableWidgetItem(droid_vol))
                 self.recent_folder_table.setItem(i, 16, QTableWidgetItem(known_guid))
+
+            self.recent_folder_table.setColumnWidth(0, self.width() * 5 / 30)
+            self.recent_folder_table.setColumnWidth(1, self.width() * 7 / 30)
+            self.recent_folder_table.setColumnWidth(2, self.width() * 3 / 30)
+            self.recent_folder_table.setColumnWidth(3, self.width() * 2 / 30)
+            self.recent_folder_table.setColumnWidth(4, self.width() * 7 / 30)
+            self.recent_folder_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(7, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(8, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(9, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(10, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(11, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(12, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(13, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(14, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(15, self.width() * 4 / 30)
+            self.recent_folder_table.setColumnWidth(16, self.width() * 4 / 30)
         except:
             pass
