@@ -124,6 +124,7 @@ def PC_Processing(file_et):
                     if eventid == '7040':
                         if 'Windows Time' != str(soup.data.string) and '표준 시간대' not in str(soup.data.string):
                             continue
+                        sec_id = soup.security['userid']
                         for i, data in enumerate(soup.findAll('data')):
                             if 'param1' == data['name']:
                                 detailed = data.string + ' 서비스 시작 유형을 '
