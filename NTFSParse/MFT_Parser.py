@@ -14,6 +14,7 @@ def parsing(): ## MAIN ##
     data_list = []
 
     for mft_file in mft_list:
+        print('     [*] {}'.format(mft_file))
         mft_parse(mft_file, data_list)
 
     Database.MFT_Databases(data_list)

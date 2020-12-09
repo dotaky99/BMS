@@ -37,8 +37,8 @@ class MyWidget(QWidget):
     # tab2 구성
     def set_tab2(self):
         self.tab2.layout = QVBoxLayout()
-        self.set_checklist()
         self.set_PCinfo()
+        self.set_checklist()
         self.tab2.setLayout(self.tab2.layout)
 
     # tab2 수집 전 확인 사항
@@ -94,13 +94,40 @@ class MyWidget(QWidget):
             rows3 = ''
             pass
         # 안티포렌식
+        # 설치 여부 확인 -> 실행 여부 확인
         try:
-            query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
-                     "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
-                     "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
-                     "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
-                     "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
-                     "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
+            if ("SELECT EXISTS (SELECT name, version, publisher, install_Date FROM Uninstall WHERE(name LIKE 'CCleaner%' "
+                "OR name LIKE 'Cipher%' OR name LIKE 'Eraser%' OR name LIKE 'SDelete%' OR name LIKE 'SetMACE%' "
+                "OR name LIKE 'TimeStomp%' OR name LIKE 'Wise Folder Hider%')) as success"):
+
+                if ("SELECT EXISTS (SELECT Full_Path, Last_Executed1 FROM Prefetch1 "
+                "WHERE( Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' "
+                "OR Executable_Name LIKE 'Eraser%' OR Executable_Name LIKE 'SDelete%' "
+                "OR Executable_Name LIKE 'TimeStomp%' OR Executable_Name LIKE 'Wise Folder Hider%')) as success"):
+                    query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, " \
+                             "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1, " + self.UTC + ") " \
+                             "FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
+                             "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%' AND b.Executable_Name LIKE 'Cipher%')" \
+                             "OR (a.name LIKE 'Eraser%' AND b.Executable_Name LIKE 'Eraser%') " \
+                             "OR (a.name LIKE 'SDelete%' AND b.Executable_Name LIKE 'SDelete%')"  \
+                             "OR (a.name LIKE 'SetMACE%' AND b.Executable_Name LIKE 'SetMACE%') " \
+                             "OR (a.name LIKE 'TimeStomp%' AND b.Executable_Name LIKE 'TimeStomp%')" \
+                             "OR (a.name LIKE 'Wise Folder Hider%' AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
+
+                else:
+                    query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
+                             "FROM Uninstall a, prefetch1 b WHERE (a.name LIKE 'CCleaner%'  OR a.name LIKE 'Cipher%' " \
+                             "OR a.name LIKE 'Eraser%'  OR a.name LIKE 'SDelete%'  OR a.name LIKE 'SetMACE%'  " \
+                             "OR a.name LIKE 'TimeStomp%'  OR a.name LIKE 'Wise Folder Hider%')"
+
+
+
+        #     query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
+        #              "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
+        #              "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
+        #              "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
+        #              "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
+        #              "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
             cur.execute(query4)
             rows4 = cur.fetchall()
         except:
@@ -224,11 +251,11 @@ class MyWidget(QWidget):
         self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(229, 243, 255))
-        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(182, 244, 155)) # 미구현
 
-    # tab2 PC 정보
+    # tab2 요약 정보
     def set_PCinfo(self):
-        self.groupbox2 = QGroupBox("PC 정보")
+        self.groupbox2 = QGroupBox("요약 정보")
         self.vbox2 = QVBoxLayout()
         self.tab2_tree = QTreeWidget()
         self.tab2_tree.header().setVisible(False)
@@ -248,7 +275,7 @@ class MyWidget(QWidget):
             rows = cur.fetchall()[0]
 
             string1 = "윈도우 버전:\t" + rows[0] + ", " + rows[1] + ", " + rows[2]
-            string2 = "윈도우 설치 시간:\t" + rows[6]
+            string2 = "윈도우 설치 시간: " + rows[6]
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
         except:
@@ -258,13 +285,15 @@ class MyWidget(QWidget):
             string4 = "표준 시간대"
             pass
 
-        self.text1 = QTreeWidgetItem(self.tab2_tree)
+        self.text0 = QTreeWidgetItem(self.tab2_tree)
+        self.text0.setText(0, "PC 정보")
+        self.text1 = QTreeWidgetItem(self.text0)
         self.text1.setText(0, string1)
-        self.text2 = QTreeWidgetItem(self.tab2_tree)
+        self.text2 = QTreeWidgetItem(self.text0)
         self.text2.setText(0, string2)
-        self.text3 = QTreeWidgetItem(self.tab2_tree)
+        self.text3 = QTreeWidgetItem(self.text0)
         self.text3.setText(0, string3)
-        self.text4 = QTreeWidgetItem(self.tab2_tree)
+        self.text4 = QTreeWidgetItem(self.text0)
         self.text4.setText(0, string4)
         self.text5 = QTreeWidgetItem(self.tab2_tree)
         self.text5.setText(0, "MFT 생성 시간")
@@ -285,7 +314,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 drive, m_time = rows[i]
                 self.text3_content.append(QTreeWidgetItem(self.text5))
-                self.text3_content[i].setText(0, drive + "드라이브: " + m_time)
+                self.text3_content[i].setText(0, drive + ":\ : " + m_time)
         except:
             pass
 
@@ -619,7 +648,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, FN_E_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(FN_E_timestamp))
-                string1 = drive + "드라이브 MFT 생성"
+                string1 = drive + ":\ MFT 생성"
                 string2 = " - FN_E_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -1192,12 +1221,12 @@ class MyWidget(QWidget):
 
         # item9_1 전체 파일 및 폴더
         self.file_and_folder_table = QTableWidget(self)
-        # self.set_file_and_folder()############################################################################################################
+        # self.set_file_and_folder()
         self.tab4.layout.addWidget(self.file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_2 삭제된 파일 및 폴더
         self.del_file_and_folder_table = QTableWidget(self)
-        # self.set_del_file_and_folder()#######################################################################################################
+        # self.set_del_file_and_folder()
         self.tab4.layout.addWidget(self.del_file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_3 파일 변경 사항
@@ -1221,6 +1250,7 @@ class MyWidget(QWidget):
 
         self.search.textChanged.connect(self.search_keyword)
 
+    # tab4의 테이블 필터링 기능
     def search_keyword(self, s):
         items = self.rightlayout.itemAt(1).widget().findItems(s, Qt.MatchContains)
 
@@ -1288,7 +1318,9 @@ class MyWidget(QWidget):
         self.item4_10 = QTreeWidgetItem(self.item4)
         self.item4_10.setText(0, "클라우드 접속기록")
 
-        self.item5 = QTreeWidgetItem(self.tree)
+        self.item55 = QTreeWidgetItem(self.tree)
+        self.item55.setText(0, "실행 흔적")
+        self.item5 = QTreeWidgetItem(self.item55)
         self.item5.setText(0, "프로그램 실행 흔적")
         self.item5_1 = QTreeWidgetItem(self.item5)
         self.item5_1.setText(0, "레지스트리")
@@ -1309,7 +1341,7 @@ class MyWidget(QWidget):
         self.item5_2 = QTreeWidgetItem(self.item5)
         self.item5_2.setText(0, "프리패치")
 
-        self.item6 = QTreeWidgetItem(self.tree)
+        self.item6 = QTreeWidgetItem(self.item55)
         self.item6.setText(0, "문서실행 흔적")
         self.item6_1 = QTreeWidgetItem(self.item6)
         self.item6_1.setText(0, "레지스트리")
@@ -1320,7 +1352,7 @@ class MyWidget(QWidget):
         self.item6_4 = QTreeWidgetItem(self.item6)
         self.item6_4.setText(0, "프리패치")
 
-        self.item7 = QTreeWidgetItem(self.tree)
+        self.item7 = QTreeWidgetItem(self.item55)
         self.item7.setText(0, "기타실행 흔적")
         self.item7_1 = QTreeWidgetItem(self.item7)
         self.item7_1.setText(0, "링크 파일")
@@ -1858,7 +1890,7 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, keyword, datetime(timestamp, " + self.UTC + ") FROM keyword;"
+            query = "SELECT type, keyword, datetime(timestamp, " + self.UTC + ") FROM keyword"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
@@ -2793,6 +2825,7 @@ class MyWidget(QWidget):
                 SI_C_timestamp, SI_A_timestamp, SI_M_timestamp, SI_E_timestamp, \
                 FN_C_timestamp, FN_A_timestamp, FN_M_timestamp, FN_E_timestamp, \
                 mft_ref_num, LSN, ADS_list = rows[i]
+
                 self.file_and_folder_table.setItem(i, 0, QTableWidgetItem(src))
                 self.file_and_folder_table.setItem(i, 1, QTableWidgetItem(drive))
                 self.file_and_folder_table.setItem(i, 2, QTableWidgetItem(file_path))
@@ -2809,8 +2842,8 @@ class MyWidget(QWidget):
                 self.file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_A_timestamp))
                 self.file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_M_timestamp))
                 self.file_and_folder_table.setItem(i, 15, QTableWidgetItem(FN_E_timestamp))
-                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(mft_ref_num))
-                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(LSN))
+                self.file_and_folder_table.setItem(i, 16, QTableWidgetItem(str(mft_ref_num)))
+                self.file_and_folder_table.setItem(i, 17, QTableWidgetItem(str(LSN)))
                 self.file_and_folder_table.setItem(i, 18, QTableWidgetItem(ADS_list))
         except:
             pass
@@ -2859,8 +2892,8 @@ class MyWidget(QWidget):
                 self.del_file_and_folder_table.setItem(i, 12, QTableWidgetItem(FN_A_timestamp))
                 self.del_file_and_folder_table.setItem(i, 13, QTableWidgetItem(FN_M_timestamp))
                 self.del_file_and_folder_table.setItem(i, 14, QTableWidgetItem(FN_E_timestamp))
-                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(mft_ref_num))
-                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(LSN))
+                self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(str(mft_ref_num)))
+                self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(str(LSN)))
                 self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(ADS_list))
         except:
             pass
@@ -2884,13 +2917,13 @@ class MyWidget(QWidget):
 
             for i in range(count):
                 USN, src, reason, file_name, file_path, MFT_refer_num, parent_MFT_refer_num, time_stamp = rows[i]
-                self.modified_file_table.setItem(i, 0, QTableWidgetItem(USN))
+                self.modified_file_table.setItem(i, 0, QTableWidgetItem(str(USN)))
                 self.modified_file_table.setItem(i, 1, QTableWidgetItem(src))
                 self.modified_file_table.setItem(i, 2, QTableWidgetItem(reason))
                 self.modified_file_table.setItem(i, 3, QTableWidgetItem(file_name))
                 self.modified_file_table.setItem(i, 4, QTableWidgetItem(file_path))
-                self.modified_file_table.setItem(i, 5, QTableWidgetItem(MFT_refer_num))
-                self.modified_file_table.setItem(i, 6, QTableWidgetItem(parent_MFT_refer_num))
+                self.modified_file_table.setItem(i, 5, QTableWidgetItem(str(MFT_refer_num)))
+                self.modified_file_table.setItem(i, 6, QTableWidgetItem(str(parent_MFT_refer_num)))
                 self.modified_file_table.setItem(i, 7, QTableWidgetItem(time_stamp))
         except:
             pass
