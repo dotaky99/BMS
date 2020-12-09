@@ -82,7 +82,23 @@ def PC_Processing(file_et):
                         detailed = file_et[each_et][eventid]
 
                     if eventid == '42':
-                        detailed = file_et[each_et][eventid]
+                        num = 0
+                        for data in soup.findAll('data'):
+                            if 'Flags' == data['name'] or 'TransitionsToOn' == data['name']:
+                                break
+                            if str(soup.data.string) == '6':
+                                break
+                            num += int(data.string)
+                        if num == 8:
+                            detailed = '버튼 및 노트북덮개에 의해 절전모드로 전환중입니다.'
+                        if num == 10:
+                            detailed = '버튼 및 노트북덮개에 의해 최대 절전모드로 전환중입니다.'
+                        if num == 12:
+                            detailed = '절전모드로 전환하는 중입니다.'
+                        if num == 14:
+                            detailed = '최대 절전모드로 전환하는 중입니다.'
+                        if num == 15:
+                            detailed = '시스템 사용이 없어 절전모드로 전환중입니다.'
 
                     if eventid == '1':
                         try:
@@ -125,7 +141,7 @@ def PC_Processing(file_et):
                         if 'Windows Time' != str(soup.data.string) and '표준 시간대' not in str(soup.data.string):
                             continue
                         sec_id = soup.security['userid']
-                        for i, data in enumerate(soup.findAll('data')):
+                        for data in soup.findAll('data'):
                             if 'param1' == data['name']:
                                 detailed = data.string + ' 서비스 시작 유형을 '
                             if 'param2' == data['name']:
