@@ -1221,12 +1221,12 @@ class MyWidget(QWidget):
 
         # item9_1 전체 파일 및 폴더
         self.file_and_folder_table = QTableWidget(self)
-        # self.set_file_and_folder()
+        self.set_file_and_folder()
         self.tab4.layout.addWidget(self.file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_2 삭제된 파일 및 폴더
         self.del_file_and_folder_table = QTableWidget(self)
-        # self.set_del_file_and_folder()
+        self.set_del_file_and_folder()
         self.tab4.layout.addWidget(self.del_file_and_folder_table)
         self.tab4.layout.itemAt(1).widget().setParent(None)
         # item9_3 파일 변경 사항
@@ -1273,9 +1273,9 @@ class MyWidget(QWidget):
         self.item1_2 = QTreeWidgetItem(self.item1)
         self.item1_2.setText(0, "계정 정보")
         self.item1_2_1 = QTreeWidgetItem(self.item1_2)
-        self.item1_2_1.setText(0, "레지스트리")
+        self.item1_2_1.setText(0, "Registry")
         self.item1_2_2 = QTreeWidgetItem(self.item1_2)
-        self.item1_2_2.setText(0, "이벤트로그")
+        self.item1_2_2.setText(0, "Event Log")
         self.item1_3 = QTreeWidgetItem(self.item1)
         self.item1_3.setText(0, "윈도우 업데이트")
 
@@ -1286,14 +1286,14 @@ class MyWidget(QWidget):
         self.item2_1_2 = QTreeWidgetItem(self.item2)
         self.item2_1_2.setText(0, "인터페이스")
         self.item2_2 = QTreeWidgetItem(self.item2)
-        self.item2_2.setText(0, "이벤트로그")
+        self.item2_2.setText(0, "Event Log")
 
         self.item3 = QTreeWidgetItem(self.tree)
         self.item3.setText(0, "외부저장장치")
         self.item3_1 = QTreeWidgetItem(self.item3)
-        self.item3_1.setText(0, "레지스트리")
+        self.item3_1.setText(0, "Registry")
         self.item3_2 = QTreeWidgetItem(self.item3)
-        self.item3_2.setText(0, "이벤트로그")
+        self.item3_2.setText(0, "Event Log")
 
         self.item4 = QTreeWidgetItem(self.tree)
         self.item4.setText(0, "브라우저")
@@ -1323,7 +1323,7 @@ class MyWidget(QWidget):
         self.item5 = QTreeWidgetItem(self.item55)
         self.item5.setText(0, "프로그램 실행 흔적")
         self.item5_1 = QTreeWidgetItem(self.item5)
-        self.item5_1.setText(0, "레지스트리")
+        self.item5_1.setText(0, "Registry")
         self.item5_1_1 = QTreeWidgetItem(self.item5_1)
         self.item5_1_1.setText(0, "BAM")
         self.item5_1_2 = QTreeWidgetItem(self.item5_1)
@@ -1339,25 +1339,25 @@ class MyWidget(QWidget):
         self.item5_1_7 = QTreeWidgetItem(self.item5_1)
         self.item5_1_7.setText(0, "Legacy")
         self.item5_2 = QTreeWidgetItem(self.item5)
-        self.item5_2.setText(0, "프리패치")
+        self.item5_2.setText(0, "Prefetch")
 
         self.item6 = QTreeWidgetItem(self.item55)
         self.item6.setText(0, "문서실행 흔적")
         self.item6_1 = QTreeWidgetItem(self.item6)
-        self.item6_1.setText(0, "레지스트리")
+        self.item6_1.setText(0, "Registry")
         self.item6_2 = QTreeWidgetItem(self.item6)
-        self.item6_2.setText(0, "링크 파일")
+        self.item6_2.setText(0, "LNK File")
         self.item6_3 = QTreeWidgetItem(self.item6)
-        self.item6_3.setText(0, "점프 목록")
+        self.item6_3.setText(0, "Jumplist")
         self.item6_4 = QTreeWidgetItem(self.item6)
-        self.item6_4.setText(0, "프리패치")
+        self.item6_4.setText(0, "Prefetch")
 
         self.item7 = QTreeWidgetItem(self.item55)
         self.item7.setText(0, "기타실행 흔적")
         self.item7_1 = QTreeWidgetItem(self.item7)
-        self.item7_1.setText(0, "링크 파일")
+        self.item7_1.setText(0, "LNK File")
         self.item7_2 = QTreeWidgetItem(self.item7)
-        self.item7_2.setText(0, "프리패치")
+        self.item7_2.setText(0, "Prefetch")
 
         self.item8 = QTreeWidgetItem(self.tree)
         self.item8.setText(0, "이벤트 로그")
@@ -1372,11 +1372,11 @@ class MyWidget(QWidget):
         self.item8_3_2 = QTreeWidgetItem(self.item8_3)
         self.item8_3_2.setText(0, "절전모드 전환 및 해제")
         self.item8_4 = QTreeWidgetItem(self.item8)
-        self.item8_4.setText(0, "원격")
+        self.item8_4.setText(0, "RDP")
         self.item8_4_1 = QTreeWidgetItem(self.item8_4)
-        self.item8_4_1.setText(0, "원격 접속 기록")
+        self.item8_4_1.setText(0, "RDP 접속 기록")
         self.item8_4_2 = QTreeWidgetItem(self.item8_4)
-        self.item8_4_2.setText(0, "원격 실행 기록")
+        self.item8_4_2.setText(0, "RDP 실행 기록")
         self.item8_5 = QTreeWidgetItem(self.item8)
         self.item8_5.setText(0, "시스템 시간 변경 기록")
 
@@ -1618,6 +1618,7 @@ class MyWidget(QWidget):
                 self.PC_system_table.setItem(i, 13, QTableWidgetItem(shutdown_time))
 
             self.PC_system_table.resizeColumnsToContents()
+
         except:
             pass
 
@@ -1638,8 +1639,8 @@ class MyWidget(QWidget):
             self.PC_user_reg_table.setRowCount(count)
             self.PC_user_reg_table.setColumnCount(12)
             column_headers = ["RID", "계정 생성 시간", "계정명", "전체 계정명", "로그인 실패 횟수", "로그인 성공 횟수", "설명", "홈 디렉토리",
-                              "마지막 로그인", "마지막 패스워드 변경",
-                              "만료", "마지막 패스워드 불일치"]
+                              "마지막 로그인 시간", "마지막 패스워드 변경 시간",
+                              "만료", "마지막 패스워드 불일치 시간"]
             self.PC_user_reg_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
@@ -1658,6 +1659,20 @@ class MyWidget(QWidget):
                 self.PC_user_reg_table.setItem(i, 9, QTableWidgetItem(last_password_change_time))
                 self.PC_user_reg_table.setItem(i, 10, QTableWidgetItem(expires_on))
                 self.PC_user_reg_table.setItem(i, 11, QTableWidgetItem(last_incorrect_password_time))
+
+                self.PC_user_reg_table.setColumnWidth(0, self.width() * 2 / 30)
+                self.PC_user_reg_table.setColumnWidth(1, self.width() * 4 / 30)
+                self.PC_user_reg_table.setColumnWidth(2, self.width() * 3 / 30)
+                self.PC_user_reg_table.setColumnWidth(3, self.width() * 3 / 30)
+                self.PC_user_reg_table.setColumnWidth(4, self.width() * 4 / 30)
+                self.PC_user_reg_table.setColumnWidth(5, self.width() * 4 / 30)
+                self.PC_user_reg_table.setColumnWidth(6, self.width() * 6 / 30)
+                self.PC_user_reg_table.setColumnWidth(7, self.width() * 3 / 30)
+                self.PC_user_reg_table.setColumnWidth(8, self.width() * 4 / 30)
+                self.PC_user_reg_table.setColumnWidth(9, self.width() * 5 / 30)
+                self.PC_user_reg_table.setColumnWidth(10, self.width() * 3 / 30)
+                self.PC_user_reg_table.setColumnWidth(11, self.width() * 5 / 30)
+
         except:
             pass
 
@@ -1849,6 +1864,16 @@ class MyWidget(QWidget):
                 self.storage_reg_table.setItem(i, 5, QTableWidgetItem(product_name))
                 self.storage_reg_table.setItem(i, 6, QTableWidgetItem(first_connected))
                 self.storage_reg_table.setItem(i, 7, QTableWidgetItem(last_connected))
+
+            self.storage_reg_table.setColumnWidth(0, self.width() * 8 / 30)
+            self.storage_reg_table.setColumnWidth(1, self.width() * 3 / 30)
+            self.storage_reg_table.setColumnWidth(2, self.width() * 3 / 30)
+            self.storage_reg_table.setColumnWidth(3, self.width() * 3 / 30)
+            self.storage_reg_table.setColumnWidth(4, self.width() * 2 / 30)
+            self.storage_reg_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.storage_reg_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.storage_reg_table.setColumnWidth(7, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -1890,23 +1915,26 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, keyword, datetime(timestamp, " + self.UTC + ") FROM keyword"
+            query = "SELECT keyword, datetime(timestamp, " + self.UTC + ") FROM keyword"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
 
             count = len(rows)
             self.browser_search_table.setRowCount(count)
-            self.browser_search_table.setColumnCount(3)
-            column_headers = ["타입", "시간", "키워드"]
+            self.browser_search_table.setColumnCount(2)
+            column_headers = ["키워드", "시간"]
             self.browser_search_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, keyword, timestamp = rows[i]
-                self.browser_search_table.setItem(i, 0, QTableWidgetItem(type))
+                keyword, timestamp = rows[i]
+                self.browser_search_table.setItem(i, 0, QTableWidgetItem(keyword))
                 self.browser_search_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_search_table.setItem(i, 2, QTableWidgetItem(keyword))
             self.browser_search_table.resizeColumnsToContents()
+
+            self.browser_search_table.setColumnWidth(0, self.width() * 22/ 30)
+            self.browser_search_table.setColumnWidth(1, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -1915,7 +1943,7 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, url, status, path, interrupt_reason, danger_type, opened, etag, " \
+            query = "SELECT url, status, path, interrupt_reason, danger_type, opened, etag, " \
                     "datetime(timestamp, " + self.UTC + "), datetime(last_modified, " + self.UTC + ") from download;"
             cur.execute(query)
             rows = cur.fetchall()
@@ -1923,23 +1951,33 @@ class MyWidget(QWidget):
 
             count = len(rows)
             self.browser_dowload_table.setRowCount(count)
-            self.browser_dowload_table.setColumnCount(10)
-            column_headers = ["타입", "시간", "url", "상태", "경로", "실패 이유", "위험 파일", "열림 유무", "이태그", "마지막 수정시각"]
+            self.browser_dowload_table.setColumnCount(9)
+            column_headers = ["URL", "경로", "다운로드 시간", "마지막 수정 시간", "상태", "실패 이유", "위험 파일", "열림 유무", "이태그"]
             self.browser_dowload_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, url, status, path, interrupt_reason, danger_type, opened, etag, \
+                url, status, path, interrupt_reason, danger_type, opened, etag, \
                 timestamp, last_modified = rows[i]
-                self.browser_dowload_table.setItem(i, 0, QTableWidgetItem(type))
-                self.browser_dowload_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_dowload_table.setItem(i, 2, QTableWidgetItem(url))
-                self.browser_dowload_table.setItem(i, 3, QTableWidgetItem(status))
-                self.browser_dowload_table.setItem(i, 4, QTableWidgetItem(path))
+                self.browser_dowload_table.setItem(i, 0, QTableWidgetItem(url))
+                self.browser_dowload_table.setItem(i, 1, QTableWidgetItem(path))
+                self.browser_dowload_table.setItem(i, 2, QTableWidgetItem(timestamp))
+                self.browser_dowload_table.setItem(i, 3, QTableWidgetItem(last_modified))
+                self.browser_dowload_table.setItem(i, 4, QTableWidgetItem(status))
                 self.browser_dowload_table.setItem(i, 5, QTableWidgetItem(interrupt_reason))
                 self.browser_dowload_table.setItem(i, 6, QTableWidgetItem(danger_type))
                 self.browser_dowload_table.setItem(i, 7, QTableWidgetItem(opened))
                 self.browser_dowload_table.setItem(i, 8, QTableWidgetItem(etag))
-                self.browser_dowload_table.setItem(i, 9, QTableWidgetItem(last_modified))
+
+            self.browser_dowload_table.setColumnWidth(0, self.width() * 10 / 30)
+            self.browser_dowload_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.browser_dowload_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.browser_dowload_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.browser_dowload_table.setColumnWidth(4, self.width() * 4 / 30)
+            self.browser_dowload_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.browser_dowload_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.browser_dowload_table.setColumnWidth(7, self.width() * 2 / 30)
+            self.browser_dowload_table.setColumnWidth(8, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -1948,8 +1986,8 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT url, title, source, visit_duration, visit_count, typed_count, url_hidden, transition, " \
-                    "datetime(timestamp, " + self.UTC + ") from url;"
+            query = "SELECT url, title, datetime(timestamp, " + self.UTC + "), source, visit_duration, visit_count, " \
+                    "typed_count, url_hidden, transition from url;"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
@@ -1957,21 +1995,30 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_url_table.setRowCount(count)
             self.browser_url_table.setColumnCount(9)
-            column_headers = ["시간", "url", "제목", "소스", "머문 시간", "방문 횟수", "검색 횟수", "hidden 값", "접근 방식"]
+            column_headers = ["url", "제목", "시간", "소스", "머문 시간", "방문 횟수", "검색 횟수", "hidden 값", "접근 방식"]
             self.browser_url_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                url, title, source, visit_duration, visit_count, typed_count, url_hidden, transition, timestamp = rows[
-                    i]
-                self.browser_url_table.setItem(i, 0, QTableWidgetItem(timestamp))
-                self.browser_url_table.setItem(i, 1, QTableWidgetItem(url))
-                self.browser_url_table.setItem(i, 2, QTableWidgetItem(title))
+                url, title, timestamp, source, visit_duration, visit_count, typed_count, url_hidden, transition = rows[i]
+                self.browser_url_table.setItem(i, 0, QTableWidgetItem(url))
+                self.browser_url_table.setItem(i, 1, QTableWidgetItem(title))
+                self.browser_url_table.setItem(i, 2, QTableWidgetItem(timestamp))
                 self.browser_url_table.setItem(i, 3, QTableWidgetItem(source))
                 self.browser_url_table.setItem(i, 4, QTableWidgetItem(visit_duration))
-                self.browser_url_table.setItem(i, 5, QTableWidgetItem(visit_count))
-                self.browser_url_table.setItem(i, 6, QTableWidgetItem(typed_count))
-                self.browser_url_table.setItem(i, 7, QTableWidgetItem(url_hidden))
+                self.browser_url_table.setItem(i, 5, QTableWidgetItem(str(visit_count)))
+                self.browser_url_table.setItem(i, 6, QTableWidgetItem(str(typed_count)))
+                self.browser_url_table.setItem(i, 7, QTableWidgetItem(str(url_hidden)))
                 self.browser_url_table.setItem(i, 8, QTableWidgetItem(transition))
+
+            self.browser_url_table.setColumnWidth(0, self.width() * 10 / 30)
+            self.browser_url_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.browser_url_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.browser_url_table.setColumnWidth(3, self.width() * 2 / 30)
+            self.browser_url_table.setColumnWidth(4, self.width() * 2 / 30)
+            self.browser_url_table.setColumnWidth(5, self.width() * 2 / 30)
+            self.browser_url_table.setColumnWidth(6, self.width() * 2 / 30)
+            self.browser_url_table.setColumnWidth(7, self.width() * 2 / 30)
+            self.browser_url_table.setColumnWidth(8, self.width() * 4 / 30)
         except:
             pass
 
@@ -1980,7 +2027,7 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, url, name, data, password_element, password_value," \
+            query = "SELECT url, name, data, password_element, password_value," \
                     "datetime(timestamp, " + self.UTC + ") from login;"
             cur.execute(query)
             rows = cur.fetchall()
@@ -1988,19 +2035,25 @@ class MyWidget(QWidget):
 
             count = len(rows)
             self.browser_login_table.setRowCount(count)
-            self.browser_login_table.setColumnCount(7)
-            column_headers = ["type", "시간", "로그인 url", "id임을 나타내는 값", "id 또는 계정", "password임을 나타내는 값", "비밀번호"]
+            self.browser_login_table.setColumnCount(6)
+            column_headers = ["로그인 url", "시간", "id임을 나타내는 값", "id 또는 계정", "password임을 나타내는 값", "비밀번호"]
             self.browser_login_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, url, name, data, password_element, password_value, timestamp = rows[i]
-                self.browser_login_table.setItem(i, 0, QTableWidgetItem(type))
+                url, name, data, password_element, password_value, timestamp = rows[i]
+                self.browser_login_table.setItem(i, 0, QTableWidgetItem(url))
                 self.browser_login_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_login_table.setItem(i, 2, QTableWidgetItem(url))
-                self.browser_login_table.setItem(i, 3, QTableWidgetItem(name))
-                self.browser_login_table.setItem(i, 4, QTableWidgetItem(data))
-                self.browser_login_table.setItem(i, 5, QTableWidgetItem(password_element))
-                self.browser_login_table.setItem(i, 6, QTableWidgetItem(str(password_value)))
+                self.browser_login_table.setItem(i, 2, QTableWidgetItem(name))
+                self.browser_login_table.setItem(i, 3, QTableWidgetItem(data))
+                self.browser_login_table.setItem(i, 4, QTableWidgetItem(password_element))
+                self.browser_login_table.setItem(i, 5, QTableWidgetItem(str(password_value)))
+
+            self.browser_login_table.setColumnWidth(0, self.width() * 8 / 30)
+            self.browser_login_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.browser_login_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.browser_login_table.setColumnWidth(3, self.width() * 5 / 30)
+            self.browser_login_table.setColumnWidth(4, self.width() * 5 / 30)
+            self.browser_login_table.setColumnWidth(5, self.width() * 4 / 30)
         except:
             pass
 
@@ -2009,24 +2062,29 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, url, title, value, datetime(timestamp, " + self.UTC + ") from cookies;"
+            query = "SELECT url, title, value, datetime(timestamp, " + self.UTC + ") from cookies;"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
 
             count = len(rows)
             self.browser_cookies_table.setRowCount(count)
-            self.browser_cookies_table.setColumnCount(5)
-            column_headers = ["타입", "시간", "url", "", "쿠키값"]
+            self.browser_cookies_table.setColumnCount(4)
+            column_headers = ["url", "시간", "타이틀", "쿠키값"]
             self.browser_cookies_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, url, title, value, timestamp = rows[i]
-                self.browser_cookies_table.setItem(i, 0, QTableWidgetItem(type))
+                url, title, value, timestamp = rows[i]
+                self.browser_cookies_table.setItem(i, 0, QTableWidgetItem(url))
                 self.browser_cookies_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_cookies_table.setItem(i, 2, QTableWidgetItem(url))
-                self.browser_cookies_table.setItem(i, 3, QTableWidgetItem(title))
-                self.browser_cookies_table.setItem(i, 4, QTableWidgetItem(value))
+                self.browser_cookies_table.setItem(i, 2, QTableWidgetItem(title))
+                self.browser_cookies_table.setItem(i, 3, QTableWidgetItem(value))
+
+            self.browser_cookies_table.setColumnWidth(0, self.width() * 8 / 30)
+            self.browser_cookies_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.browser_cookies_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.browser_cookies_table.setColumnWidth(3, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2035,8 +2093,8 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT url, status, value, etag, server_name, data_location, all_http_headers, " \
-                    "datetime(timestamp, " + self.UTC + "), datetime(last_modified, " + self.UTC + ") from cache;"
+            query = "SELECT url, value, datetime(timestamp, " + self.UTC + "), datetime(last_modified, " + self.UTC + "), " \
+                    "status, etag, server_name, data_location, all_http_headers from cache;"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
@@ -2044,21 +2102,31 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_cache_table.setRowCount(count)
             self.browser_cache_table.setColumnCount(9)
-            column_headers = ["시간", "url", "상태", "파일", "etag", "마지막 수정", "서버", "데이터 위치", "http 트래픽"]
+            column_headers = ["url", "파일", "생성 시간", "마지막 수정 시간", "상태", "etag",  "서버", "데이터 위치", "http 트래픽"]
             self.browser_cache_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                url, status, value, etag, server_name, data_location, all_http_headers, timestamp, last_modified = rows[
+                url, value, timestamp, last_modified, status, etag, server_name, data_location, all_http_headers = rows[
                     i]
-                self.browser_cache_table.setItem(i, 0, QTableWidgetItem(timestamp))
-                self.browser_cache_table.setItem(i, 1, QTableWidgetItem(url))
-                self.browser_cache_table.setItem(i, 2, QTableWidgetItem(status))
-                self.browser_cache_table.setItem(i, 3, QTableWidgetItem(value))
-                self.browser_cache_table.setItem(i, 4, QTableWidgetItem(etag))
-                self.browser_cache_table.setItem(i, 5, QTableWidgetItem(last_modified))
+                self.browser_cache_table.setItem(i, 0, QTableWidgetItem(url))
+                self.browser_cache_table.setItem(i, 1, QTableWidgetItem(value))
+                self.browser_cache_table.setItem(i, 2, QTableWidgetItem(timestamp))
+                self.browser_cache_table.setItem(i, 3, QTableWidgetItem(last_modified))
+                self.browser_cache_table.setItem(i, 4, QTableWidgetItem(status))
+                self.browser_cache_table.setItem(i, 5, QTableWidgetItem(etag))
                 self.browser_cache_table.setItem(i, 6, QTableWidgetItem(server_name))
                 self.browser_cache_table.setItem(i, 7, QTableWidgetItem(data_location))
                 self.browser_cache_table.setItem(i, 8, QTableWidgetItem(all_http_headers))
+
+            self.browser_cache_table.setColumnWidth(0, self.width() * 8 / 30)
+            self.browser_cache_table.setColumnWidth(1, self.width() * 8 / 30)
+            self.browser_cache_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.browser_cache_table.setColumnWidth(3, self.width() * 4 / 30)
+            self.browser_cache_table.setColumnWidth(4, self.width() * 4 / 30)
+            self.browser_cache_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.browser_cache_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.browser_cache_table.setColumnWidth(7, self.width() * 4 / 30)
+            self.browser_cache_table.setColumnWidth(8, self.width() * 9 / 30)
         except:
             pass
 
@@ -2067,24 +2135,29 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, url, title, value, datetime(timestamp, " + self.UTC + ") from bookmark;"
+            query = "SELECT url, title, value, datetime(timestamp, " + self.UTC + ") from bookmark;"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
 
             count = len(rows)
             self.browser_bookmark_table.setRowCount(count)
-            self.browser_bookmark_table.setColumnCount(5)
-            column_headers = ["타입", "시간", "url", "타이틀", "상위값"]
+            self.browser_bookmark_table.setColumnCount(4)
+            column_headers = ["타이틀", "url", "시간",  "상위값"]
             self.browser_bookmark_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, url, title, value, timestamp = rows[i]
-                self.browser_bookmark_table.setItem(i, 0, QTableWidgetItem(type))
-                self.browser_bookmark_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_bookmark_table.setItem(i, 2, QTableWidgetItem(url))
-                self.browser_bookmark_table.setItem(i, 3, QTableWidgetItem(title))
-                self.browser_bookmark_table.setItem(i, 4, QTableWidgetItem(value))
+                url, title, value, timestamp = rows[i]
+                self.browser_bookmark_table.setItem(i, 0, QTableWidgetItem(title))
+                self.browser_bookmark_table.setItem(i, 1, QTableWidgetItem(url))
+                self.browser_bookmark_table.setItem(i, 2, QTableWidgetItem(timestamp))
+                self.browser_bookmark_table.setItem(i, 3, QTableWidgetItem(value))
+
+            self.browser_bookmark_table.setColumnWidth(0, self.width() * 8 / 30)
+            self.browser_bookmark_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.browser_bookmark_table.setColumnWidth(2, self.width() * 4 / 30)
+            self.browser_bookmark_table.setColumnWidth(3, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2093,23 +2166,27 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, status, value, datetime(timestamp, " + self.UTC + ") from autofill;"
+            query = "SELECT status, value, datetime(timestamp, " + self.UTC + ") from autofill;"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
 
             count = len(rows)
             self.browser_autofill_table.setRowCount(count)
-            self.browser_autofill_table.setColumnCount(4)
-            column_headers = ["타입", "시간", "id/email", "자동 완성 값"]
+            self.browser_autofill_table.setColumnCount(3)
+            column_headers = ["id/email", "자동 완성 값", "시간", ]
             self.browser_autofill_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, status, value, timestamp = rows[i]
-                self.browser_autofill_table.setItem(i, 0, QTableWidgetItem(type))
-                self.browser_autofill_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_autofill_table.setItem(i, 2, QTableWidgetItem(status))
-                self.browser_autofill_table.setItem(i, 3, QTableWidgetItem(value))
+                status, value, timestamp = rows[i]
+                self.browser_autofill_table.setItem(i, 0, QTableWidgetItem(status))
+                self.browser_autofill_table.setItem(i, 1, QTableWidgetItem(value))
+                self.browser_autofill_table.setItem(i, 2, QTableWidgetItem(timestamp))
+
+            self.browser_autofill_table.setColumnWidth(0, self.width() * 8 / 30)
+            self.browser_autofill_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.browser_autofill_table.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2118,24 +2195,30 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, url, status, data, datetime(timestamp, " + self.UTC + ") FROM preference;"
+            query = "SELECT url, status, data, datetime(timestamp, " + self.UTC + ") FROM preference;"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
 
             count = len(rows)
             self.browser_preference_table.setRowCount(count)
-            self.browser_preference_table.setColumnCount(5)
-            column_headers = ["타입", "시간", "url", "상태", "데이터"]
+            self.browser_preference_table.setColumnCount(4)
+            column_headers = ["url", "시간", "상태", "데이터"]
             self.browser_preference_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
-                type, url, status, data, timestamp = rows[i]
-                self.browser_preference_table.setItem(i, 0, QTableWidgetItem(type))
+                url, status, data, timestamp = rows[i]
+                self.browser_preference_table.setItem(i, 0, QTableWidgetItem(url))
                 self.browser_preference_table.setItem(i, 1, QTableWidgetItem(timestamp))
-                self.browser_preference_table.setItem(i, 2, QTableWidgetItem(url))
-                self.browser_preference_table.setItem(i, 3, QTableWidgetItem(status))
-                self.browser_preference_table.setItem(i, 4, QTableWidgetItem(data))
+                self.browser_preference_table.setItem(i, 2, QTableWidgetItem(status))
+                self.browser_preference_table.setItem(i, 3, QTableWidgetItem(data))
+
+            self.browser_preference_table.setColumnWidth(0, self.width() * 10 / 30)
+            self.browser_preference_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.browser_preference_table.setColumnWidth(2, self.width() * 6 / 30)
+            self.browser_preference_table.setColumnWidth(3, self.width() * 6 / 30)
+
+
         except:
             pass
 
@@ -2152,14 +2235,19 @@ class MyWidget(QWidget):
             count = len(rows)
             self.browser_cloud_table.setRowCount(count)
             self.browser_cloud_table.setColumnCount(3)
-            column_headers = ["시간", "url", "사이트 제목"]
+            column_headers = ["사이트 제목", "url", "접근 시간",]
             self.browser_cloud_table.setHorizontalHeaderLabels(column_headers)
 
             for i in range(count):
                 url, title, timestamp = rows[i]
-                self.browser_cloud_table.setItem(i, 0, QTableWidgetItem(timestamp))
+                self.browser_cloud_table.setItem(i, 0, QTableWidgetItem(title))
                 self.browser_cloud_table.setItem(i, 1, QTableWidgetItem(url))
-                self.browser_cloud_table.setItem(i, 2, QTableWidgetItem(title))
+                self.browser_cloud_table.setItem(i, 2, QTableWidgetItem(timestamp))
+
+            self.browser_cloud_table.setColumnWidth(0, self.width() * 10 / 30)
+            self.browser_cloud_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.browser_cloud_table.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2184,6 +2272,11 @@ class MyWidget(QWidget):
                 self.program_bam.setItem(i, 0, QTableWidgetItem(SID))
                 self.program_bam.setItem(i, 1, QTableWidgetItem(program_path))
                 self.program_bam.setItem(i, 2, QTableWidgetItem(last_executed))
+
+            self.program_bam.setColumnWidth(0, self.width() * 9 / 30)
+            self.program_bam.setColumnWidth(1, self.width() * 16 / 30)
+            self.program_bam.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2206,8 +2299,13 @@ class MyWidget(QWidget):
             for i in range(count):
                 name, run_count, last_executed = rows[i]
                 self.program_userassist.setItem(i, 0, QTableWidgetItem(name))
-                self.program_userassist.setItem(i, 1, QTableWidgetItem(run_count))
+                self.program_userassist.setItem(i, 1, QTableWidgetItem(str(run_count)))
                 self.program_userassist.setItem(i, 2, QTableWidgetItem(last_executed))
+
+            self.program_userassist.setColumnWidth(0, self.width() * 15 / 30)
+            self.program_userassist.setColumnWidth(1, self.width() * 3 / 30)
+            self.program_userassist.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2235,6 +2333,14 @@ class MyWidget(QWidget):
                 self.program_uninstall.setItem(i, 3, QTableWidgetItem(publisher))
                 self.program_uninstall.setItem(i, 4, QTableWidgetItem(type))
                 self.program_uninstall.setItem(i, 5, QTableWidgetItem(install_date))
+
+            self.program_uninstall.setColumnWidth(0, self.width() * 7 / 30)
+            self.program_uninstall.setColumnWidth(1, self.width() * 3 / 30)
+            self.program_uninstall.setColumnWidth(2, self.width() * 8 / 30)
+            self.program_uninstall.setColumnWidth(3, self.width() * 5 / 30)
+            self.program_uninstall.setColumnWidth(4, self.width() * 2 / 30)
+            self.program_uninstall.setColumnWidth(5, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2258,6 +2364,9 @@ class MyWidget(QWidget):
                 name, path = rows[i]
                 self.program_muicache.setItem(i, 0, QTableWidgetItem(name))
                 self.program_muicache.setItem(i, 1, QTableWidgetItem(path))
+
+            self.program_muicache.setColumnWidth(0, self.width() * 9 / 30)
+            self.program_muicache.setColumnWidth(1, self.width() * 20 / 30)
         except:
             pass
 
@@ -2283,6 +2392,11 @@ class MyWidget(QWidget):
                 self.program_firstfolder.setItem(i, 1, QTableWidgetItem(folder))
                 self.program_firstfolder.setItem(i, 2, QTableWidgetItem(str(mru)))
                 self.program_firstfolder.setItem(i, 3, QTableWidgetItem(opened_on))
+
+            self.program_firstfolder.setColumnWidth(0, self.width() * 8 / 30)
+            self.program_firstfolder.setColumnWidth(1, self.width() * 15 / 30)
+            self.program_firstfolder.setColumnWidth(2, self.width() * 2 / 30)
+            self.program_firstfolder.setColumnWidth(3, self.width() * 4 / 30)
         except:
             pass
 
@@ -2307,6 +2421,11 @@ class MyWidget(QWidget):
                 self.program_cidsizemru.setItem(i, 0, QTableWidgetItem(program_name))
                 self.program_cidsizemru.setItem(i, 1, QTableWidgetItem(str(mru)))
                 self.program_cidsizemru.setItem(i, 2, QTableWidgetItem(opened_on))
+
+            self.program_cidsizemru.setColumnWidth(0, self.width() * 20 / 30)
+            self.program_cidsizemru.setColumnWidth(1, self.width() * 2 / 30)
+            self.program_cidsizemru.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2329,6 +2448,11 @@ class MyWidget(QWidget):
                 self.etc_dialog_table.setItem(i, 0, QTableWidgetItem(program))
                 self.etc_dialog_table.setItem(i, 1, QTableWidgetItem(str(mru)))
                 self.etc_dialog_table.setItem(i, 2, QTableWidgetItem(opened_on))
+
+            self.etc_dialog_table.setColumnWidth(0, self.width() * 4 / 30)
+            self.etc_dialog_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.etc_dialog_table.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -2392,6 +2516,11 @@ class MyWidget(QWidget):
                 self.doc_reg_table.setItem(i, 0, QTableWidgetItem(program))
                 self.doc_reg_table.setItem(i, 1, QTableWidgetItem(lnk))
                 self.doc_reg_table.setItem(i, 2, QTableWidgetItem(opened_on))
+
+            self.doc_reg_table.setColumnWidth(0, self.width() * 11 / 30)
+            self.doc_reg_table.setColumnWidth(1, self.width() * 11 / 30)
+            self.doc_reg_table.setColumnWidth(2, self.width() * 4 / 30)
+
         except:
             pass
 
