@@ -94,13 +94,40 @@ class MyWidget(QWidget):
             rows3 = ''
             pass
         # 안티포렌식
+        # 설치 여부 확인 -> 실행 여부 확인
         try:
-            query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
-                     "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
-                     "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
-                     "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
-                     "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
-                     "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
+            if ("SELECT EXISTS (SELECT name, version, publisher, install_Date FROM Uninstall WHERE(name LIKE 'CCleaner%' "
+                "OR name LIKE 'Cipher%' OR name LIKE 'Eraser%' OR name LIKE 'SDelete%' OR name LIKE 'SetMACE%' "
+                "OR name LIKE 'TimeStomp%' OR name LIKE 'Wise Folder Hider%')) as success"):
+
+                if ("SELECT EXISTS (SELECT Full_Path, Last_Executed1 FROM Prefetch1 "
+                "WHERE( Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' "
+                "OR Executable_Name LIKE 'Eraser%' OR Executable_Name LIKE 'SDelete%' "
+                "OR Executable_Name LIKE 'TimeStomp%' OR Executable_Name LIKE 'Wise Folder Hider%')) as success"):
+                    query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, " \
+                             "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1, " + self.UTC + ") " \
+                             "FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
+                             "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%' AND b.Executable_Name LIKE 'Cipher%')" \
+                             "OR (a.name LIKE 'Eraser%' AND b.Executable_Name LIKE 'Eraser%') " \
+                             "OR (a.name LIKE 'SDelete%' AND b.Executable_Name LIKE 'SDelete%')"  \
+                             "OR (a.name LIKE 'SetMACE%' AND b.Executable_Name LIKE 'SetMACE%') " \
+                             "OR (a.name LIKE 'TimeStomp%' AND b.Executable_Name LIKE 'TimeStomp%')" \
+                             "OR (a.name LIKE 'Wise Folder Hider%' AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
+
+                else:
+                    query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
+                             "FROM Uninstall a, prefetch1 b WHERE (a.name LIKE 'CCleaner%'  OR a.name LIKE 'Cipher%' " \
+                             "OR a.name LIKE 'Eraser%'  OR a.name LIKE 'SDelete%'  OR a.name LIKE 'SetMACE%'  " \
+                             "OR a.name LIKE 'TimeStomp%'  OR a.name LIKE 'Wise Folder Hider%')"
+
+
+
+        #     query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
+        #              "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
+        #              "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
+        #              "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
+        #              "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
+        #              "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
             cur.execute(query4)
             rows4 = cur.fetchall()
         except:
@@ -224,7 +251,7 @@ class MyWidget(QWidget):
         self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(229, 243, 255))
-        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(229, 243, 255))
+        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(182, 244, 155)) # 미구현
 
     # tab2 PC 정보
     def set_PCinfo(self):
@@ -1288,7 +1315,9 @@ class MyWidget(QWidget):
         self.item4_10 = QTreeWidgetItem(self.item4)
         self.item4_10.setText(0, "클라우드 접속기록")
 
-        self.item5 = QTreeWidgetItem(self.tree)
+        self.item55 = QTreeWidgetItem(self.tree)
+        self.item55.setText(0, "실행 흔적")
+        self.item5 = QTreeWidgetItem(self.item55)
         self.item5.setText(0, "프로그램 실행 흔적")
         self.item5_1 = QTreeWidgetItem(self.item5)
         self.item5_1.setText(0, "레지스트리")
@@ -1309,7 +1338,7 @@ class MyWidget(QWidget):
         self.item5_2 = QTreeWidgetItem(self.item5)
         self.item5_2.setText(0, "프리패치")
 
-        self.item6 = QTreeWidgetItem(self.tree)
+        self.item6 = QTreeWidgetItem(self.item55)
         self.item6.setText(0, "문서실행 흔적")
         self.item6_1 = QTreeWidgetItem(self.item6)
         self.item6_1.setText(0, "레지스트리")
@@ -1320,7 +1349,7 @@ class MyWidget(QWidget):
         self.item6_4 = QTreeWidgetItem(self.item6)
         self.item6_4.setText(0, "프리패치")
 
-        self.item7 = QTreeWidgetItem(self.tree)
+        self.item7 = QTreeWidgetItem(self.item55)
         self.item7.setText(0, "기타실행 흔적")
         self.item7_1 = QTreeWidgetItem(self.item7)
         self.item7_1.setText(0, "링크 파일")
@@ -1858,7 +1887,7 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT type, keyword, datetime(timestamp, " + self.UTC + ") FROM keyword;"
+            query = "SELECT type, keyword, datetime(timestamp, " + self.UTC + ") FROM keyword"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
