@@ -101,14 +101,14 @@ def Save_Event():
             '2':'was successfully changed to the Installed state.'
         },
         system_et: {
-            '12':'Start Windows',                           '13':'Shut down Windows',
-            '1074':'Shut down/Restart',                     '104':'Log is deleted',
-            '42':'Turn on Sleep Mode',                      '1':'Turn off Sleep Mode',
-            '7045':'Install service in System',             '22':'Changed Time Zone',
+            '12':'윈도우를 시작합니다.',                        '13':'윈도우를 종료합니다.',
+            '1074':'종료 및 재시작을 하였습니다.',               '104':'로그가 삭제되었습니다.',
+            '42':'',                                        '1':'저전원 상태에서 복귀했습니다.',
+            '7045':'시스템에 서비스를 설치합니다.',              '22':'표준 시간대가 변경되었습니다.',
             '24580':'Decryption of volume started.',        '7040':'',
             '24660':'Encrypt of volume started',
             '10000':'Driver package is being installed',
-            '10002':'service upgrade',                      '10100':'The driver package installation has succeeded',
+            '10002':'서비스가 업그레이드 됐습니다.',             '10100':'The driver package installation has succeeded',
             '20003':'Service Installation or Update',       '24576':'Drivers were successfully installed for device .',
             '24577':'Compatibility Layer Successful Registration',
             '24579':'Autoplay Skipping'
