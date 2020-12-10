@@ -259,17 +259,15 @@ class MyWidget(QWidget):
         self.vbox2 = QVBoxLayout()
         self.tab2_tree = QTreeWidget()
         self.tab2_tree.header().setVisible(False)
-        # conn = sqlite3.connect("Believe_Me_Sister.db")
-        # cur = conn.cursor()
 
-        string1 = None
-        string2 = None
-        string3 = None
-        string4 = None
+        # string1 = None
+        # string2 = None
+        # string3 = None
+        # string4 = None
         pubIP = os.popen("curl ifconfig.me").read()
         string5 = "공인 IP : " + str(pubIP)
-        string6 = None
-        string7 = None
+        # string6 = None
+        # string7 = None
         # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대, 공인IP, 시스템 시간 변경, 표준시간대 변경
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
@@ -285,42 +283,39 @@ class MyWidget(QWidget):
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
 
-            conn = sqlite3.connect("Believe_Me_Sister.db")
-            cur = conn.cursor()
-            query = "SELECT datetime(time_created, " + self.UTC + "), detailed, sbt_usr_name, " \
-                      "datetime(sys_prv_time, " + self.UTC + "), datetime(sys_new_time, " + self.UTC + ") FROM event_log " \
-                     "WHERE event_id LIKE 4616"
-            cur.execute(query)
-            evt_data = cur.fetchall()[0]
-
-            conn = sqlite3.connect("Believe_Me_Sister.db")
-            cur = conn.cursor()
-            query = "SELECT account_name FROM UserAccounts"
-            cur.execute(query)
-            reg_data = cur.fetchall()
-
-            for evt in evt_data:
-                for reg in reg_data:
-                    if evt[2] in reg[0]:
-                        string5 = "시스템 시간 변경:\t detailed : " + evt_data[1] + ", time_created : " + evt_data[0]\
-                                  + "sbt_usr_name" + evt_data[2] + "sys_prv_time" + evt_data[3] + "sys_new_time" + evt_data[4]
-
-            conn = sqlite3.connect("Believe_Me_Sister.db")
-            cur = conn.cursor()
-            query = "SELECT datetime(time_created, " + self.UTC + "), detailed, new_bias, old_bias " \
-                    "FROM event_log WHERE event_id LIKE 22"
-            cur.execute(query)
-            rows = cur.fetchall()[0]
-            string6 = "표준시간대 변경:\t detaild" + rows[1] + "time_created : " + rows[0] + "old_bias" + rows[3] + "new_bias" + rows[2]
-
         except:
             string1 = "윈도우 버전"
             string2 = "윈도우 설치 시간"
             string3 = "컴퓨터 이름"
             string4 = "표준 시간대"
+
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(a.time_created, " + self.UTC + "), a.detailed, a.sbt_usr_name, " \
+                    "datetime(a.sys_prv_time, " + self.UTC + "), datetime(a.sys_new_time, " + self.UTC + ") FROM event_log a, UserAccounts b " \
+                    "WHERE ((event_id LIKE 4616) AND (a.sbt_usr_name = b.account_name))"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            string6 = "시스템 시간 변경:\t detailed : " + rows[1] + ", time_created : " + rows[0] \
+                      + "sbt_usr_name" + rows[2] + "sys_prv_time" + rows[3] + "sys_new_time" + rows[4]
+            # string6.setStyleSheet("Color : red")
+
+        except:
             string6 = "시스템 시간 변경"
+
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(time_created, " + self.UTC + "), detailed, new_bias, old_bias " \
+                    "FROM event_log WHERE event_id LIKE 22"
+            cur.execute(query)
+            rows = cur.fetchall()
+            string7 = "표준시간대 변경:\t detaild" + rows[1] + "time_created : " + rows[0] + "old_bias" + rows[3] + "new_bias" + rows[2]
+
+        except:
             string7 = "표준 시간대 변경"
-            pass
 
         self.text0 = QTreeWidgetItem(self.tab2_tree)
         self.text0.setText(0, "PC 정보")
@@ -348,6 +343,8 @@ class MyWidget(QWidget):
         self.text9_1.setText(0, string6)
         self.text9_2 = QTreeWidgetItem(self.text9)
         self.text9_2.setText(0, string7)
+
+
 
         # MFT 생성 시간
         try:
@@ -408,7 +405,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 description, ip, default_gateway, lease_obtained_time, lease_terminates_time = rows[i]
                 self.text8_content.append(QTreeWidgetItem(self.text8))
-                string = str(description) + ", ip: " + str(ip) + ", 게이트웨이: " + str(default_gateway) + ", 할당: " + str(lease_obtained_time) + ", 만료: " + str(lease_terminates_time)
+                string = "네트워크 : " + str(description) + ", ip: " + str(ip) + ", 게이트웨이: " + str(default_gateway) + ", 할당: " + str(lease_obtained_time) + ", 만료: " + str(lease_terminates_time)
                 self.text8_content[i].setText(0, string)
         except:
             pass
@@ -417,6 +414,7 @@ class MyWidget(QWidget):
         self.vbox2.addWidget(self.tab2_tree)
         self.groupbox2.setLayout(self.vbox2)
         self.tab2.layout.addWidget(self.groupbox2)
+
 
 #################################################
 #   tab3                                        #
@@ -608,7 +606,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 file_path, drive, SI_E_timestamp = rows[i]
                 self.timeline.setItem(accum + i, 0, QTableWidgetItem(SI_E_timestamp))
-                string1 = drive + ":\ $SI mft 접근"
+                string1 = drive + ":\ $SI mft 변경"
                 string2 = " - SI_E_timestamp"
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem(string1))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(file_path + string2))
@@ -757,9 +755,9 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query1 = "SELECT datetime(install_date," + self.UTC + "), product_name, product_ID FROM OSInformation " \
+            query = "SELECT datetime(install_date," + self.UTC + "), product_name, product_ID FROM OSInformation " \
                     " WHERE (install_date >= '" + self.datetime1 + "' AND install_date <= '" + self.datetime2 + "')"
-            cur.execute(query1)
+            cur.execute(query)
             rows = cur.fetchall()
             conn.close()
             accum = self.timeline_count
@@ -776,9 +774,15 @@ class MyWidget(QWidget):
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(product_name + ", 제품 ID: " + product_ID))
             self.timeline.setSortingEnabled(sortingEnabled)
 
-            query2 = "SELECT detailed, computer, datetime(time_created," + self.UTC + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
+        except:
+            pass
+
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT detailed, computer, datetime(time_created," + self.UTC + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
                     " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
-            cur.execute(query2)
+            cur.execute(query)
             rows = cur.fetchall()
             conn.close()
             accum = self.timeline_count
@@ -796,7 +800,6 @@ class MyWidget(QWidget):
                 self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
             self.timeline.setSortingEnabled(sortingEnabled)
         except:
-            print("없음!!")
             pass
 
     # 타임라인 - 시간 변경, 표준시간대 변경
@@ -846,7 +849,6 @@ class MyWidget(QWidget):
                 self.timeline.setItem(i+accum, 2, QTableWidgetItem(string))
             self.timeline.setSortingEnabled(sortingEnabled)
         except:
-            print("없음!!")
             pass
 
     # 타임라인 - 시스템 On/Off
@@ -3239,21 +3241,21 @@ class MyWidget(QWidget):
 
             self.file_and_folder_table.setColumnWidth(0, self.width() * 3 / 30)
             self.file_and_folder_table.setColumnWidth(1, self.width() * 3 / 30)
-            self.file_and_folder_table.setColumnWidth(2, self.width() * 6 / 30)
+            self.file_and_folder_table.setColumnWidth(2, self.width() * 10 / 30)
             self.file_and_folder_table.setColumnWidth(3, self.width() * 3 / 30)
             self.file_and_folder_table.setColumnWidth(4, self.width() * 3 / 30)
             self.file_and_folder_table.setColumnWidth(5, self.width() * 3 / 30)
-            self.file_and_folder_table.setColumnWidth(6, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(7, self.width() * 6 / 30)
-            self.file_and_folder_table.setColumnWidth(8, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(9, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(10, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(11, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(12, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(13, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(14, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(15, self.width() * 4 / 30)
-            self.file_and_folder_table.setColumnWidth(16, self.width() * 3 / 30)
+            self.file_and_folder_table.setColumnWidth(6, self.width() * 6 / 30)
+            self.file_and_folder_table.setColumnWidth(7, self.width() * 8 / 30)
+            self.file_and_folder_table.setColumnWidth(8, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(9, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(10, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(11, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(12, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(13, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(14, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(15, self.width() * 5 / 30)
+            self.file_and_folder_table.setColumnWidth(16, self.width() * 6 / 30)
             self.file_and_folder_table.setColumnWidth(17, self.width() * 3 / 30)
             self.file_and_folder_table.setColumnWidth(18, self.width() * 3 / 30)
 
@@ -3307,6 +3309,26 @@ class MyWidget(QWidget):
                 self.del_file_and_folder_table.setItem(i, 15, QTableWidgetItem(str(mft_ref_num)))
                 self.del_file_and_folder_table.setItem(i, 16, QTableWidgetItem(str(LSN)))
                 self.del_file_and_folder_table.setItem(i, 17, QTableWidgetItem(ADS_list))
+
+            self.del_file_and_folder_table.setColumnWidth(0, self.width() * 4 / 30)
+            self.del_file_and_folder_table.setColumnWidth(1, self.width() * 10 / 30)
+            self.del_file_and_folder_table.setColumnWidth(2, self.width() * 3 / 30)
+            self.del_file_and_folder_table.setColumnWidth(3, self.width() * 3 / 30)
+            self.del_file_and_folder_table.setColumnWidth(4, self.width() * 4 / 30)
+            self.del_file_and_folder_table.setColumnWidth(5, self.width() * 4 / 30)
+            self.del_file_and_folder_table.setColumnWidth(6, self.width() * 4 / 30)
+            self.del_file_and_folder_table.setColumnWidth(7, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(8, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(9, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(10, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(11, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(12, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(13, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(14, self.width() * 5 / 30)
+            self.del_file_and_folder_table.setColumnWidth(15, self.width() * 7 / 30)
+            self.del_file_and_folder_table.setColumnWidth(16, self.width() * 4 / 30)
+            self.del_file_and_folder_table.setColumnWidth(17, self.width() * 4 / 30)
+
         except:
             pass
 
@@ -3337,6 +3359,16 @@ class MyWidget(QWidget):
                 self.modified_file_table.setItem(i, 5, QTableWidgetItem(str(MFT_refer_num)))
                 self.modified_file_table.setItem(i, 6, QTableWidgetItem(str(parent_MFT_refer_num)))
                 self.modified_file_table.setItem(i, 7, QTableWidgetItem(time_stamp))
+
+            self.modified_file_table.setColumnWidth(0, self.width() * 4 / 30)
+            self.modified_file_table.setColumnWidth(1, self.width() * 4 / 30)
+            self.modified_file_table.setColumnWidth(2, self.width() * 10 / 30)
+            self.modified_file_table.setColumnWidth(3, self.width() * 8 / 30)
+            self.modified_file_table.setColumnWidth(4, self.width() * 8 / 30)
+            self.modified_file_table.setColumnWidth(5, self.width() * 5 / 30)
+            self.modified_file_table.setColumnWidth(6, self.width() * 5 / 30)
+            self.modified_file_table.setColumnWidth(7, self.width() * 5 / 30)
+
         except:
             pass
 
