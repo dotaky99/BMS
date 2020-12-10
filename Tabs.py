@@ -259,15 +259,21 @@ class MyWidget(QWidget):
         self.vbox2 = QVBoxLayout()
         self.tab2_tree = QTreeWidget()
         self.tab2_tree.header().setVisible(False)
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
+        # conn = sqlite3.connect("Believe_Me_Sister.db")
+        # cur = conn.cursor()
 
         string1 = None
         string2 = None
         string3 = None
         string4 = None
-        # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대
+        pubIP = os.popen("curl ifconfig.me").read()
+        string5 = "공인 IP : " + str(pubIP)
+        string6 = None
+        string7 = None
+        # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대, 공인IP, 시스템 시간 변경, 표준시간대 변경
         try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
             query = "SELECT product_name, product_ID, build_lab, computer_name, " \
                     "timezone_name, UTC, " \
                     "datetime(install_date, " + self.UTC + ") FROM OSInformation;"
@@ -278,11 +284,42 @@ class MyWidget(QWidget):
             string2 = "윈도우 설치 시간: " + rows[6]
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
+
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(time_created, " + self.UTC + "), detailed, sbt_usr_name, " \
+                      "datetime(sys_prv_time, " + self.UTC + "), datetime(sys_new_time, " + self.UTC + ") FROM event_log " \
+                     "WHERE event_id LIKE 4616"
+            cur.execute(query)
+            evt_data = cur.fetchall()[0]
+
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT account_name FROM UserAccounts"
+            cur.execute(query)
+            reg_data = cur.fetchall()
+
+            for evt in evt_data:
+                for reg in reg_data:
+                    if evt[2] in reg[0]:
+                        string5 = "시스템 시간 변경:\t detailed : " + evt_data[1] + ", time_created : " + evt_data[0]\
+                                  + "sbt_usr_name" + evt_data[2] + "sys_prv_time" + evt_data[3] + "sys_new_time" + evt_data[4]
+
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(time_created, " + self.UTC + "), detailed, new_bias, old_bias " \
+                    "FROM event_log WHERE event_id LIKE 22"
+            cur.execute(query)
+            rows = cur.fetchall()[0]
+            string6 = "표준시간대 변경:\t detaild" + rows[1] + "time_created : " + rows[0] + "old_bias" + rows[3] + "new_bias" + rows[2]
+
         except:
             string1 = "윈도우 버전"
             string2 = "윈도우 설치 시간"
             string3 = "컴퓨터 이름"
             string4 = "표준 시간대"
+            string6 = "시스템 시간 변경"
+            string7 = "표준 시간대 변경"
             pass
 
         self.text0 = QTreeWidgetItem(self.tab2_tree)
@@ -303,6 +340,14 @@ class MyWidget(QWidget):
         self.text7.setText(0, "USB")
         self.text8 = QTreeWidgetItem(self.tab2_tree)
         self.text8.setText(0, "네트워크")
+        self.text8_1 = QTreeWidgetItem(self.text8)
+        self.text8_1.setText(0, string5)
+        self.text9 = QTreeWidgetItem(self.tab2_tree)
+        self.text9.setText(0, "시간 변경")
+        self.text9_1 = QTreeWidgetItem(self.text9)
+        self.text9_1.setText(0, string6)
+        self.text9_2 = QTreeWidgetItem(self.text9)
+        self.text9_2.setText(0, string7)
 
         # MFT 생성 시간
         try:
@@ -338,8 +383,6 @@ class MyWidget(QWidget):
 
         # USB
         try:
-            # query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, " \
-            #         "datetime(first_connected, " + self.UTC + "), datetime(last_connected, " + self.UTC + ") FROM Connected_USB"
             query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
             cur.execute(query)
             rows = cur.fetchall()
@@ -363,12 +406,13 @@ class MyWidget(QWidget):
             rows = cur.fetchall()
             self.text8_content = []
             for i in range(len(rows)):
-                description, ip, default_gateway, obtained, terminates = rows[i]
+                description, ip, default_gateway, lease_obtained_time, lease_terminates_time = rows[i]
                 self.text8_content.append(QTreeWidgetItem(self.text8))
-                string = description + ", ip: " + ip + ", 게이트웨이: " + default_gateway + ", 할당: " + obtained + ", 만료: " + terminates
+                string = str(description) + ", ip: " + str(ip) + ", 게이트웨이: " + str(default_gateway) + ", 할당: " + str(lease_obtained_time) + ", 만료: " + str(lease_terminates_time)
                 self.text8_content[i].setText(0, string)
         except:
             pass
+
 
         self.vbox2.addWidget(self.tab2_tree)
         self.groupbox2.setLayout(self.vbox2)
@@ -384,8 +428,8 @@ class MyWidget(QWidget):
         self.box1 = QVBoxLayout()
         self.checkbox1_1 = QCheckBox("MFT 생성")
         self.checkbox1_2 = QCheckBox("계정 생성")
-        self.checkbox1_3 = QCheckBox("Windows 설치")
-        self.checkbox1_4 = QCheckBox("Windows 업데이트")
+        self.checkbox1_3 = QCheckBox("Windows 설치 / Windows 업데이트")
+        self.checkbox1_4 = QCheckBox("시간 변경")
         self.checkbox1_5 = QCheckBox("시스템 On/Off")
         self.box1.addWidget(self.checkbox1_1)
         self.box1.addWidget(self.checkbox1_2)
@@ -708,14 +752,14 @@ class MyWidget(QWidget):
         except:
             pass
 
-    # 타임라인 - Windows 설치
+    # 타임라인 - Windows 설치, Windows 업데이트
     def timeline_data1_3(self):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT datetime(install_date," + self.UTC + "), product_name, product_ID FROM OSInformation " \
+            query1 = "SELECT datetime(install_date," + self.UTC + "), product_name, product_ID FROM OSInformation " \
                     " WHERE (install_date >= '" + self.datetime1 + "' AND install_date <= '" + self.datetime2 + "')"
-            cur.execute(query)
+            cur.execute(query1)
             rows = cur.fetchall()
             conn.close()
             accum = self.timeline_count
@@ -731,17 +775,10 @@ class MyWidget(QWidget):
                 self.timeline.setItem(accum + i, 1, QTableWidgetItem("Windows 설치"))
                 self.timeline.setItem(accum + i, 2, QTableWidgetItem(product_name + ", 제품 ID: " + product_ID))
             self.timeline.setSortingEnabled(sortingEnabled)
-        except:
-            pass
 
-    # 타임라인 - Windows 업데이트
-    def timeline_data1_4(self):
-        try:
-            conn = sqlite3.connect("Believe_Me_Sister.db")
-            cur = conn.cursor()
-            query = "SELECT detailed, computer, datetime(time_created," + self.UTC + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
+            query2 = "SELECT detailed, computer, datetime(time_created," + self.UTC + "), package FROM event_log WHERE ((event_id='2' AND package IS NOT '')" \
                     " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
-            cur.execute(query)
+            cur.execute(query2)
             rows = cur.fetchall()
             conn.close()
             accum = self.timeline_count
@@ -759,6 +796,57 @@ class MyWidget(QWidget):
                 self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
             self.timeline.setSortingEnabled(sortingEnabled)
         except:
+            print("없음!!")
+            pass
+
+    # 타임라인 - 시간 변경, 표준시간대 변경
+    def timeline_data1_4(self):
+        try:
+            conn = sqlite3.connect('Believe_Me_Sister.db')
+            cur = conn.cursor()
+            query1 = "SELECT datetime(a.time_created," + self.UTC + "), a.detailed, " \
+                    "a.sbt_usr_name, datetime(a.sys_prv_time, " + self.UTC + "), " \
+                    "datetime(a.sys_new_time, " + self.UTC + ") FROM event_log a, UserAccounts b WHERE ((event_id LIKE 4616) " \
+                    "AND (a.sbt_usr_name LIKE b.account_name) " \
+                    "AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
+            cur.execute(query1)
+            rows = cur.fetchall()
+            conn.close()
+            accum = self.timeline_count
+            self.timeline_count = accum + len(rows)
+            self.timeline.setRowCount(self.timeline_count)
+
+            sortingEnabled = self.timeline.isSortingEnabled()
+            self.timeline.setSortingEnabled(False)
+
+            for i in range(len(rows)):
+                time_created, detailed, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
+                self.timeline.setItem(i + accum, 0, QTableWidgetItem(time_created))
+                self.timeline.setItem(i + accum, 1, QTableWidgetItem("시스템 시간 변경"))
+                string = "계정 이름: " + sbt_usr_name + ", 변경 전 시간: " + sys_prv_time + ", 변경 후 시간: " + sys_new_time
+                self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
+            self.timeline.setSortingEnabled(sortingEnabled)
+
+            query2 = "SELECT datetime(time_created, " + self.UTC + "), detailed, new_bias, old_bias FROM event_log WHERE event_id LIKE 22"
+            cur.execute(query2)
+            rows = cur.fetchall()
+            conn.close()
+            accum = self.timeline_count
+            self.timeline_count = accum + len(rows)
+            self.timeline.setRowCount(self.timeline_count)
+
+            sortingEnabled = self.timeline.isSortingEnabled()
+            self.timeline.setSortingEnabled(False)
+
+            for i in range(len(rows)):
+                time_created, detailed, new_bias, old_bias = rows[i]
+                self.timeline.setItem(i + accum, 0, QTableWidgetItem(time_created))
+                self.timeline.setItem(i + accum, 1, QTableWidgetItem("표준시간대 변경"))
+                string = "detailed : " + detailed + ", old_bias : " + old_bias + ", new bias : " + new_bias
+                self.timeline.setItem(i+accum, 2, QTableWidgetItem(string))
+            self.timeline.setSortingEnabled(sortingEnabled)
+        except:
+            print("없음!!")
             pass
 
     # 타임라인 - 시스템 On/Off
@@ -1002,6 +1090,11 @@ class MyWidget(QWidget):
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 255, 102))
                 elif self.timeline.item(i, 1).text() == "이벤트로그 삭제":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(51, 102, 225))
+                elif self.timeline.item(i, 1).text() == "시스템 시간 변경":
+                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(255, 128, 0))
+                elif self.timeline.item(i, 1).text() == "표준 시간대 변경":
+                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(0, 128, 255))
+
 
 
 #################################################
