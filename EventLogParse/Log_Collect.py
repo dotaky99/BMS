@@ -180,16 +180,18 @@ def PC_Processing(file_et):
                             sys_drv_file_name = soup.driverfilename.string
                             sys_dvc_inst_id = soup.deviceinstanceid.string
 
-
                 # 네트워크 이벤트 파일에서 션별된 이벤트만을 파싱
                 if ('Network' in each_et or 'WLAN' in each_et) and eventid in file_et[each_et]:
                     if eventid == '10000' or eventid == '10001':
                         detailed = file_et[each_et][eventid]
                         for data in soup.findAll('data'):
                             if 'Name' == data['name']:
+                                if '식별' in str(data.string):
+                                    continue
                                 net_name = data.string
                             if 'Guid' == data['name']:
                                 guid = data.string
+
                     if eventid == '8003':
                         detailed = file_et[each_et][eventid]
                         for data in soup.findAll('data'):
@@ -344,9 +346,9 @@ def PC_Processing(file_et):
                                 drive_serial = data.string
                             if 'PartitionTableBytes' == data['name']:
                                 if data.string == '0':
-                                    detailed = 'The storage device has been successfully connected.'
+                                    detailed = '연결 성공.'
                                 else:
-                                    detailed = 'The storage device has been successfully released.'
+                                    detailed = '연결 해제.'
                             # CHECK VHD/X
                             if 'Location' == data['name']:
                                 if 'vhd' in data.string:
