@@ -1,6 +1,6 @@
 import os, sys
 from PyQt5.QtWidgets import *
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import *
 import sqlite3
 from datetime import timedelta
@@ -485,6 +485,7 @@ class MyWidget(QWidget):
         self.set_timeline_tab2()
         self.tab3.setLayout(self.tab3.layout)
 
+    # tab3의 타임라인 테이블 구성
     def set_timeline_tab1(self):
         self.timeline_tab1.layout = QVBoxLayout()
 
@@ -506,6 +507,7 @@ class MyWidget(QWidget):
         self.timeline_tab1.layout.addWidget(self.timeline)
         self.timeline_tab1.setLayout(self.timeline_tab1.layout)
 
+    # tab3의 타임라인 그래프 + 테이블 구성
     def set_timeline_tab2(self):
         self.timeline_tab2.layout = QHBoxLayout()
 
@@ -561,8 +563,10 @@ class MyWidget(QWidget):
     def set_graph(self):
         conn = sqlite3.connect("Believe_Me_Sister-Browser.db")
         cur = conn.cursor()
-        start = self.input_datetime1.dateTime().toPyDateTime()
-        end = self.input_datetime2.dateTime().toPyDateTime()
+        start = self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -9)
+        end = self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -9)
+        start = start - timedelta(minutes=start.minute, seconds=start.second)   # 분, 초 버림
+        end = end - timedelta(hours = 1, minutes=end.minute, seconds=end.second)    # 분, 초 올림
 
         self.times = []  # str: 쿼리에서 string 타입의 시간이 필요함. self.times는 times2, times3보다 1 더 길음. (쿼리 사용을 위함)
         times2 = []  # datetime: matplot 사용시 datetime 타입으로 인자를 넘겨야 함
@@ -598,7 +602,7 @@ class MyWidget(QWidget):
             return
 
         dists = [self.distance([event.xdata, event.ydata], k) for k in self.points]
-        if min(dists) > 1:  # 클릭 범위 지정
+        if min(dists) > 1.5:  # 클릭 범위 지정. 숫자가 클 수록 범위 커짐.
             return
 
         self.set_internet_table(dists.index(min(dists)))
@@ -610,10 +614,9 @@ class MyWidget(QWidget):
     # tab3 그래프 - 인터넷 테이블
     def set_internet_table(self, index):
         self.graph_table.clearContents()
-
         conn = sqlite3.connect("Believe_Me_Sister-Browser.db")
         cur = conn.cursor()
-        query = "SELECT timestamp, url, title FROM url WHERE (timestamp >= '" + self.times[index] + \
+        query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + self.times[index] + \
                 "') AND (timestamp <= '" + self.times[index+1] + "')"
         cur.execute(query)
         rows = cur.fetchall()
@@ -625,6 +628,8 @@ class MyWidget(QWidget):
             self.graph_table.setItem(i, 0, QTableWidgetItem(timestamp))
             self.graph_table.setItem(i, 1, QTableWidgetItem(url))
             self.graph_table.setItem(i, 2, QTableWidgetItem(title))
+
+        self.graph_table.sortItems(0, QtCore.Qt.AscendingOrder)
 
     # tab3의 타임라인 필터링
     def search_timeline(self, s):
