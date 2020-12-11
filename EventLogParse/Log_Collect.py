@@ -346,9 +346,9 @@ def PC_Processing(file_et):
                                 drive_serial = data.string
                             if 'PartitionTableBytes' == data['name']:
                                 if data.string == '0':
-                                    detailed = '연결 성공.'
+                                    detailed = '연결 성공'
                                 else:
-                                    detailed = '연결 해제.'
+                                    detailed = '연결 해제'
                             # CHECK VHD/X
                             if 'Location' == data['name']:
                                 if 'vhd' in data.string:
