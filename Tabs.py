@@ -1,9 +1,13 @@
-import os
+import os, sys
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
 import sqlite3
 from datetime import timedelta
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.dates as mdates
 
 
 class MyWidget(QWidget):
@@ -25,7 +29,7 @@ class MyWidget(QWidget):
 
         self.set_tab2()
         self.set_tab3()
-        self.set_tab4()
+        # self.set_tab4()
 
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
@@ -468,6 +472,22 @@ class MyWidget(QWidget):
         self.box3.addWidget(self.input_datetime2)
         self.box3.addWidget(self.timebutton)
 
+        self.timeline_tab1 = QWidget()
+        self.timeline_tab2 = QWidget()
+        self.timeline_tabs = QTabWidget()
+        self.timeline_tabs.addTab(self.timeline_tab1, "테이블")
+        self.timeline_tabs.addTab(self.timeline_tab2, "인터넷 사용")
+
+        self.tab3.layout.addLayout(self.box3, 0, 0)
+        self.tab3.layout.addLayout(self.box4, 1, 0)
+        self.tab3.layout.addWidget(self.timeline_tabs, 2, 0)
+        self.set_timeline_tab1()
+        self.set_timeline_tab2()
+        self.tab3.setLayout(self.tab3.layout)
+
+    def set_timeline_tab1(self):
+        self.timeline_tab1.layout = QVBoxLayout()
+
         self.timeline_search = QLineEdit(self)
         self.timeline_search.setPlaceholderText("Search ...")
         self.timeline_search.textChanged.connect(self.search_timeline)
@@ -482,14 +502,35 @@ class MyWidget(QWidget):
         self.timeline.setColumnWidth(2, self.width() * 8 / 20)
         self.timeline.setColumnWidth(3, self.width() * 10 / 20)
 
-        self.tab3.layout.addLayout(self.box3, 0, 0)
-        self.tab3.layout.addLayout(self.box4, 1, 0)
-        self.tab3.layout.addWidget(self.timeline_search, 2, 0)
-        self.tab3.layout.addWidget(self.timeline, 3, 0)
-        self.tab3.setLayout(self.tab3.layout)
+        self.timeline_tab1.layout.addWidget(self.timeline_search)
+        self.timeline_tab1.layout.addWidget(self.timeline)
+        self.timeline_tab1.setLayout(self.timeline_tab1.layout)
+
+    def set_timeline_tab2(self):
+        self.timeline_tab2.layout = QHBoxLayout()
+
+        fig = plt.Figure()
+        self.ax = fig.add_subplot(111)
+        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+        self.canvas = FigureCanvas(fig)
+        self.canvas.draw()
+        self.canvas.mpl_connect('button_press_event', self.timeline_click)
+
+        self.graph_table = QTableWidget(self)
+        self.graph_table.setColumnCount(3)
+        column_headers = ["시간", "URL", "제목"]
+        self.graph_table.setHorizontalHeaderLabels(column_headers)
+        self.graph_table.setColumnWidth(0, self.width() * 2 / 15)
+        self.graph_table.setColumnWidth(1, self.width() * 4 / 11)
+        self.graph_table.setColumnWidth(2, self.width() * 3 / 11)
+
+        self.timeline_tab2.layout.addWidget(self.canvas)
+        self.timeline_tab2.layout.addWidget(self.graph_table)
+        self.timeline_tab2.setLayout(self.timeline_tab2.layout)
 
     # tab3의 타임라인 구성
     def set_timeline(self):
+        self.set_graph()
         self.datetime1 = (self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -9)).strftime("%Y-%m-%d %H:%M:%S")
         self.datetime2 = (self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -9)).strftime("%Y-%m-%d %H:%M:%S")
         self.timeline.clearContents()
@@ -515,6 +556,75 @@ class MyWidget(QWidget):
             self.timeline_data2_4()
         if self.checkbox2_5.isChecked():
             self.timeline_data2_5()
+
+    # 그래프 출력
+    def set_graph(self):
+        conn = sqlite3.connect("Believe_Me_Sister-Browser.db")
+        cur = conn.cursor()
+        start = self.input_datetime1.dateTime().toPyDateTime()
+        end = self.input_datetime2.dateTime().toPyDateTime()
+
+        self.times = []  # str: 쿼리에서 string 타입의 시간이 필요함. self.times는 times2, times3보다 1 더 길음. (쿼리 사용을 위함)
+        times2 = []  # datetime: matplot 사용시 datetime 타입으로 인자를 넘겨야 함
+        interval = int((end - start).days * 24 + (end - start).seconds / 3600) + 1
+        index = start
+        for i in range(interval):
+            self.times.append(index.strftime("%Y-%m-%d %H:%M:%S"))
+            times2.append(index)
+            index = index + timedelta(hours=1)
+        data = []
+        for t in range(len(self.times) - 1):
+            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + \
+                    "') AND (timestamp <= '" + self.times[t + 1] + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            data.append(len(rows))
+        conn.close()
+
+        times3 = []  # float: datetime 객체는 matplot에서 float 타입으로 출력됨.
+        for t in times2:
+            times3.append(mdates.date2num(t))
+        self.points = list(zip(times3, data))
+
+        N = len(data)
+        self.ax.cla()
+        self.ax.plot(times2[0:N], data)
+        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+        self.canvas.draw()
+
+    # 그래프 클릭 시 이벤트
+    def timeline_click(self, event):
+        if event.inaxes is None:
+            return
+
+        dists = [self.distance([event.xdata, event.ydata], k) for k in self.points]
+        if min(dists) > 1:  # 클릭 범위 지정
+            return
+
+        self.set_internet_table(dists.index(min(dists)))
+
+    # 그래프 클릭 시 거리 계산
+    def distance(self, a, b):
+        return (sum([(k[0] - k[1]) ** 2 for k in zip(a, b)]) ** 0.5)
+
+    # tab3 그래프 - 인터넷 테이블
+    def set_internet_table(self, index):
+        self.graph_table.clearContents()
+
+        conn = sqlite3.connect("Believe_Me_Sister-Browser.db")
+        cur = conn.cursor()
+        query = "SELECT timestamp, url, title FROM url WHERE (timestamp >= '" + self.times[index] + \
+                "') AND (timestamp <= '" + self.times[index+1] + "')"
+        cur.execute(query)
+        rows = cur.fetchall()
+
+        count = len(rows)
+        self.graph_table.setRowCount(count)
+        for i in range(count):
+            timestamp, url, title = rows[i]
+            self.graph_table.setItem(i, 0, QTableWidgetItem(timestamp))
+            self.graph_table.setItem(i, 1, QTableWidgetItem(url))
+            self.graph_table.setItem(i, 2, QTableWidgetItem(title))
 
     # tab3의 타임라인 필터링
     def search_timeline(self, s):
@@ -1098,7 +1208,6 @@ class MyWidget(QWidget):
                     self.timeline.itme(i, 1).setBackground(QtGui.QColor(0, 128, 255))
 
 
-
 #################################################
 #   tab4                                        #
 #################################################
@@ -1670,6 +1779,7 @@ class MyWidget(QWidget):
             delete.setParent(None)
             self.rightlayout.addWidget(self.recent_folder_table)
             self.search.clear()
+
 
 #################################################
 #   tab4의 테이블 구성                            #
