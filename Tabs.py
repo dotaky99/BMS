@@ -265,12 +265,9 @@ class MyWidget(QWidget):
         self.tab2_tree = QTreeWidget()
         self.tab2_tree.header().setVisible(False)
 
-        # string1 = None
-        # string2 = None
-        # string3 = None
-        # string4 = None
         pubIP = os.popen("curl ifconfig.me").read()
         string5 = "공인 IP : " + str(pubIP)
+
         # 윈도우 버전, 윈도우 설치 시각, 컴퓨터 이름, 표준 시간대, 공인IP, 시스템 시간 변경, 표준시간대 변경
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
@@ -314,12 +311,8 @@ class MyWidget(QWidget):
         self.text8_1.setText(0, string5)
         self.text9 = QTreeWidgetItem(self.tab2_tree)
         self.text9.setText(0, "시간 변경")
-        # self.text9_1 = QTreeWidgetItem(self.text9)
-        # self.text9_1.setText(0, string6)
-        # self.text9_2 = QTreeWidgetItem(self.text9)
-        # self.text9_2.setText(0, string7)
 
-        # MFT 생성 시간
+        # MFT 생성 시간 + (MFT 생성 vs 시스템 설치)
         c_mft_time = ''
         try:
             win_install = re.search('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}', string2)
@@ -327,40 +320,61 @@ class MyWidget(QWidget):
             query = "SELECT drive, datetime(SI_M_timestamp, " + self.UTC + ") FROM parsed_MFT WHERE file_path LIKE '/$MFT'"
             cur.execute(query)
             rows = cur.fetchall()
-            self.text3_content = []
+            self.text5_content = []
             for i in range(len(rows)):
                 drive, SI_M_timestamp = rows[i]
-
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
-                        print('이상함') # c_mft_time, window_install_time 하이라이팅
-                    else:
-                        print("괜찮음")
-                self.text3_content.append(QTreeWidgetItem(self.text5))
-                self.text3_content[i].setText(0, drive + ":\ : " + SI_M_timestamp)
+                        string = "★" + drive + ":\ : " + SI_M_timestamp
+                        # 윈도우 설치 -> mft 생성 => 이상함!
+                    else :
+                        string = drive + ":\ : " + SI_M_timestamp # 정상(C에 대해서만)
+                else :
+                    string = drive + ":\ : " + SI_M_timestamp
+                self.text5_content.append(QTreeWidgetItem(self.text5))
+                self.text5_content[i].setText(0, string)
+
         except:
             print("MFT 없음")
             pass
 
-        # 계정
+        # 계정 + (계정 vs 시스템 설치)
         try:
+            query = 'SELECT datetime(install_date, ' + self.UTC + ') FROM OSInformation;'
+            cur.execute(query)
+            win_inst = cur.fetchone()
+            # print(win_inst[0])
+
             query = "SELECT account_name, RID_int, datetime(created_on, " + self.UTC + "), " \
                     "datetime(last_login_time, " + self.UTC + ") FROM UserAccounts"
             cur.execute(query)
             rows = cur.fetchall()
-            c_mft_time = datetime.strptime(c_mft_time, "%Y-%m-%d %H:%M:%S")
+
             self.text6_content = []
             for i in range(len(rows)):
+                string = None
                 account_name, RID_int, created_on, last_login_time = rows[i]
-                self.text6_content.append(QTreeWidgetItem(self.text6))
                 if last_login_time == None:
                     string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on
+
                 else:
-                    if c_mft_time > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
+                    if int(RID_int) > 1000:
+                        if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
+                            string ="★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+                            # 계정 생성 -> 윈도우 설치 => 이상함!
+                        else : # 정상인 경우
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+
+                        if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
+                            string ="★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+                            # 계정 생성 -> MFT 생성 => 이상함!
+                        else: # 정상인 경우
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+                    else :
                         string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
-                    else:
-                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+
+                self.text6_content.append(QTreeWidgetItem(self.text6))
                 self.text6_content[i].setText(0, string)
         except:
             pass
