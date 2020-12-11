@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
-    <height>331</height>
+    <width>688</width>
+    <height>265</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,13 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>BoB 9기 디지털 포렌식 트랙 (한택승, 박지현, 이민형, 이은진, 장유진, 정선영)</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1" rowspan="2">
      <widget class="QLabel" name="logo">
       <property name="text">
@@ -29,18 +22,31 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label">
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_5">
       <property name="font">
        <font>
-        <family>Bodoni MT</family>
-        <pointsize>35</pointsize>
+        <family>맑은 고딕</family>
+       </font>
+      </property>
+      <property name="text">
+       <string>도구를 실행하면 메모리 덤프, 파일 복사 및 DB 생성 단게로 진행됩니다. 
+메모리 덤프는 추가적으로 메모리 분석이 필요한 경우에 사용자가 선택할 수 있으며, 소요시간은 1분 내외입니다.
+또한, 파일 복사 및 DB생성 단계는 도구 실행을 위해 필수적이며, 소요 시간은 40분 내외입니다. 참고하시기 바랍니다.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="font">
+       <font>
+        <family>맑은 고딕</family>
         <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>B.M.S</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#0055ff;&quot;&gt;&amp;lt;참고&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -54,6 +60,13 @@
       </property>
       <property name="text">
        <string>대상 PC 상태 및 환경 분석용 현장 조사 도구</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>BoB 9기 디지털 포렌식 트랙 (한택승, 박지현, 이민형, 이은진, 장유진, 정선영)</string>
       </property>
      </widget>
     </item>
@@ -71,31 +84,18 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_6">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
       <property name="font">
        <font>
-        <family>맑은 고딕</family>
+        <family>Bodoni MT</family>
+        <pointsize>35</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>&lt;참고&gt;</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_5">
-      <property name="font">
-       <font>
-        <family>맑은 고딕</family>
-       </font>
-      </property>
-      <property name="text">
-       <string>도구를 실행하면 메모리 덤프, 파일 복사 및 DB 생성 단게로 진행됩니다. 
-메모리 덤프는 추가적으로 메모리 분석이 필요한 경우에 사용자가 선택할 수 있으며, 소요시간은 1분 내외입니다.
-또한, 파일 복사 및 DB생성 단계는 도구 실행을 위해 필수적이며, 소요 시간은 40분 내외입니다. 참고하시기 바랍니다.</string>
+       <string>B.M.S</string>
       </property>
      </widget>
     </item>

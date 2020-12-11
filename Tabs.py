@@ -1,4 +1,5 @@
 import os, sys
+import re
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import *
@@ -348,20 +349,27 @@ class MyWidget(QWidget):
         self.text9_2 = QTreeWidgetItem(self.text9)
         self.text9_2.setText(0, string7)
 
-
-
         # MFT 생성 시간
         try:
-            query = "SELECT drive, datetime(SI_M_timestamp, " + self.UTC + ") " \
-                    "from parsed_MFT WHERE file_path Like '/$MFT'"
+            win_install = re.search('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}', string2)
+            win_install = win_install.group()
+            query = "SELECT drive, datetime(SI_M_timestamp, " + self.UTC + ") FROM parsed_MFT WHERE file_path LIKE '/$MFT'"
             cur.execute(query)
             rows = cur.fetchall()
             self.text3_content = []
             for i in range(len(rows)):
-                drive, m_time = rows[i]
+                drive, SI_M_timestamp = rows[i]
+
+                if drive == 'C':
+                    if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
+                        print('이상함') # c_mft_time, window_install_time 하이라이팅
+                    else:
+                        print("괜찮음")
+
                 self.text3_content.append(QTreeWidgetItem(self.text5))
-                self.text3_content[i].setText(0, drive + ":\ : " + m_time)
+                self.text3_content[i].setText(0, drive + ":\ : " + SI_M_timestamp)
         except:
+            print("MFT 없음")
             pass
 
         # 계정
@@ -561,7 +569,7 @@ class MyWidget(QWidget):
 
     # 그래프 출력
     def set_graph(self):
-        conn = sqlite3.connect("Believe_Me_Sister-Browser.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         start = self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -9)
         end = self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -9)
@@ -578,8 +586,7 @@ class MyWidget(QWidget):
             index = index + timedelta(hours=1)
         data = []
         for t in range(len(self.times) - 1):
-            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + \
-                    "') AND (timestamp <= '" + self.times[t + 1] + "')"
+            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
             cur.execute(query)
             rows = cur.fetchall()
             data.append(len(rows))
@@ -614,7 +621,7 @@ class MyWidget(QWidget):
     # tab3 그래프 - 인터넷 테이블
     def set_internet_table(self, index):
         self.graph_table.clearContents()
-        conn = sqlite3.connect("Believe_Me_Sister-Browser.db")
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
         query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + self.times[index] + \
                 "') AND (timestamp <= '" + self.times[index+1] + "')"
