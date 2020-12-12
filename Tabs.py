@@ -956,7 +956,6 @@ class MyWidget(QWidget):
             rows4_6 = ''
             pass
         tab2_accum = tab2_accum + len(rows4_6)+1
-        print(tab2_accum)
 
         # VM
         self.color_tab2_table("VM", tab2_accum)
