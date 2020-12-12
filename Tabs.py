@@ -588,8 +588,7 @@ class MyWidget(QWidget):
 
         internet_data = []
         for t in range(len(self.times) - 1):
-            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + \
-                    "') AND (timestamp < '" + self.times[t + 1] + "')"
+            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
             cur.execute(query)
             rows = cur.fetchall()
             internet_data.append(len(rows))
@@ -661,6 +660,8 @@ class MyWidget(QWidget):
 
     # tab3 타임라인의 그래프 - 인터넷 테이블
     def set_internet_table(self, index):
+        self.internet_table.clearContents()
+        conn = sqlite3.connect("Believe_Me_Sister.db")
         self.internet_table.clearContents()
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
