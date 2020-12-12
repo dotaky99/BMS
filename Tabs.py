@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import *
 import sqlite3
-from datetime import timedelta
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -16,7 +15,7 @@ class MyWidget(QWidget):
         super(MyWidget, self).__init__(parent)
         self.setGeometry(100, 100, 1500, 700)
         self.UTC = "'" + UTC + " hours'"
-        self.UTC_int = UTC
+        self.UTC_int = int(UTC)
         self.initUI()
 
     def initUI(self):
@@ -1307,7 +1306,7 @@ class MyWidget(QWidget):
         self.timeline_tab2 = QWidget()
         self.timeline_tabs = QTabWidget()
         self.timeline_tabs.addTab(self.timeline_tab1, "테이블")
-        self.timeline_tabs.addTab(self.timeline_tab2, "인터넷 사용")
+        self.timeline_tabs.addTab(self.timeline_tab2, "그래프")
 
         self.tab3.layout.addLayout(self.box3, 0, 0)
         self.tab3.layout.addLayout(self.box4, 1, 0)
@@ -1316,7 +1315,219 @@ class MyWidget(QWidget):
         self.set_timeline_tab2()
         self.tab3.setLayout(self.tab3.layout)
 
-    # tab3의 타임라인 테이블 구성
+
+#################################################
+#   tab3의 tab2                                 #
+#################################################
+    # tab3의 타임라인 그래프 + 테이블 구성
+    def set_timeline_tab2(self):
+        self.timeline_tab2.layout = QHBoxLayout()
+
+        fig = plt.Figure()
+        self.ax = fig.add_subplot(111)
+        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+        self.ax2 = self.ax.twinx()
+        self.canvas = FigureCanvas(fig)
+        self.canvas.draw()
+        self.canvas.mpl_connect('button_press_event', self.timeline_click)
+
+        self.print_graph_button = QPushButton("그래프 출력")
+        self.print_graph_button.clicked.connect(self.set_graph)
+        self.graph_layout = QVBoxLayout()
+        self.time_label = QLabel()
+
+        self.internet_table = QTableWidget(self)
+        self.internet_table.setColumnCount(3)
+        column_headers = ["시간", "URL", "제목"]
+        self.internet_table.setHorizontalHeaderLabels(column_headers)
+        self.internet_table.setColumnWidth(0, self.width() * 2 / 15)
+        self.internet_table.setColumnWidth(1, self.width() * 4 / 11)
+        self.internet_table.setColumnWidth(2, self.width() * 3 / 11)
+
+        self.document_table = QTableWidget(self)
+        self.document_table.setColumnCount(3)
+        column_headers = ["시간", "타입", "파일"]
+        self.document_table.setHorizontalHeaderLabels(column_headers)
+        self.document_table.setColumnWidth(0, self.width() * 2 / 15)
+        self.document_table.setColumnWidth(1, self.width() * 1 / 17)
+        self.document_table.setColumnWidth(2, self.width() * 8 / 14)
+
+        self.graph_layout.addWidget(self.print_graph_button)
+        self.graph_layout.addWidget(self.time_label)
+        self.graph_layout.addWidget(self.internet_table)
+        self.graph_layout.addWidget(self.document_table)
+
+        self.timeline_tab2.layout.addWidget(self.canvas)
+        self.timeline_tab2.layout.addLayout(self.graph_layout)
+        self.timeline_tab2.setLayout(self.timeline_tab2.layout)
+
+    # 그래프 출력
+    def set_graph(self):
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        start = self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours=-self.UTC_int)
+        end = self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours=-self.UTC_int)
+        start = start - timedelta(minutes=start.minute, seconds=start.second)  # 분, 초 버림
+        end = end - timedelta(hours=1, minutes=end.minute, seconds=end.second)  # 분, 초 올림
+
+        self.times = []  # str: 쿼리에서 string 타입의 시간이 필요함. self.times는 self.times2, self.times3보다 1 더 길음. (쿼리 사용을 위함)
+        self.times2 = []  # datetime: matplot 사용시 datetime 타입으로 인자를 넘겨야 함
+        interval = int((end - start).days * 24 + (end - start).seconds / 3600) + 1
+        index = start
+        for i in range(interval):
+            self.times.append(index.strftime("%Y-%m-%d %H:%M:%S"))
+            self.times2.append(index)
+            index = index + timedelta(hours=1)
+        self.times3 = []  # float: datetime 객체는 matplot에서 float 타입으로 출력됨.
+        for t in self.times2:
+            self.times3.append(mdates.date2num(t))
+
+        internet_data = []
+        for t in range(len(self.times) - 1):
+            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            internet_data.append(len(rows))
+
+        self.document_data = []
+        for t in range(len(self.times) - 1):
+            query = "SELECT OBJID_timestamp FROM parsed_MFT WHERE " \
+                    "((FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
+                        t + 1] + "') OR " \
+                                 "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
+                        t + 1] + "') OR " \
+                                 "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
+                        t + 1] + "'))"
+            cur.execute(query)
+            rows = cur.fetchall()
+            self.document_data.append(len(rows))
+        conn.close()
+
+        self.points1 = list(zip(self.times3, internet_data))
+        self.points2 = list(zip(self.times3, self.document_data))
+
+        N = len(internet_data)
+        self.ax.cla()
+        self.ax2.cla()
+        line1 = self.ax.plot(self.times2[0:N], internet_data, color="lightskyblue", label="Internet")
+        line2 = self.ax2.plot(self.times2[0:N], self.document_data, color="sandybrown",
+                              label="Documnets Create/Modify/Access")
+        lines = line1 + line2
+        labels = [l.get_label() for l in lines]
+        self.ax.legend(lines, labels, loc="upper left")
+        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+        self.canvas.draw()
+
+    # 그래프 클릭 시 거리 계산
+    def distance(self, a, b):
+        return (sum([(k[0] - k[1]) ** 2 for k in zip(a, b)]) ** 0.5)
+
+    # 그래프 클릭 시 이벤트
+    def timeline_click(self, event):
+        if event.inaxes is None:
+            return
+
+        # print(max(self.document_data))
+        x = (event.xdata - self.times3[0]) * max(self.document_data)
+        y = event.ydata
+        # print(x)
+        # print(y)
+
+        dists = [self.distance([x, y], k) for k in self.points1]
+        # dists2 = [self.distance([event.xdata, event.ydata], k) for k in self.points2]
+        # print(dists1)
+        # print(dists2)
+        # if min(dists1) > min(dists2):
+        #     dists = dists2
+        # else:
+        #     dists = dists1
+
+        # if min(dists) > 5:  # 클릭 범위 지정. 숫자가 클 수록 클릭 가능 범위 커짐.
+        #     return
+
+        index = dists.index(min(dists))
+        # print(index)
+
+        start_label = (self.times2[index] + timedelta(hours=9)).strftime("%Y-%m-%d %H:%M:%S")
+        end_label = (self.times2[index] + timedelta(hours=10)).strftime("%Y-%m-%d %H:%M:%S")
+        self.time_label.setText(start_label + " ~ " + end_label)
+        self.set_internet_table(index)
+        self.set_document_table(index)
+
+    # tab3 타임라인의 그래프 - 인터넷 테이블
+    def set_internet_table(self, index):
+        self.internet_table.clearContents()
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        self.internet_table.clearContents()
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + \
+                self.times[index] + \
+                "') AND (timestamp <= '" + self.times[index + 1] + "')"
+        cur.execute(query)
+        rows = cur.fetchall()
+        conn.close()
+
+        count = len(rows)
+        self.internet_table.setRowCount(count)
+        for i in range(count):
+            timestamp, url, title = rows[i]
+            self.internet_table.setItem(i, 0, QTableWidgetItem(timestamp))
+            self.internet_table.setItem(i, 1, QTableWidgetItem(url))
+            self.internet_table.setItem(i, 2, QTableWidgetItem(title))
+
+        self.internet_table.sortItems(0, QtCore.Qt.AscendingOrder)
+
+    # tab3 타임라인의 그래프 - 문서 테이블
+    def set_document_table(self, index):
+        self.document_table.clearContents()
+        conn = sqlite3.connect("Believe_Me_Sister.db")
+        cur = conn.cursor()
+        query = "SELECT datetime(FN_C_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
+                                                                "WHERE (FN_C_timestamp >= '" + self.times[
+                    index] + "') AND (FN_C_timestamp <= '" + self.times[index + 1] + "')"
+        cur.execute(query)
+        creation_rows = cur.fetchall()
+        query = "SELECT datetime(FN_M_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
+                                                                "WHERE (FN_M_timestamp >= '" + self.times[
+                    index] + "') AND (FN_M_timestamp <= '" + self.times[index + 1] + "')"
+        cur.execute(query)
+        modified_rows = cur.fetchall()
+        query = "SELECT datetime(FN_A_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
+                                                                "WHERE (FN_A_timestamp >= '" + self.times[
+                    index] + "') AND (FN_A_timestamp <= '" + self.times[index + 1] + "')"
+        cur.execute(query)
+        accessed_rows = cur.fetchall()
+        conn.close()
+
+        count = len(creation_rows) + len(modified_rows) + len(accessed_rows)
+        self.document_table.setRowCount(count)
+
+        for i in range(len(creation_rows)):  # 문서 생성
+            time, file = creation_rows[i]
+            self.document_table.setItem(i, 0, QTableWidgetItem(time))
+            self.document_table.setItem(i, 1, QTableWidgetItem("생성"))
+            self.document_table.setItem(i, 2, QTableWidgetItem(file))
+        accum = len(creation_rows)
+        for i in range(len(modified_rows)):  # 문서 수정
+            time, file = modified_rows[i]
+            self.document_table.setItem(i + accum, 0, QTableWidgetItem(time))
+            self.document_table.setItem(i + accum, 1, QTableWidgetItem("수정"))
+            self.document_table.setItem(i + accum, 2, QTableWidgetItem(file))
+        accum = accum + len(modified_rows)
+        for i in range(len(accessed_rows)):  # 문서 접근
+            time, file = accessed_rows[i]
+            self.document_table.setItem(i + accum, 0, QTableWidgetItem(time))
+            self.document_table.setItem(i + accum, 1, QTableWidgetItem("접근"))
+            self.document_table.setItem(i + accum, 2, QTableWidgetItem(file))
+
+        self.document_table.sortItems(0, QtCore.Qt.AscendingOrder)
+
+
+#################################################
+#   tab3의 tab1                                 #
+#################################################
+    # tab3의 tab1 구성 (search line, 테이블)
     def set_timeline_tab1(self):
         self.timeline_tab1.layout = QVBoxLayout()
 
@@ -1338,34 +1549,10 @@ class MyWidget(QWidget):
         self.timeline_tab1.layout.addWidget(self.timeline)
         self.timeline_tab1.setLayout(self.timeline_tab1.layout)
 
-    # tab3의 타임라인 그래프 + 테이블 구성
-    def set_timeline_tab2(self):
-        self.timeline_tab2.layout = QHBoxLayout()
-
-        fig = plt.Figure()
-        self.ax = fig.add_subplot(111)
-        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
-        self.canvas = FigureCanvas(fig)
-        self.canvas.draw()
-        self.canvas.mpl_connect('button_press_event', self.timeline_click)
-
-        self.graph_table = QTableWidget(self)
-        self.graph_table.setColumnCount(3)
-        column_headers = ["시간", "URL", "제목"]
-        self.graph_table.setHorizontalHeaderLabels(column_headers)
-        self.graph_table.setColumnWidth(0, self.width() * 2 / 15)
-        self.graph_table.setColumnWidth(1, self.width() * 4 / 11)
-        self.graph_table.setColumnWidth(2, self.width() * 3 / 11)
-
-        self.timeline_tab2.layout.addWidget(self.canvas)
-        self.timeline_tab2.layout.addWidget(self.graph_table)
-        self.timeline_tab2.setLayout(self.timeline_tab2.layout)
-
     # tab3의 타임라인 구성
     def set_timeline(self):
-        self.set_graph()
-        self.datetime1 = (self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -9)).strftime("%Y-%m-%d %H:%M:%S")
-        self.datetime2 = (self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -9)).strftime("%Y-%m-%d %H:%M:%S")
+        self.datetime1 = (self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -self.UTC_int)).strftime("%Y-%m-%d %H:%M:%S")
+        self.datetime2 = (self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -self.UTC_int)).strftime("%Y-%m-%d %H:%M:%S")
         self.timeline.clearContents()
         self.timeline_count = 0
 
@@ -1389,77 +1576,6 @@ class MyWidget(QWidget):
             self.timeline_data2_4()
         if self.checkbox2_5.isChecked():
             self.timeline_data2_5()
-
-    # 그래프 출력
-    def set_graph(self):
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        start = self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours = -9)
-        end = self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -9)
-        start = start - timedelta(minutes=start.minute, seconds=start.second)   # 분, 초 버림
-        end = end - timedelta(hours = 1, minutes=end.minute, seconds=end.second)    # 분, 초 올림
-
-        self.times = []  # str: 쿼리에서 string 타입의 시간이 필요함. self.times는 times2, times3보다 1 더 길음. (쿼리 사용을 위함)
-        times2 = []  # datetime: matplot 사용시 datetime 타입으로 인자를 넘겨야 함
-        interval = int((end - start).days * 24 + (end - start).seconds / 3600) + 1
-        index = start
-        for i in range(interval):
-            self.times.append(index.strftime("%Y-%m-%d %H:%M:%S"))
-            times2.append(index)
-            index = index + timedelta(hours=1)
-        data = []
-        for t in range(len(self.times) - 1):
-            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
-            cur.execute(query)
-            rows = cur.fetchall()
-            data.append(len(rows))
-        conn.close()
-
-        times3 = []  # float: datetime 객체는 matplot에서 float 타입으로 출력됨.
-        for t in times2:
-            times3.append(mdates.date2num(t))
-        self.points = list(zip(times3, data))
-
-        N = len(data)
-        self.ax.cla()
-        self.ax.plot(times2[0:N], data)
-        self.ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
-        self.canvas.draw()
-
-    # 그래프 클릭 시 이벤트
-    def timeline_click(self, event):
-        if event.inaxes is None:
-            return
-
-        dists = [self.distance([event.xdata, event.ydata], k) for k in self.points]
-        if min(dists) > 1.5:  # 클릭 범위 지정. 숫자가 클 수록 범위 커짐.
-            return
-
-        self.set_internet_table(dists.index(min(dists)))
-
-    # 그래프 클릭 시 거리 계산
-    def distance(self, a, b):
-        return (sum([(k[0] - k[1]) ** 2 for k in zip(a, b)]) ** 0.5)
-
-    # tab3 그래프 - 인터넷 테이블
-    def set_internet_table(self, index):
-        self.graph_table.clearContents()
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + self.times[index] + \
-                "') AND (timestamp <= '" + self.times[index+1] + "')"
-        cur.execute(query)
-        rows = cur.fetchall()
-
-        count = len(rows)
-        self.graph_table.setRowCount(count)
-        for i in range(count):
-            timestamp, url, title = rows[i]
-            self.graph_table.setItem(i, 0, QTableWidgetItem(timestamp))
-            self.graph_table.setItem(i, 1, QTableWidgetItem(url))
-            self.graph_table.setItem(i, 2, QTableWidgetItem(title))
-
-        self.graph_table.sortItems(0, QtCore.Qt.AscendingOrder)
 
     # tab3의 타임라인 필터링
     def search_timeline(self, s):
