@@ -521,7 +521,7 @@ class MyWidget(QWidget):
                 + len(rows3_1_1) + len(rows3_1_2) + len(rows3_1_3) \
                 + len(rows3_2_1) + len(rows3_2_2) + len(rows3_2_3) \
                 + len(rows3_3_1) + len(rows3_3_2) + len(rows3_3_3) \
-                + len(rows4_1_1) + len(rows4_1_1) + len(rows4_1_1) \
+                + len(rows4_1_1) + len(rows4_1_2) + len(rows4_1_3) \
                 + len(rows4_2_1) + len(rows4_2_2) + len(rows4_2_3) \
                 + len(rows4_3_1) + len(rows4_3_2) + len(rows4_3_3) \
                 + len(rows4_4_1) + len(rows4_4_2) + len(rows4_4_3) \
