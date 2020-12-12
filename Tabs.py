@@ -62,12 +62,12 @@ class MyWidget(QWidget):
             rows1_1_1 = cur.fetchall()
             if len(rows1_1_1) < 1:
                 # 설치
-                query1_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%fasoo%'"
+                query1_1_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like '%fasoo%'"
                 cur.execute(query1_1_2)
                 rows1_1_2 = cur.fetchall()
                 if len(rows1_1_2)<1:
                     # 실행
-                    query1_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%fasoo%'"
+                    query1_1_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like '%fasoo%'"
                     cur.execute(query1_1_3)
                     rows1_1_3 = cur.fetchall()
                 else:
@@ -91,12 +91,12 @@ class MyWidget(QWidget):
             rows1_2_1 = cur.fetchall()
             if len(rows1_2_1) < 1:
                 # 설치
-                query1_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%SoftcampDS%'"
+                query1_2_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like '%SoftcampDS%'"
                 cur.execute(query1_2_2)
                 rows1_2_2 = cur.fetchall()
                 if len(rows1_2_2)<1:
                     # 실행
-                    query1_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%SoftcampDS%'"
+                    query1_2_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like '%SoftcampDS%'"
                     cur.execute(query1_2_3)
                     rows1_2_3 = cur.fetchall()
                 else:
@@ -120,12 +120,12 @@ class MyWidget(QWidget):
             rows1_3_1 = cur.fetchall()
             if len(rows1_3_1) < 1:
                 # 설치
-                query1_3_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%SDSLanuc%'"
+                query1_3_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like '%SDSLanuc%'"
                 cur.execute(query1_3_2)
                 rows1_3_2 = cur.fetchall()
                 if len(rows1_3_2)<1:
                     # 실행
-                    query1_3_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%SDSLanuc%'"
+                    query1_3_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like '%SDSLanuc%'"
                     cur.execute(query1_3_3)
                     rows1_3_3 = cur.fetchall()
                 else:
@@ -149,12 +149,12 @@ class MyWidget(QWidget):
             rows1_4_1 = cur.fetchall()
             if len(rows1_4_1) < 1:
                 # 설치
-                query1_4_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%DocumentSAFER%'"
+                query1_4_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like '%DocumentSAFER%'"
                 cur.execute(query1_4_2)
                 rows1_4_2 = cur.fetchall()
                 if len(rows1_4_2)<1:
                     # 실행
-                    query1_4_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%DocumentSAFER%'"
+                    query1_4_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like '%DocumentSAFER%'"
                     cur.execute(query1_4_3)
                     rows1_4_3 = cur.fetchall()
                 else:
@@ -201,12 +201,12 @@ class MyWidget(QWidget):
             rows3_1_1 = cur.fetchall()
             if len(rows3_1_1) < 1:
                 # 설치
-                query3_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'CipherShed%'"
+                query3_1_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'CipherShed%'"
                 cur.execute(query3_1_2)
                 rows3_1_2 = cur.fetchall()
                 if len(rows3_1_2)<1:
                     # 실행
-                    query3_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'CihperShed%'"
+                    query3_1_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'CihperShed%'"
                     cur.execute(query3_1_3)
                     rows3_1_3 = cur.fetchall()
                 else:
@@ -230,12 +230,12 @@ class MyWidget(QWidget):
             rows3_2_1 = cur.fetchall()
             if len(rows3_2_1) < 1:
                 # 설치
-                query3_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'TrueCrypt%'"
+                query3_2_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'TrueCrypt%'"
                 cur.execute(query3_2_2)
                 rows3_2_2 = cur.fetchall()
                 if len(rows3_2_2)<1:
                     # 실행
-                    query3_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'TrueCrypt%'"
+                    query3_2_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'TrueCrypt%'"
                     cur.execute(query3_2_3)
                     rows3_2_3 = cur.fetchall()
                 else:
@@ -259,12 +259,12 @@ class MyWidget(QWidget):
             rows3_3_1 = cur.fetchall()
             if len(rows3_3_1) < 1:
                 # 설치
-                query3_3_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'VeraCrypt%'"
+                query3_3_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'VeraCrypt%'"
                 cur.execute(query3_3_2)
                 rows3_3_2 = cur.fetchall()
                 if len(rows3_3_2) < 1:
                     # 실행
-                    query3_3_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'VeraCrypt%'"
+                    query3_3_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'VeraCrypt%'"
                     cur.execute(query3_3_3)
                     rows3_3_3 = cur.fetchall()
                 else:
@@ -289,12 +289,12 @@ class MyWidget(QWidget):
             rows4_1_1 = cur.fetchall()
             if len(rows4_1_1) < 1:
                 # 설치
-                query4_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'CCleaner%'"
+                query4_1_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'CCleaner%'"
                 cur.execute(query4_1_2)
                 rows4_1_2 = cur.fetchall()
                 if len(rows4_1_2) < 1:
                     # 실행
-                    query4_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'CCleaner%'"
+                    query4_1_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'CCleaner%'"
                     cur.execute(query4_1_3)
                     rows4_1_3 = cur.fetchall()
                 else:
@@ -318,12 +318,12 @@ class MyWidget(QWidget):
             rows4_2_1 = cur.fetchall()
             if len(rows4_2_1) < 1:
                 # 설치
-                query4_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'Cipher%'"
+                query4_2_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'Cipher%'"
                 cur.execute(query4_2_2)
                 rows4_2_2 = cur.fetchall()
                 if len(rows4_2_2) < 1:
                     # 실행
-                    query4_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'Cipher%'"
+                    query4_2_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'Cipher%'"
                     cur.execute(query4_2_3)
                     rows4_2_3 = cur.fetchall()
                 else:
@@ -347,12 +347,12 @@ class MyWidget(QWidget):
             rows4_3_1 = cur.fetchall()
             if len(rows4_3_1) < 1:
                 # 설치
-                query4_3_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'Eraser%'"
+                query4_3_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'Eraser%'"
                 cur.execute(query4_3_2)
                 rows4_3_2 = cur.fetchall()
                 if len(rows4_3_2)<1:
                     # 실행
-                    query4_3_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'Eraser%'"
+                    query4_3_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'Eraser%'"
                     cur.execute(query4_3_3)
                     rows4_3_3 = cur.fetchall()
                 else:
@@ -376,12 +376,12 @@ class MyWidget(QWidget):
             rows4_4_1 = cur.fetchall()
             if len(rows4_4_1) < 1:
                 # 설치
-                query4_4_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'SDelete%'"
+                query4_4_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'SDelete%'"
                 cur.execute(query4_4_2)
                 rows4_4_2 = cur.fetchall()
                 if len(rows4_4_2) < 1:
                     # 실행
-                    query4_4_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'SDelete%'"
+                    query4_4_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'SDelete%'"
                     cur.execute(query4_4_3)
                     rows4_4_3 = cur.fetchall()
                 else:
@@ -405,12 +405,12 @@ class MyWidget(QWidget):
             rows4_5_1 = cur.fetchall()
             if len(rows4_5_1) < 1:
                 # 설치
-                query4_5_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'TimeStomp%'"
+                query4_5_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'TimeStomp%'"
                 cur.execute(query4_5_2)
                 rows4_5_2 = cur.fetchall()
                 if len(rows4_5_2) < 1:
                     # 실행
-                    query4_5_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'TimeStomp%'"
+                    query4_5_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'TimeStomp%'"
                     cur.execute(query4_5_3)
                     rows4_5_3 = cur.fetchall()
                 else:
@@ -434,12 +434,12 @@ class MyWidget(QWidget):
             rows4_6_1 = cur.fetchall()
             if len(rows4_6_1) < 1:
                 # 설치
-                query4_6_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'Wise Folder Hider%'"
+                query4_6_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'Wise Folder Hider%'"
                 cur.execute(query4_6_2)
                 rows4_6_2 = cur.fetchall()
                 if len(rows4_6_2) < 1:
                     # 실행
-                    query4_6_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'Wise Folder Hider%'"
+                    query4_6_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like 'Wise Folder Hider%'"
                     cur.execute(query4_6_3)
                     rows4_6_3 = cur.fetchall()
                 else:
@@ -464,12 +464,12 @@ class MyWidget(QWidget):
             rows5_1_1 = cur.fetchall()
             if len(rows5_1_1) < 1:
                 # 설치
-                query5_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%virtualbox%'"
+                query5_1_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like '%virtualbox%'"
                 cur.execute(query5_1_2)
                 rows5_1_2 = cur.fetchall()
                 if len(rows5_1_2) < 1:
                     # 실행
-                    query5_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%virtualbox%'"
+                    query5_1_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like '%virtualbox%'"
                     cur.execute(query5_1_3)
                     rows5_1_3 = cur.fetchall()
                 else:
@@ -493,12 +493,12 @@ class MyWidget(QWidget):
             rows5_2_1 = cur.fetchall()
             if len(rows5_2_1) < 1:
                 # 설치
-                query5_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%VMWARE%'"
+                query5_2_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like '%VMWARE%'"
                 cur.execute(query5_2_2)
                 rows5_2_2 = cur.fetchall()
                 if len(rows5_2_2) < 1:
                     # 실행
-                    query5_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%VMWARE%'"
+                    query5_2_3 = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") FROM Prefetch1 WHERE Executable_Name like '%VMWARE%'"
                     cur.execute(query5_2_3)
                     rows5_2_3 = cur.fetchall()
                 else:
@@ -1150,8 +1150,8 @@ class MyWidget(QWidget):
                 string = None
                 account_name, RID_int, created_on, last_login_time = rows[i]
                 if last_login_time == None:
-                    string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on
-
+                    if int(RID_int ) > 1000:
+                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on
                 else:
                     if int(RID_int) > 1000:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
