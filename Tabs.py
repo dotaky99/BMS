@@ -1237,7 +1237,11 @@ class MyWidget(QWidget):
             self.text9_2_content = []
             for i in range(len(rows)):
                 time_created, new_bias, old_bias = rows[i]
-                string = "★표준 시간대 변경 : time_created : " + time_created + ", 전 : " + old_bias + "-> 후 : " + new_bias
+                old = "UTC+" + str(int(old_bias) / 60 * -1) if int(old_bias) < 0 else "UTC" + str(
+                    int(old_bias) / 60 * -1)
+                new = "UTC+" + str(int(new_bias) / 60 * -1) if int(new_bias) < 0 else "UTC" + str(
+                    int(new_bias) / 60 * -1)
+                string = "★표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new)
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
                 self.text9_2_content[i].setText(0, string)
 
