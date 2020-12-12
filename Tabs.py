@@ -53,18 +53,122 @@ class MyWidget(QWidget):
 
         conn = sqlite3.connect("Believe_Me_Sister.db")
         cur = conn.cursor()
-        # DRM
+        # DRM - fasoo
         try:
-            query1 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
-                     "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE (a.name like '%fasoo%' " \
-                     "and b.Executable_Name like '%fasoo%') or ((a.name like 'SDSLaunc%' or a.name like 'SoftcampDS%') " \
-                     "and (b.Executable_Name like 'SDSLaunc%' or b.Executable_Name like 'SoftcampDS%')) or (a.name like 'DocumentSAFER%' " \
-                     "and b.Executable_Name like 'DocumentSAFER%')"
-            cur.execute(query1)
-            rows1 = cur.fetchall()
+            # 설치 + 실행
+            query1_1_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like '%fasoo%' AND Executable_Name LIKE '%fasoo%'"
+            cur.execute(query1_1_1)
+            rows1_1_1 = cur.fetchall()
+            if len(rows1_1_1) < 1:
+                # 설치
+                query1_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%fasoo%'"
+                cur.execute(query1_1_2)
+                rows1_1_2 = cur.fetchall()
+                if len(rows1_1_2)<1:
+                    # 실행
+                    query1_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%fasoo%'"
+                    cur.execute(query1_1_3)
+                    rows1_1_3 = cur.fetchall()
+                else:
+                    rows1_1_3 = ''
+            else:
+                rows1_1_2 = ''
+                rows1_1_3 = ''
         except:
-            rows1 = ''
+            rows1_1_1 = ''
+            rows1_1_2 = ''
+            rows1_1_3 = ''
             pass
+
+        # DRM - SoftcampDS
+        try:
+            # 설치 + 실행
+            query1_2_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like '%SoftcampDS%' AND Executable_Name LIKE '%SoftcampDS%'"
+            cur.execute(query1_2_1)
+            rows1_2_1 = cur.fetchall()
+            if len(rows1_2_1) < 1:
+                # 설치
+                query1_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%SoftcampDS%'"
+                cur.execute(query1_2_2)
+                rows1_2_2 = cur.fetchall()
+                if len(rows1_2_2)<1:
+                    # 실행
+                    query1_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%SoftcampDS%'"
+                    cur.execute(query1_2_3)
+                    rows1_2_3 = cur.fetchall()
+                else:
+                    rows1_2_3 = ''
+            else:
+                rows1_2_2 = ''
+                rows1_2_3 = ''
+        except:
+            rows1_2_1 = ''
+            rows1_2_2 = ''
+            rows1_2_3 = ''
+            pass
+
+        # DRM - SDSLanuc
+        try:
+            # 설치 + 실행
+            query1_3_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like '%SDSLanuc%' AND Executable_Name LIKE '%SDSLanuc%'"
+            cur.execute(query1_3_1)
+            rows1_3_1 = cur.fetchall()
+            if len(rows1_3_1) < 1:
+                # 설치
+                query1_3_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%SDSLanuc%'"
+                cur.execute(query1_3_2)
+                rows1_3_2 = cur.fetchall()
+                if len(rows1_3_2)<1:
+                    # 실행
+                    query1_3_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%SDSLanuc%'"
+                    cur.execute(query1_3_3)
+                    rows1_3_3 = cur.fetchall()
+                else:
+                    rows1_3_3 = ''
+            else:
+                rows1_3_2 = ''
+                rows1_3_3 = ''
+        except:
+            rows1_3_1 = ''
+            rows1_3_2 = ''
+            rows1_3_3 = ''
+            pass
+
+        # DRM - DocumentSAFER
+        try:
+            # 설치 + 실행
+            query1_4_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like '%DocumentSAFER%' AND Executable_Name LIKE '%DocumentSAFER%'"
+            cur.execute(query1_4_1)
+            rows1_4_1 = cur.fetchall()
+            if len(rows1_4_1) < 1:
+                # 설치
+                query1_4_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%DocumentSAFER%'"
+                cur.execute(query1_4_2)
+                rows1_4_2 = cur.fetchall()
+                if len(rows1_4_2)<1:
+                    # 실행
+                    query1_4_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%DocumentSAFER%'"
+                    cur.execute(query1_4_3)
+                    rows1_4_3 = cur.fetchall()
+                else:
+                    rows1_4_3 = ''
+            else:
+                rows1_4_2 = ''
+                rows1_4_3 = ''
+        except:
+            rows1_4_1 = ''
+            rows1_4_2 = ''
+            rows1_4_3 = ''
+            pass
+
         # 매체제어
         # Symantec이 설치되었는지 확인
         symantec = []
@@ -87,71 +191,346 @@ class MyWidget(QWidget):
                     symantec.append("")
         except:
             pass
-        # 디스크 암호화
-        try:
-            query3 = "SELECT a.name, a.version, a.install_location, a.publisher, datetime(a.install_date," + self.UTC + "), " \
-                     "datetime(b.Last_Executed1, "+ self.UTC + ") FROM Uninstall a,  prefetch1 b WHERE (a.name like 'CipherShed%' " \
-                     "AND b.Executable_Name like 'CipherShed%') OR (a.name like 'TrueCrypt%' AND b.Executable_Name like 'TrueCrypt%') " \
-                     "OR (a.name like 'VeraCrypt%' and b.Executable_Name like 'VeraCrypt%')"
-            cur.execute(query3)
-            rows3 = cur.fetchall()
-        except:
-            rows3 = ''
-            pass
-        # 안티포렌식
-        # 설치 여부 확인 -> 실행 여부 확인
-        try:
-            if ("SELECT EXISTS (SELECT name, version, publisher, install_Date FROM Uninstall WHERE(name LIKE 'CCleaner%' "
-                "OR name LIKE 'Cipher%' OR name LIKE 'Eraser%' OR name LIKE 'SDelete%' OR name LIKE 'SetMACE%' "
-                "OR name LIKE 'TimeStomp%' OR name LIKE 'Wise Folder Hider%')) as success"):
 
-                if ("SELECT EXISTS (SELECT Full_Path, Last_Executed1 FROM Prefetch1 "
-                "WHERE( Executable_Name LIKE 'CCleaner%' OR Executable_Name LIKE 'Cipher%' "
-                "OR Executable_Name LIKE 'Eraser%' OR Executable_Name LIKE 'SDelete%' "
-                "OR Executable_Name LIKE 'TimeStomp%' OR Executable_Name LIKE 'Wise Folder Hider%')) as success"):
-                    query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, " \
-                             "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1, " + self.UTC + ") " \
-                             "FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
-                             "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%' AND b.Executable_Name LIKE 'Cipher%')" \
-                             "OR (a.name LIKE 'Eraser%' AND b.Executable_Name LIKE 'Eraser%') " \
-                             "OR (a.name LIKE 'SDelete%' AND b.Executable_Name LIKE 'SDelete%')"  \
-                             "OR (a.name LIKE 'SetMACE%' AND b.Executable_Name LIKE 'SetMACE%') " \
-                             "OR (a.name LIKE 'TimeStomp%' AND b.Executable_Name LIKE 'TimeStomp%')" \
-                             "OR (a.name LIKE 'Wise Folder Hider%' AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
-
+        # 디스크 암호화 - CipherShed
+        try:
+            # 설치 + 실행
+            query3_1_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'CipherShed%' AND Executable_Name LIKE 'CipherShed%'"
+            cur.execute(query3_1_1)
+            rows3_1_1 = cur.fetchall()
+            if len(rows3_1_1) < 1:
+                # 설치
+                query3_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'CipherShed%'"
+                cur.execute(query3_1_2)
+                rows3_1_2 = cur.fetchall()
+                if len(rows3_1_2)<1:
+                    # 실행
+                    query3_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'CihperShed%'"
+                    cur.execute(query3_1_3)
+                    rows3_1_3 = cur.fetchall()
                 else:
-                    query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date, " + self.UTC + "), " \
-                             "FROM Uninstall a, prefetch1 b WHERE (a.name LIKE 'CCleaner%'  OR a.name LIKE 'Cipher%' " \
-                             "OR a.name LIKE 'Eraser%'  OR a.name LIKE 'SDelete%'  OR a.name LIKE 'SetMACE%'  " \
-                             "OR a.name LIKE 'TimeStomp%'  OR a.name LIKE 'Wise Folder Hider%')"
-
-
-
-        #     query4 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + ")," \
-        #              "datetime(b.Last_Executed1, " + self.UTC + ") FROM Uninstall a, prefetch1 b WHERE ((a.name LIKE 'CCleaner%'  " \
-        #              "AND b.Executable_Name LIKE 'CCleaner%') OR (a.name LIKE 'Cipher%'  AND b.Executable_Name LIKE 'Cipher%')" \
-        #              "OR (a.name LIKE 'Eraser%'  AND b.Executable_Name LIKE 'Eraser%') OR (a.name LIKE 'SDelete%'  AND b.Executable_Name LIKE 'SDelete%')"  \
-        #              "OR (a.name LIKE 'SetMACE%'  AND b.Executable_Name LIKE 'SetMACE%') OR (a.name LIKE 'TimeStomp%'  AND b.Executable_Name LIKE 'TimeStomp%')" \
-        #              "OR (a.name LIKE 'Wise Folder Hider%'  AND b.Executable_Name LIKE 'Wise Folder Hider%'))"
-            cur.execute(query4)
-            rows4 = cur.fetchall()
+                    rows3_1_3 = ''
+            else:
+                rows3_1_2 = ''
+                rows3_1_3 = ''
         except:
-            rows4 = ''
+            rows3_1_1 = ''
+            rows3_1_2 = ''
+            rows3_1_3 = ''
             pass
-        # VM
+
+        # 디스크 암호화 - TrueCyrpt
         try:
-            query5 = "SELECT a.name, a.version, b.Full_Path, a.publisher, datetime(a.install_date," + self.UTC + "), " \
-                     "datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, prefetch1 b " \
-                     "WHERE (a.name like '%vmware%' and b.Executable_Name like '%vmware%') " \
-                     "or (a.name like '%virtualbox%' and b.Executable_Name like '%virtualbox%')"
-            cur.execute(query5)
-            rows5 = cur.fetchall()
+            # 설치 + 실행
+            query3_2_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                        "WHERE name like 'VeraCrypt%' AND Executable_Name likE 'TrueCrypt%'"
+            cur.execute(query3_2_1)
+            rows3_2_1 = cur.fetchall()
+            if len(rows3_2_1) < 1:
+                # 설치
+                query3_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'TrueCrypt%'"
+                cur.execute(query3_2_2)
+                rows3_2_2 = cur.fetchall()
+                if len(rows3_2_2)<1:
+                    # 실행
+                    query3_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'TrueCrypt%'"
+                    cur.execute(query3_2_3)
+                    rows3_2_3 = cur.fetchall()
+                else:
+                    rows3_2_3 = ''
+            else:
+                rows3_2_2 = ''
+                rows3_2_3 = ''
         except:
-            rows5 = ''
+            rows3_2_1 = ''
+            rows3_2_2 = ''
+            rows3_2_3 = ''
+            pass
+
+        # 디스크 암호화 - VeraCrypt
+        try:
+            # 설치 + 실행
+            query3_3_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'VeraCrypt%' AND Executable_Name likE 'VeraCrypt%'"
+            cur.execute(query3_3_1)
+            rows3_3_1 = cur.fetchall()
+            if len(rows3_3_1) < 1:
+                # 설치
+                query3_3_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'VeraCrypt%'"
+                cur.execute(query3_3_2)
+                rows3_3_2 = cur.fetchall()
+                if len(rows3_3_2) < 1:
+                    # 실행
+                    query3_3_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'VeraCrypt%'"
+                    cur.execute(query3_3_3)
+                    rows3_3_3 = cur.fetchall()
+                else:
+                    rows3_3_3 = ''
+            else:
+                rows3_3_2 = ''
+                rows3_3_3 = ''
+
+        except:
+            rows3_3_1 = ''
+            rows3_3_2 = ''
+            rows3_3_3 = ''
+            pass
+
+        # 안티포렌식 - CCleaner
+        try:
+            # 설치 + 실행
+            query4_1_1 = "SELECT a.name, a.version,  b.Full_Path, a.publisher," \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'CCleaner%' AND Executable_Name LIKE 'CCleaner%'"
+            cur.execute(query4_1_1)
+            rows4_1_1 = cur.fetchall()
+            if len(rows4_1_1) < 1:
+                # 설치
+                query4_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'CCleaner%'"
+                cur.execute(query4_1_2)
+                rows4_1_2 = cur.fetchall()
+                if len(rows4_1_2) < 1:
+                    # 실행
+                    query4_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'CCleaner%'"
+                    cur.execute(query4_1_3)
+                    rows4_1_3 = cur.fetchall()
+                else:
+                    rows4_1_3 = ''
+            else:
+                rows4_1_2 = ''
+                rows4_1_3 = ''
+        except:
+            rows4_1_1 = ''
+            rows4_1_2 = ''
+            rows4_1_3 = ''
+            pass
+
+        # 안티포렌식 - Cipher
+        try:
+            # 설치 + 실행
+            query4_2_1 = "SELECT a.name, a.version, b.Full_Path, a.publisher, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'Cipher%' AND Executable_Name LIKE 'Cipher%'"
+            cur.execute(query4_2_1)
+            rows4_2_1 = cur.fetchall()
+            if len(rows4_2_1) < 1:
+                # 설치
+                query4_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'Cipher%'"
+                cur.execute(query4_2_2)
+                rows4_2_2 = cur.fetchall()
+                if len(rows4_2_2) < 1:
+                    # 실행
+                    query4_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'Cipher%'"
+                    cur.execute(query4_2_3)
+                    rows4_2_3 = cur.fetchall()
+                else:
+                    rows4_2_3 = ''
+            else:
+                rows4_2_2 = ''
+                rows4_2_3 = ''
+        except:
+            rows4_2_1 = ''
+            rows4_2_2 = ''
+            rows4_2_3 = ''
+            pass
+
+        # 안티포렌식 - Eraser
+        try:
+        # 설치 + 실행
+            query4_3_1 = "SELECT a.name, a.version, b.Full_Path, a.publisher, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'Eraser%' AND Executable_Name LIKE 'Eraser%'"
+            cur.execute(query4_3_1)
+            rows4_3_1 = cur.fetchall()
+            if len(rows4_3_1) < 1:
+                # 설치
+                query4_3_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'Eraser%'"
+                cur.execute(query4_3_2)
+                rows4_3_2 = cur.fetchall()
+                if len(rows4_3_2)<1:
+                    # 실행
+                    query4_3_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'Eraser%'"
+                    cur.execute(query4_3_3)
+                    rows4_3_3 = cur.fetchall()
+                else:
+                    rows4_3_3 = ''
+            else:
+                rows4_3_2 = ''
+                rows4_3_3 = ''
+        except:
+            rows4_3_1 = ''
+            rows4_3_2 = ''
+            rows4_3_3 = ''
+            pass
+
+        # 안티포렌식 - SDelete
+        try:
+            # 설치 + 실행
+            query4_4_1 = "SELECT a.name, a.version,b.Full_Path,  a.publisher, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'SDelete%' AND Executable_Name LIKE 'SDelete%'"
+            cur.execute(query4_4_1)
+            rows4_4_1 = cur.fetchall()
+            if len(rows4_4_1) < 1:
+                # 설치
+                query4_4_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'SDelete%'"
+                cur.execute(query4_4_2)
+                rows4_4_2 = cur.fetchall()
+                if len(rows4_4_2) < 1:
+                    # 실행
+                    query4_4_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'SDelete%'"
+                    cur.execute(query4_4_3)
+                    rows4_4_3 = cur.fetchall()
+                else:
+                    rows4_4_3 = ''
+            else:
+                rows4_4_2 = ''
+                rows4_4_3 = ''
+        except:
+            rows4_4_1 = ''
+            rows4_4_2 = ''
+            rows4_4_3 = ''
+            pass
+
+        # 안티포렌식 - TimeStomp
+        try:
+            # 설치 + 실행
+            query4_5_1 = "SELECT a.name, a.version, b.Full_Path, a.publisher, " \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'TimeStomp%' AND Executable_Name LIKE 'TimeStomp%'"
+            cur.execute(query4_5_1)
+            rows4_5_1 = cur.fetchall()
+            if len(rows4_5_1) < 1:
+                # 설치
+                query4_5_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'TimeStomp%'"
+                cur.execute(query4_5_2)
+                rows4_5_2 = cur.fetchall()
+                if len(rows4_5_2) < 1:
+                    # 실행
+                    query4_5_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'TimeStomp%'"
+                    cur.execute(query4_5_3)
+                    rows4_5_3 = cur.fetchall()
+                else:
+                    rows4_5_3 = ''
+            else:
+                rows4_5_2 = ''
+                rows4_5_3 = ''
+        except:
+            rows4_5_1 = ''
+            rows4_5_2 = ''
+            rows4_5_3 = ''
+            pass
+
+        # 안티포렌식 - Wise Folder Hider
+        try:
+            # 설치 + 실행
+            query4_6_1 = "SELECT a.name, a.version, b.Full_Path, a.publisher," \
+                       "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                       "WHERE name like 'Wise Folder Hider%' AND Executable_Name LIKE 'Wise Folder Hider%'"
+            cur.execute(query4_6_1)
+            rows4_6_1 = cur.fetchall()
+            if len(rows4_6_1) < 1:
+                # 설치
+                query4_6_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like 'Wise Folder Hider%'"
+                cur.execute(query4_6_2)
+                rows4_6_2 = cur.fetchall()
+                if len(rows4_6_2) < 1:
+                    # 실행
+                    query4_6_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like 'Wise Folder Hider%'"
+                    cur.execute(query4_6_3)
+                    rows4_6_3 = cur.fetchall()
+                else:
+                    rows4_6_3 = ''
+            else:
+                rows4_6_2 = ''
+                rows4_6_3 = ''
+        except:
+            rows4_6_1 = ''
+            rows4_6_2 = ''
+            rows4_6_3 = ''
+            pass
+
+
+        # VM - virtualbox
+        try:
+            # 설치 + 실행
+            query5_1_1 = "SELECT a.name, a.version, b.Full_Path, a.publisher," \
+                         "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                         "WHERE name like '%virtualbox%' AND Executable_Name LIKE '%virtualbox%'"
+            cur.execute(query5_1_1)
+            rows5_1_1 = cur.fetchall()
+            if len(rows5_1_1) < 1:
+                # 설치
+                query5_1_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%virtualbox%'"
+                cur.execute(query5_1_2)
+                rows5_1_2 = cur.fetchall()
+                if len(rows5_1_2) < 1:
+                    # 실행
+                    query5_1_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%virtualbox%'"
+                    cur.execute(query5_1_3)
+                    rows5_1_3 = cur.fetchall()
+                else:
+                    rows5_1_3 = ''
+            else:
+                rows5_1_2 = ''
+                rows5_1_3 = ''
+        except:
+            rows5_1_1 = ''
+            rows5_1_2 = ''
+            rows5_1_3 = ''
+            pass
+
+        # VM - VMWARE
+        try:
+            # 설치 + 실행
+            query5_2_1 = "SELECT a.name, a.version, b.Full_Path, a.publisher," \
+                         "datetime(a.install_date," + self.UTC + "), datetime(b.Last_Executed1," + self.UTC + ") FROM Uninstall a, Prefetch1 b " \
+                         "WHERE name like '%VMWARE%' AND Executable_Name LIKE '%VMWARE%'"
+            cur.execute(query5_2_1)
+            rows5_2_1 = cur.fetchall()
+            if len(rows5_2_1) < 1:
+                # 설치
+                query5_2_2 = "SELECT name, version, publisher, install_location, install_date FROM Uninstall WHERE name like '%VMWARE%'"
+                cur.execute(query5_2_2)
+                rows5_2_2 = cur.fetchall()
+                if len(rows5_2_2) < 1:
+                    # 실행
+                    query5_2_3 = "SELECT Executable_Name, Full_Path, Last_Executed1 FROM Prefetch1 WHERE Executable_Name like '%VMWARE%'"
+                    cur.execute(query5_2_3)
+                    rows5_2_3 = cur.fetchall()
+                else:
+                    rows5_2_3 = ''
+            else:
+                rows5_2_2 = ''
+                rows5_2_3 = ''
+        except:
+            rows5_2_1 = ''
+            rows5_2_2 = ''
+            rows5_2_3 = ''
             pass
 
         self.tab2_table = QTableWidget(self)
-        count = len(rows1) + len(symantec) + len(rows3) + len(rows4) + len(rows5) + 5
+        count = len(rows1_1_1) + len(rows1_1_2) + len(rows1_1_3) \
+                + len(rows1_2_1) + len(rows1_2_2) + len(rows1_2_3) \
+                + len(rows1_3_1) + len(rows1_3_2) + len(rows1_3_3) \
+                + len(rows1_4_1) + len(rows1_4_2) + len(rows1_4_3) \
+                + len(symantec)\
+                + len(rows3_1_1) + len(rows3_1_2) + len(rows3_1_3) \
+                + len(rows3_2_1) + len(rows3_2_2) + len(rows3_2_3) \
+                + len(rows3_3_1) + len(rows3_3_2) + len(rows3_3_3) \
+                + len(rows4_1_1) + len(rows4_1_1) + len(rows4_1_1) \
+                + len(rows4_2_1) + len(rows4_2_2) + len(rows4_2_3) \
+                + len(rows4_3_1) + len(rows4_3_2) + len(rows4_3_3) \
+                + len(rows4_4_1) + len(rows4_4_2) + len(rows4_4_3) \
+                + len(rows4_5_1) + len(rows4_5_2) + len(rows4_5_3) \
+                + len(rows4_6_1) + len(rows4_6_2) + len(rows4_6_3) \
+                + len(rows5_1_1) + len(rows5_1_2) + len(rows5_1_3) \
+                + len(rows5_2_1) + len(rows5_2_2) + len(rows5_2_3) \
+                + 5
         self.tab2_table.setRowCount(count)
         self.tab2_table.setColumnCount(8)
         column_headers = ["", "프로그램", "버전", "설치 경로", "제조사", "설치 시각", "실행 시각", "삭제 여부"]
@@ -161,15 +540,124 @@ class MyWidget(QWidget):
         # DRM
         self.color_tab2_table("DRM", tab2_accum)
         try:
-            for i in range(len(rows1)):
-                program, install, execute, delete= rows1[i]
-                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+            if len(rows1_1_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_1_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_1_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_1_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_1_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_1_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_1_1[0][5]))
+                rows1_1 = rows1_1_1
+            elif len(rows1_1_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_1_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_1_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_1_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_1_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_1_2[0][4]))
+                rows1_1 = rows1_1_2
+            elif len(rows1_1_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_1_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_1_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_1_3[0][2]))
+                rows1_1 = rows1_1_3
+            else:
+                rows1_1 = ''
         except:
             pass
-        tab2_accum = tab2_accum + len(rows1) + 1
+        tab2_accum = tab2_accum + len(rows1_1)
+
+        try:
+            if len(rows1_2_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_2_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_2_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_2_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_2_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_2_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_2_1[0][5]))
+                rows1_2 = rows1_2_1
+            elif len(rows1_2_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_2_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_2_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_2_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_2_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_2_2[0][4]))
+                rows1_2 = rows1_2_2
+            elif len(rows1_2_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_2_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_2_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_2_3[0][2]))
+                rows1_2 = rows1_2_3
+            else:
+                rows1_2 = ''
+        except:
+            pass
+        tab2_accum = tab2_accum + len(rows1_2)
+
+        try:
+            if len(rows1_3_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_3_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_3_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_3_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_3_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_3_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_3_1[0][5]))
+                rows1_3 = rows1_3_1
+            elif len(rows1_3_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_3_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_3_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_3_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_3_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_3_2[0][4]))
+                rows1_3 = rows1_3_2
+            elif len(rows1_3_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_3_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_3_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_3_3[0][2]))
+                rows1_3 = rows1_3_3
+            else:
+                rows1_3 = ''
+        except:
+            pass
+        tab2_accum = tab2_accum + len(rows1_3)
+
+        try:
+            if len(rows1_3_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_4_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_4_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_4_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_4_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_4_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_4_1[0][5]))
+                rows1_4 = rows1_4_1
+            elif len(rows1_4_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_4_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows1_4_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_4_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows1_4_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows1_4_2[0][4]))
+                rows1_4 = rows1_4_2
+            elif len(rows1_4_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows1_4_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows1_4_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows1_4_3[0][2]))
+                rows1_4 = rows1_4_3
+            else:
+                rows1_4 = ''
+        except:
+            pass
+        tab2_accum = tab2_accum + len(rows1_4) + 1
 
         # 매체제어
         self.color_tab2_table("매체제어", tab2_accum)
@@ -184,51 +672,361 @@ class MyWidget(QWidget):
         # 디스크 암호화
         self.color_tab2_table("디스크 암호화", tab2_accum)
         try:
-            for i in range(len(rows3)):
-                program, install, execute, delete = rows3[i]
-                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(str(program)))
-                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(install))
-                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(execute))
-                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(delete))
+            if len(rows3_1_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_1_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows3_1_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_1_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows3_1_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows3_1_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows3_1_1[0][5]))
+                rows3_1 = rows3_1_1
+            elif len(rows3_1_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_1_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows3_1_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_1_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows3_1_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows3_1_2[0][4]))
+                rows3_1 = rows3_1_2
+            elif len(rows3_1_3) >=1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_1_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_1_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows3_1_3[0][2]))
+                rows3_1 = rows3_1_3
+            else:
+                rows3_1 = ''
+
         except:
-            rows3 = ''
+            rows3_1 = ''
             pass
-        tab2_accum = tab2_accum + len(rows3) + 1
+        tab2_accum = tab2_accum + len(rows3_1)
+
+        try:
+            if len(rows3_2_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_2_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows3_2_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_2_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows3_2_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows3_2_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows3_2_1[0][5]))
+                rows3_2 = rows3_2_1
+            elif len(rows3_2_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_2_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows3_2_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_2_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows3_2_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows3_2_2[0][4]))
+                rows3_2 = rows3_2_2
+            elif len(rows3_2_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_2_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_2_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows3_2_3[0][2]))
+                rows3_2 = rows3_2_3
+            else:
+                rows3_2 = ''
+
+        except:
+            rows3_2 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows3_2)
+
+        try:
+            if len(rows3_3_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_3_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows3_3_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_3_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows3_3_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows3_3_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows3_3_1[0][5]))
+                rows3_3 = rows3_3_1
+            elif len(rows3_3_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_3_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows3_3_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_3_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows3_3_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows3_3_2[0][4]))
+                rows3_3 = rows3_3_2
+            elif len(rows3_3_3) >= 1:
+                #실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows3_3_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows3_3_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows3_3_3[0][2]))
+                rows3_3 = rows3_3_3
+            else:
+                rows3_3 = ''
+        except:
+            rows3_3 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows3_3) + 1
 
         # 안티포렌식
         self.color_tab2_table("안티포렌식", tab2_accum)
         try:
-            for i in range(len(rows4)):
-                name, version, Full_Path, publisher, install_date, Last_Executed1 = rows4[i]
-                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(name))
-                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(version))
-                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
-                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
-                self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
-                self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+            if len(rows4_1_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_1_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_1_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_1_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_1_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_1_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_1_1[0][5]))
+                rows4_1 = rows4_1_1
+            elif len(rows4_1_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_1_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_1_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_1_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_1_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_1_2[0][4]))
+                rows4_1 = rows4_1_2
+            elif len(rows4_1_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_1_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_1_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_1_3[0][2]))
+                rows4_1 = rows4_1_3
+            else:
+                rows4_1 = ''
+
         except:
-            rows4 = ''
+            rows4_1 = ''
             pass
-        tab2_accum = tab2_accum + len(rows4) + 1
+        tab2_accum = tab2_accum + len(rows4_1)
+
+        try:
+            if len(rows4_2_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_2_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_2_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_2_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_2_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_2_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_2_1[0][5]))
+                rows4_2 = rows4_2_1
+            elif len(rows4_2_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_2_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_2_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_2_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_2_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_2_2[0][4]))
+                rows4_2 = rows4_2_2
+            elif len(rows4_2_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_2_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_2_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_2_3[0][2]))
+                rows4_2 = rows4_2_3
+            else:
+                rows4_2 = ''
+
+        except:
+            rows4_2 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows4_2)
+
+        try:
+            if len(rows4_3_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_3_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_3_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_3_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_3_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_3_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_3_1[0][5]))
+                rows4_3 = rows4_3_1
+            elif len(rows4_3_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_3_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_3_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_3_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_3_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_3_2[0][4]))
+                rows4_3 = rows4_3_2
+            elif len(rows4_3_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_3_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_3_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_3_3[0][2]))
+                rows4_3 = rows4_3_3
+            else:
+                rows4_3 = ''
+        except:
+            rows4_3 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows4_3)
+
+        try:
+            if len(rows4_4_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_4_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_4_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_4_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_4_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_4_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_4_1[0][5]))
+                rows4_4 = rows4_4_1
+            elif len(rows4_4_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_4_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_4_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_4_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_4_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_4_2[0][4]))
+                rows4_4 = rows4_4_2
+            elif len(rows4_4_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_4_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_4_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_4_3[0][2]))
+                rows4_4 = rows4_4_3
+            else:
+                rows4_4 = ''
+
+        except:
+            rows4_4 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows4_4)
+
+        try:
+            if len(rows4_5_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_5_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_5_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_5_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_5_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_5_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_5_1[0][5]))
+                rows4_5 = rows4_5_1
+            elif len(rows4_5_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_5_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_5_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_5_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_5_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_5_2[0][4]))
+                rows4_5 = rows4_5_2
+            elif len(rows4_5_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_5_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_5_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_5_3[0][2]))
+                rows4_5 = rows4_5_3
+            else:
+                rows4_5 = ''
+
+        except:
+            rows4_5 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows4_5)
+
+        try:
+            if len(rows4_6_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_6_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_6_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_6_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_6_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_6_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_6_1[0][5]))
+                rows4_6 = rows4_6_1
+            elif len(rows4_6_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_6_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows4_6_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_6_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows4_6_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows4_6_2[0][4]))
+                rows4_6 = rows4_6_2
+            elif len(rows4_6_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows4_6_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows4_6_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows4_6_3[0][2]))
+                rows4_6 = rows4_6_3
+            else:
+                rows4_6 = ''
+        except:
+            rows4_6 = ''
+            pass
+        tab2_accum = tab2_accum + len(rows4_6)+1
+        print(tab2_accum)
 
         # VM
         self.color_tab2_table("VM", tab2_accum)
         try:
-            for i in range(len(rows5)):
-                name, version, Full_Path, publisher, install_date, Last_Executed1= rows5[i]
-                self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(name))
-                self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(version))
-                self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
-                self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
-                self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
-                self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+            if len(rows5_1_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows5_1_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows5_1_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows5_1_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows5_1_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows5_1_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows5_1_1[0][5]))
+                rows5_1 = rows5_1_1
+            elif len(rows5_1_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows5_1_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows5_1_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows5_1_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows5_1_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows5_1_2[0][4]))
+                rows5_1 = rows5_1_2
+            elif len(rows5_1_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows5_1_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows5_1_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows5_1_3[0][2]))
+                rows5_1 = rows5_1_3
+            else:
+                rows5_1 = ''
         except:
+            rows5_1 = ''
             pass
+        tab2_accum = tab2_accum + len(rows5_1)
+
+        try:
+            if len(rows5_2_1) >= 1:
+                # 설치 + 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows5_2_1[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows5_2_1[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows5_2_1[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows5_2_1[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows5_2_1[0][4]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows5_2_1[0][5]))
+                rows5_2 = rows5_2_1
+            elif len(rows5_2_2) >= 1:
+                # 설치
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows5_2_2[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 2, QTableWidgetItem(rows5_2_2[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows5_2_2[0][2]))
+                self.tab2_table.setItem(tab2_accum + 1, 4, QTableWidgetItem(rows5_2_2[0][3]))
+                self.tab2_table.setItem(tab2_accum + 1, 5, QTableWidgetItem(rows5_2_2[0][4]))
+                rows5_2 = rows5_2_2
+            elif len(rows5_2_3) >= 1:
+                # 실행
+                self.tab2_table.setItem(tab2_accum + 1, 1, QTableWidgetItem(rows5_2_3[0][0]))
+                self.tab2_table.setItem(tab2_accum + 1, 3, QTableWidgetItem(rows5_2_3[0][1]))
+                self.tab2_table.setItem(tab2_accum + 1, 6, QTableWidgetItem(rows5_2_3[0][2]))
+                rows5_2 = rows5_2_3
+            else:
+                rows5_2 = ''
+        except:
+            rows5_2 = ''
+            pass
+
 
         self.tab2_table.verticalHeader().hide()
         self.tab2_table.setColumnWidth(0, self.width()*3/30)
         self.tab2_table.setColumnWidth(1, self.width()*4/30)
-        self.tab2_table.setColumnWidth(2, self.width()*2/30)
+        self.tab2_table.setColumnWidth(2, self.width()*3/30)
         self.tab2_table.setColumnWidth(3, self.width()*13/30)
         self.tab2_table.setColumnWidth(4, self.width()*3/30)
         self.tab2_table.setColumnWidth(5, self.width()*4/30)
@@ -336,15 +1134,13 @@ class MyWidget(QWidget):
                 self.text5_content[i].setText(0, string)
 
         except:
-            print("MFT 없음")
             pass
 
-        # 계정 + (계정 vs 시스템 설치)
+        # 계정 + (계정 vs 시스템 설치) + (계정 vs mft 생성)
         try:
             query = 'SELECT datetime(install_date, ' + self.UTC + ') FROM OSInformation;'
             cur.execute(query)
             win_inst = cur.fetchone()
-            # print(win_inst[0])
 
             query = "SELECT account_name, RID_int, datetime(created_on, " + self.UTC + "), " \
                     "datetime(last_login_time, " + self.UTC + ") FROM UserAccounts"
