@@ -2152,8 +2152,8 @@ class MyWidget(QWidget):
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
             query = "SELECT event_id, detailed, computer, datetime(time_created," + self.UTC + "), sbt_usr_name, channel FROM event_log " \
-                    " WHERE ((event_id = '104' or event_id = '1102' AND sbt_usr_name IS NOT '' )" \
-                    " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
+                    "WHERE (event_id = '104' or (event_id = '1102' AND sbt_usr_name IS NOT '' )" \
+                    "AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()

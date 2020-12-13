@@ -118,7 +118,7 @@ def Save_Event():
             '4634':'Logoff',                 '4720':'Created Account',
             '4726':'Deleted Account',        '4724':'Changed Password',
             '4738':'Changed Account Name',   '4732':'Add to Admin group',
-            '4733':'Remove from Admin group','1102':'The audit log was cleared',
+            '4733':'Remove from Admin group','1102':'감사로그가 지워졌습니다',
             '4648':'A logon was attempted using explicit credentials',
             '4616':'System time was changed'
         },
