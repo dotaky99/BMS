@@ -1196,7 +1196,7 @@ class MyWidget(QWidget):
 
                 self.text6_content.append(QTreeWidgetItem(self.text6))
                 if flag == 1:
-                    self.text6_content[i].setBackground(0, QColor(255, 77, 77))
+                    self.text6_content[i].setBackground(0, QColor(255, 128, 128))
                 self.text6_content[i].setText(0, string)
         except:
             pass
@@ -1248,7 +1248,7 @@ class MyWidget(QWidget):
                 time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
                 string = "★시스템 시간 변경 : time_created : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time
                 self.text9_1_content.append(QTreeWidgetItem(self.text9))
-                self.text9_1_content[i].setBackground(0, QColor(255, 77, 77))
+                self.text9_1_content[i].setBackground(0, QColor(255, 128, 128))
                 self.text9_1_content[i].setText(0, string)
 
         except:
@@ -1271,7 +1271,7 @@ class MyWidget(QWidget):
                     int(new_bias) / 60 * -1)
                 string = "★표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new)
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
-                self.text9_2_content[i].setBackground(0, QColor(255,77,77))
+                self.text9_2_content[i].setBackground(0, QColor(255, 128, 128))
                 self.text9_2_content[i].setText(0, string)
 
         except:
