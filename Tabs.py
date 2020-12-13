@@ -1120,16 +1120,20 @@ class MyWidget(QWidget):
             self.text5_content = []
             for i in range(len(rows)):
                 drive, SI_M_timestamp = rows[i]
+                flag = 0
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
                         string = "★" + drive + ":\ : " + SI_M_timestamp
+                        flag = 1
                         # 윈도우 설치 -> mft 생성 => 이상함!
                     else :
                         string = drive + ":\ : " + SI_M_timestamp # 정상(C에 대해서만)
                 else :
                     string = drive + ":\ : " + SI_M_timestamp
                 self.text5_content.append(QTreeWidgetItem(self.text5))
+                if flag == 1:
+                    self.text5_content[i].setBackground(0, QColor(255,0,0))
                 self.text5_content[i].setText(0, string)
 
         except:
