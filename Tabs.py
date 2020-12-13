@@ -1027,7 +1027,7 @@ class MyWidget(QWidget):
         self.tab2_table.setColumnWidth(1, self.width()*4/30)
         self.tab2_table.setColumnWidth(2, self.width()*3/30)
         self.tab2_table.setColumnWidth(3, self.width()*13/30)
-        self.tab2_table.setColumnWidth(4, self.width()*3/30)
+        self.tab2_table.setColumnWidth(4, self.width()*2/30)
         self.tab2_table.setColumnWidth(5, self.width()*4/30)
         self.tab2_table.setColumnWidth(6, self.width()*4/30)
         self.tab2_table.setColumnWidth(7, self.width()*3/30)
@@ -1124,7 +1124,7 @@ class MyWidget(QWidget):
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
-                        string = "★" + drive + ":\ : " + SI_M_timestamp
+                        string = drive + ":\ : " + SI_M_timestamp + "\t ※윈도우 설치시간과 MFT 생성 시간이 논리적 모순입니다."
                         flag = 1
                         # 윈도우 설치 -> mft 생성 => 이상함!
                     else :
@@ -1133,7 +1133,7 @@ class MyWidget(QWidget):
                     string = drive + ":\ : " + SI_M_timestamp
                 self.text5_content.append(QTreeWidgetItem(self.text5))
                 if flag == 1:
-                    self.text5_content[i].setBackground(0, QColor(255,0,0))
+                    self.text5_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text5_content[i].setText(0, string)
 
         except:
@@ -1152,26 +1152,28 @@ class MyWidget(QWidget):
 
             self.text6_content = []
             for i in range(len(rows)):
-                #string = None
                 string = QTextEdit()
                 flag = 0
                 account_name, RID_int, created_on, last_login_time = rows[i]
                 # 사용자가 생성한 계정
-                query = 'SELECT SI_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
-                cur.execute(query)
-                acc_folder = cur.fetchone()
+                try:
+                    query = 'SELECT SI_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
+                    cur.execute(query)
+                    acc_folder = cur.fetchone()
+                except:
+                    acc_folder = ''
                 if int(RID_int) > 1000:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
-                            flag = 1
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            # flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
                     else: # 사용자가 생성한 계정에 로그인 기록이 존재
                         # 윈도우 설치 시간이 계정 생성 시간 이후인 경우
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S")\
-                                or datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(acc_folder[0], "%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
+                                or datetime.strptime(c_mft_time, "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0] + "\t ※윈도우 설치시간 또는 MFT 생성 시간과 계정 생성 시간이 논리적 모순입니다."
                             flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
@@ -1180,21 +1182,21 @@ class MyWidget(QWidget):
                 else:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
-                            flag = 1
-                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            # flag = 1
+                        else:
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
                     else: # 시스템이 생성한 계정에 로그인 기록이 존재
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t ※윈도우 설치시간과 계정 생성 시간이 논리적 모순입니다."
                             flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
-
                 self.text6_content.append(QTreeWidgetItem(self.text6))
                 if flag == 1:
-                    self.text6_content[i].setBackground(0, QColor(255,0,0))
+                    self.text6_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text6_content[i].setText(0, string)
         except:
             pass
@@ -1244,10 +1246,10 @@ class MyWidget(QWidget):
             self.text9_1_content = []
             for i in range(len(rows)):
                 time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
-                string = "★시스템 시간 변경 : time_created : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time
+                string = "시스템 시간 변경 : time_created : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time + "\t ※시스템 시간이 변경되었습니다."
                 self.text9_1_content.append(QTreeWidgetItem(self.text9))
+                self.text9_1_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text9_1_content[i].setText(0, string)
-            # string6.setStyleSheet("Color : red")
 
         except:
             pass
@@ -1267,8 +1269,9 @@ class MyWidget(QWidget):
                     int(old_bias) / 60 * -1)
                 new = "UTC+" + str(int(new_bias) / 60 * -1) if int(new_bias) < 0 else "UTC" + str(
                     int(new_bias) / 60 * -1)
-                string = "★표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new)
+                string = "표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new) + "\t ※표준 시간대가 변경되었습니다."
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
+                self.text9_2_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text9_2_content[i].setText(0, string)
 
         except:
@@ -1412,24 +1415,31 @@ class MyWidget(QWidget):
             self.times3.append(mdates.date2num(t))
 
         internet_data = []
-        for t in range(len(self.times) - 1):
-            query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
-            cur.execute(query)
-            rows = cur.fetchall()
-            internet_data.append(len(rows))
+        try:
+            for t in range(len(self.times) - 1):
+                query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
+                cur.execute(query)
+                rows = cur.fetchall()
+                internet_data.append(len(rows))
+        except:
+            pass
+
 
         self.document_data = []
-        for t in range(len(self.times) - 1):
-            query = "SELECT OBJID_timestamp FROM parsed_MFT WHERE " \
-                    "((FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
-                        t + 1] + "') OR " \
-                                 "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
-                        t + 1] + "') OR " \
-                                 "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
-                        t + 1] + "'))"
-            cur.execute(query)
-            rows = cur.fetchall()
-            self.document_data.append(len(rows))
+        try:
+            for t in range(len(self.times) - 1):
+                query = "SELECT OBJID_timestamp FROM parsed_MFT WHERE " \
+                        "((FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
+                            t + 1] + "') OR " \
+                                     "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
+                            t + 1] + "') OR " \
+                                     "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
+                            t + 1] + "'))"
+                cur.execute(query)
+                rows = cur.fetchall()
+                self.document_data.append(len(rows))
+        except:
+            pass
         conn.close()
 
         self.points1 = list(zip(self.times3, internet_data))
@@ -1439,8 +1449,7 @@ class MyWidget(QWidget):
         self.ax.cla()
         self.ax2.cla()
         line1 = self.ax.plot(self.times2[0:N], internet_data, color="lightskyblue", label="Internet")
-        line2 = self.ax2.plot(self.times2[0:N], self.document_data, color="sandybrown",
-                              label="Documnets Create/Modify/Access")
+        line2 = self.ax2.plot(self.times2[0:N], self.document_data, color="sandybrown", label="Documnets Create/Modify/Access")
         lines = line1 + line2
         labels = [l.get_label() for l in lines]
         self.ax.legend(lines, labels, loc="upper left")
@@ -1473,7 +1482,6 @@ class MyWidget(QWidget):
 
         # if min(dists) > 5:  # 클릭 범위 지정. 숫자가 클 수록 클릭 가능 범위 커짐.
         #     return
-
         index = dists.index(min(dists))
         # print(index)
 
@@ -1485,72 +1493,73 @@ class MyWidget(QWidget):
 
     # tab3 타임라인의 그래프 - 인터넷 테이블
     def set_internet_table(self, index):
-        self.internet_table.clearContents()
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        self.internet_table.clearContents()
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + \
-                self.times[index] + \
-                "') AND (timestamp <= '" + self.times[index + 1] + "')"
-        cur.execute(query)
-        rows = cur.fetchall()
-        conn.close()
+        try:
+            self.internet_table.clearContents()
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + \
+                    self.times[index] + \
+                    "') AND (timestamp <= '" + self.times[index + 1] + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
 
-        count = len(rows)
-        self.internet_table.setRowCount(count)
-        for i in range(count):
-            timestamp, url, title = rows[i]
-            self.internet_table.setItem(i, 0, QTableWidgetItem(timestamp))
-            self.internet_table.setItem(i, 1, QTableWidgetItem(url))
-            self.internet_table.setItem(i, 2, QTableWidgetItem(title))
+            count = len(rows)
+            self.internet_table.setRowCount(count)
+            for i in range(count):
+                timestamp, url, title = rows[i]
+                self.internet_table.setItem(i, 0, QTableWidgetItem(timestamp))
+                self.internet_table.setItem(i, 1, QTableWidgetItem(url))
+                self.internet_table.setItem(i, 2, QTableWidgetItem(title))
 
-        self.internet_table.sortItems(0, QtCore.Qt.AscendingOrder)
+            self.internet_table.sortItems(0, QtCore.Qt.AscendingOrder)
+        except:
+            pass
 
     # tab3 타임라인의 그래프 - 문서 테이블
     def set_document_table(self, index):
-        self.document_table.clearContents()
-        conn = sqlite3.connect("Believe_Me_Sister.db")
-        cur = conn.cursor()
-        query = "SELECT datetime(FN_C_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
-                                                                "WHERE (FN_C_timestamp >= '" + self.times[
-                    index] + "') AND (FN_C_timestamp <= '" + self.times[index + 1] + "')"
-        cur.execute(query)
-        creation_rows = cur.fetchall()
-        query = "SELECT datetime(FN_M_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
-                                                                "WHERE (FN_M_timestamp >= '" + self.times[
-                    index] + "') AND (FN_M_timestamp <= '" + self.times[index + 1] + "')"
-        cur.execute(query)
-        modified_rows = cur.fetchall()
-        query = "SELECT datetime(FN_A_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
-                                                                "WHERE (FN_A_timestamp >= '" + self.times[
-                    index] + "') AND (FN_A_timestamp <= '" + self.times[index + 1] + "')"
-        cur.execute(query)
-        accessed_rows = cur.fetchall()
-        conn.close()
+        try:
+            self.document_table.clearContents()
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(FN_C_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
+                    "WHERE (FN_C_timestamp >= '" + self.times[index] + "') AND (FN_C_timestamp <= '" + self.times[index+1] + "')"
+            cur.execute(query)
+            creation_rows = cur.fetchall()
+            query = "SELECT datetime(FN_M_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
+                    "WHERE (FN_M_timestamp >= '" + self.times[index] + "') AND (FN_M_timestamp <= '" + self.times[index + 1] + "')"
+            cur.execute(query)
+            modified_rows = cur.fetchall()
+            query = "SELECT datetime(FN_A_timestamp, " + self.UTC + "), file_path FROM parsed_MFT " \
+                    "WHERE (FN_A_timestamp >= '" + self.times[index] + "') AND (FN_A_timestamp <= '" + self.times[index + 1] + "')"
+            cur.execute(query)
+            accessed_rows = cur.fetchall()
+            conn.close()
 
-        count = len(creation_rows) + len(modified_rows) + len(accessed_rows)
-        self.document_table.setRowCount(count)
+            count = len(creation_rows) + len(modified_rows) + len(accessed_rows)
+            self.document_table.setRowCount(count)
 
-        for i in range(len(creation_rows)):  # 문서 생성
-            time, file = creation_rows[i]
-            self.document_table.setItem(i, 0, QTableWidgetItem(time))
-            self.document_table.setItem(i, 1, QTableWidgetItem("생성"))
-            self.document_table.setItem(i, 2, QTableWidgetItem(file))
-        accum = len(creation_rows)
-        for i in range(len(modified_rows)):  # 문서 수정
-            time, file = modified_rows[i]
-            self.document_table.setItem(i + accum, 0, QTableWidgetItem(time))
-            self.document_table.setItem(i + accum, 1, QTableWidgetItem("수정"))
-            self.document_table.setItem(i + accum, 2, QTableWidgetItem(file))
-        accum = accum + len(modified_rows)
-        for i in range(len(accessed_rows)):  # 문서 접근
-            time, file = accessed_rows[i]
-            self.document_table.setItem(i + accum, 0, QTableWidgetItem(time))
-            self.document_table.setItem(i + accum, 1, QTableWidgetItem("접근"))
-            self.document_table.setItem(i + accum, 2, QTableWidgetItem(file))
+            for i in range(len(creation_rows)):  # 문서 생성
+                time, file = creation_rows[i]
+                self.document_table.setItem(i, 0, QTableWidgetItem(time))
+                self.document_table.setItem(i, 1, QTableWidgetItem("생성"))
+                self.document_table.setItem(i, 2, QTableWidgetItem(file))
+            accum = len(creation_rows)
+            for i in range(len(modified_rows)):  # 문서 수정
+                time, file = modified_rows[i]
+                self.document_table.setItem(i + accum, 0, QTableWidgetItem(time))
+                self.document_table.setItem(i + accum, 1, QTableWidgetItem("수정"))
+                self.document_table.setItem(i + accum, 2, QTableWidgetItem(file))
+            accum = accum + len(modified_rows)
+            for i in range(len(accessed_rows)):  # 문서 접근
+                time, file = accessed_rows[i]
+                self.document_table.setItem(i + accum, 0, QTableWidgetItem(time))
+                self.document_table.setItem(i + accum, 1, QTableWidgetItem("접근"))
+                self.document_table.setItem(i + accum, 2, QTableWidgetItem(file))
 
-        self.document_table.sortItems(0, QtCore.Qt.AscendingOrder)
+            self.document_table.sortItems(0, QtCore.Qt.AscendingOrder)
+        except:
+            pass
 
 
 #################################################
@@ -2149,8 +2158,8 @@ class MyWidget(QWidget):
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
             query = "SELECT event_id, detailed, computer, datetime(time_created," + self.UTC + "), sbt_usr_name, channel FROM event_log " \
-                    " WHERE ((event_id = '104' or event_id = '1102' AND sbt_usr_name IS NOT '' )" \
-                    " AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
+                    "WHERE (event_id = '104' or (event_id = '1102' AND sbt_usr_name IS NOT '' )" \
+                    "AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()

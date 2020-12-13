@@ -72,7 +72,7 @@ def PC_Processing(file_et):
                 if 'System' in each_et and eventid in file_et[each_et]:
                     if eventid == '104':
                         detailed = file_et[each_et][eventid]
-                        for data in soup.findAll('data'):
+                        for data in soup.findAll('userdata'):
                             sbt_usr_name = data.subjectusername.string
                             channel = data.channel.string
 
@@ -186,8 +186,6 @@ def PC_Processing(file_et):
                         detailed = file_et[each_et][eventid]
                         for data in soup.findAll('data'):
                             if 'Name' == data['name']:
-                                if '식별' in str(data.string):
-                                    continue
                                 net_name = data.string
                             if 'Guid' == data['name']:
                                 guid = data.string
@@ -244,9 +242,9 @@ def PC_Processing(file_et):
 
                     if eventid == '1102':
                         detailed = file_et[each_et][eventid]
-                        for data in soup.findAll('data'):
-                            if 'SubjectUserName' == data['name']:
-                                sbt_usr_name = data.string
+                        for data in soup.findAll('userdata'):
+                            sbt_usr_name = data.subjectusername.string
+
                     if eventid == '4648':
                         detailed = file_et[each_et][eventid]
                         for data in soup.findAll('data'):
@@ -346,9 +344,9 @@ def PC_Processing(file_et):
                                 drive_serial = data.string
                             if 'PartitionTableBytes' == data['name']:
                                 if data.string == '0':
-                                    detailed = '연결 성공'
+                                    detailed = 'The storage device has been successfully connected.'
                                 else:
-                                    detailed = '연결 해제'
+                                    detailed = 'The storage device has been successfully released.'
                             # CHECK VHD/X
                             if 'Location' == data['name']:
                                 if 'vhd' in data.string:
