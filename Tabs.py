@@ -2,6 +2,7 @@ import os, sys
 import re
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QColor
 from PyQt5.QtCore import *
 import sqlite3
 from datetime import datetime, timedelta
@@ -1119,16 +1120,20 @@ class MyWidget(QWidget):
             self.text5_content = []
             for i in range(len(rows)):
                 drive, SI_M_timestamp = rows[i]
+                flag = 0
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
                         string = "★" + drive + ":\ : " + SI_M_timestamp
+                        flag = 1
                         # 윈도우 설치 -> mft 생성 => 이상함!
                     else :
                         string = drive + ":\ : " + SI_M_timestamp # 정상(C에 대해서만)
                 else :
                     string = drive + ":\ : " + SI_M_timestamp
                 self.text5_content.append(QTreeWidgetItem(self.text5))
+                if flag == 1:
+                    self.text5_content[i].setBackground(0, QColor(255,0,0))
                 self.text5_content[i].setText(0, string)
 
         except:
@@ -1147,28 +1152,50 @@ class MyWidget(QWidget):
 
             self.text6_content = []
             for i in range(len(rows)):
-                string = None
+                #string = None
+                string = QTextEdit()
+                flag = 0
                 account_name, RID_int, created_on, last_login_time = rows[i]
-                if last_login_time == None:
-                    if int(RID_int ) > 1000:
-                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on
-                else:
-                    if int(RID_int) > 1000:
-                        if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
-                            string ="★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
-                            # 계정 생성 -> 윈도우 설치 => 이상함!
-                        else : # 정상인 경우
-                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+                # 사용자가 생성한 계정
+                if int(RID_int) > 1000:
+                    if last_login_time == None:
+                        if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
+                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
+                        else:
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                    else: # 사용자가 생성한 계정에 로그인 기록이 존재
+                        # 윈도우 설치 시간이 계정 생성 시간 이후인 경우
+                        query = 'SELECT FN_C_timestamp FROM parsed_MFT WHERE file_path="/Users/'+account_name+'" and is_dir="Y"'
+                        cur.execute(query)
+                        acc_folder = cur.fetchone()
+                        print(acc_folder)
+                        if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S")\
+                                or datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(acc_folder[0], "%Y-%m-%d %H:%M:%S"):
+                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
+                        else:
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
-                        if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
-                            string ="★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
-                            # 계정 생성 -> MFT 생성 => 이상함!
-                        else: # 정상인 경우
-                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
-                    else :
-                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
+                # 시스템이 생성한 계정
+                else:
+                    if last_login_time == None:
+                        if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
+                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
+                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+
+                    else: # 시스템이 생성한 계정에 로그인 기록이 존재
+                        if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
+                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
+                        else:
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+
 
                 self.text6_content.append(QTreeWidgetItem(self.text6))
+                if flag == 1:
+                    self.text6_content[i].setBackground(0, QColor(255,0,0))
                 self.text6_content[i].setText(0, string)
         except:
             pass
@@ -1237,7 +1264,11 @@ class MyWidget(QWidget):
             self.text9_2_content = []
             for i in range(len(rows)):
                 time_created, new_bias, old_bias = rows[i]
-                string = "★표준 시간대 변경 : time_created : " + time_created + ", 전 : " + old_bias + "-> 후 : " + new_bias
+                old = "UTC+" + str(int(old_bias) / 60 * -1) if int(old_bias) < 0 else "UTC" + str(
+                    int(old_bias) / 60 * -1)
+                new = "UTC+" + str(int(new_bias) / 60 * -1) if int(new_bias) < 0 else "UTC" + str(
+                    int(new_bias) / 60 * -1)
+                string = "★표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new)
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
                 self.text9_2_content[i].setText(0, string)
 
