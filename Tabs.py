@@ -1157,7 +1157,7 @@ class MyWidget(QWidget):
                 flag = 0
                 account_name, RID_int, created_on, last_login_time = rows[i]
                 # 사용자가 생성한 계정
-                query = 'SELECT FN_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
+                query = 'SELECT SI_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
                 cur.execute(query)
                 acc_folder = cur.fetchone()
                 if int(RID_int) > 1000:
