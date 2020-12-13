@@ -2,21 +2,31 @@ import os
 import win32com.client
 import getpass
 import Parse
+import threading, pythoncom
 
-def get_drives():
-    drives = []
+class Drive(threading.Thread):
+    def __init__(self):
+        super().__init__()
 
-    strComputer = "."
-    objWMIService = win32com.client.Dispatch("WbemScripting.SWbemLocator")
-    objSWbemServices = objWMIService.ConnectServer(strComputer, "root\cimv2")
-    colItems = objSWbemServices.ExecQuery("Select * from Win32_LogicalDisk")
+    def run(self):
+        pythoncom.CoInitialize()
+        self.drives = []
 
-    for obj in colItems:
-        if obj.FileSystem =="NTFS":
-            letter = obj.Name.split(':')[0]
-            drives.append(letter)
+        strComputer = "."
+        objWMIService = win32com.client.Dispatch("WbemScripting.SWbemLocator")
+        objSWbemServices = objWMIService.ConnectServer(strComputer, "root\cimv2")
+        colItems = objSWbemServices.ExecQuery("Select * from Win32_LogicalDisk")
 
-    return drives
+        for obj in colItems:
+            if obj.FileSystem == "NTFS":
+                letter = obj.Name.split(':')[0]
+                print(obj.Name.split(':')[0])
+                self.drives.append(letter)
+
+        pythoncom.CoUninitialize()
+
+    def returnDrive(self):
+        return self.drives
 
 def file_copy():
     # path
@@ -31,7 +41,7 @@ def file_copy():
     reg_dir = "COPY/REGHIVE"
 
     #prefetch BMS/COPY/PREFETCH
-    os.system('robocopy {} COPY/PREFETCH'.format(prefetch_path)) # 관리자 권한 필요.
+    os.system('robocopy {} COPY/PREFETCH'.format(prefetch_path))
 
     #registry BMS/COPY/REGHIVE
     if not os.path.isdir(reg_dir):
@@ -42,7 +52,10 @@ def file_copy():
     os.system(r'COPY\RawCopy.exe /FileNamePath:{}\AppData\Local\Microsoft\Windows\UsrClass.dat /OutputPath:{}\COPY\REGHIVE'.format(cur_user_dir, cur_path))
 
     #mft BMS/COPY/NTFS
-    drive_list = get_drives()
+    getDrives = Drive()
+    getDrives.start()
+    getDrives.join()
+    drive_list = getDrives.returnDrive()
 
     if not os.path.isdir(nt_dir):
         os.mkdir(nt_dir)

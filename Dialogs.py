@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
 import os
+from PyQt5.QtCore import *
 from COPY import copy
 
 
@@ -114,18 +115,43 @@ class FileCopy(QDialog):
         self.setWindowTitle("파일 복사")
         self.explanation1_ = QLabel("분석에 필요한 파일을 복사중입니다.")
         self.blank_ = QLabel()
-        self.explanation2_ = QLabel("아래 버튼을 누른 후, 조금만 기다려 주세요.\nDB가 생성되면 창이 종료됩니다.")
+        self.explanation2_ = QLabel("아래 시작 버튼을 누른 후, 조금만 기다려 주세요.\nDB가 생성되면 창이 종료됩니다.")
+
+        self.progressBar = QProgressBar(self)
+        self.progressBar.setRange(0,1)
+        self.progressBar.setAlignment(Qt.AlignCenter)
+        self.progLabel = QLabel()
 
         self.pushButton_ = QPushButton("시작")
         self.pushButton_.clicked.connect(self.pushButtonCopy)
+
+        self.task = Thread()
+        self.task.taskFinished.connect(self.onFinished)
 
         layout = QGridLayout()
         layout.addWidget(self.explanation1_, 0, 0)
         layout.addWidget(self.blank_, 1, 0)
         layout.addWidget(self.explanation2_, 2, 0)
-        layout.addWidget(self.pushButton_, 3, 0)
+        layout.addWidget(self.progressBar, 3, 0)
+        layout.addWidget(self.progLabel, 4, 0)
+        layout.addWidget(self.pushButton_, 5, 0)
+
         self.setLayout(layout)
 
     def pushButtonCopy(self):
+        self.progressBar.setRange(0,0)
+        self.progLabel.setText("잠시만 기다려주세요")
+        self.progLabel.repaint()
+        self.task.start()
+        #self.close()
+
+    def onFinished(self):
+        self.progressBar.setRange(0,1)
+        self.progressBar.setValue(1)
+
+
+class Thread(QThread):
+    taskFinished = pyqtSignal()
+    def run(self):
         copy.main()
-        self.close()
+        self.taskFinished.emit()
