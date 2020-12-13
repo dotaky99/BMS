@@ -1157,13 +1157,16 @@ class MyWidget(QWidget):
                 flag = 0
                 account_name, RID_int, created_on, last_login_time = rows[i]
                 # 사용자가 생성한 계정
-                query = 'SELECT SI_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
-                cur.execute(query)
-                acc_folder = cur.fetchone()
+                try:
+                    query = 'SELECT SI_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
+                    cur.execute(query)
+                    acc_folder = cur.fetchone()
+                except:
+                    acc_folder = ''
                 if int(RID_int) > 1000:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
                             flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
@@ -1171,7 +1174,7 @@ class MyWidget(QWidget):
                         # 윈도우 설치 시간이 계정 생성 시간 이후인 경우
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S")\
                                 or datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(acc_folder[0], "%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
                             flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
@@ -1186,15 +1189,14 @@ class MyWidget(QWidget):
 
                     else: # 시스템이 생성한 계정에 로그인 기록이 존재
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
                             flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
-
                 self.text6_content.append(QTreeWidgetItem(self.text6))
                 if flag == 1:
-                    self.text6_content[i].setBackground(0, QColor(255,0,0))
+                    self.text6_content[i].setBackground(0, QColor(255, 77, 77))
                 self.text6_content[i].setText(0, string)
         except:
             pass
@@ -1246,8 +1248,8 @@ class MyWidget(QWidget):
                 time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
                 string = "★시스템 시간 변경 : time_created : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time
                 self.text9_1_content.append(QTreeWidgetItem(self.text9))
+                self.text9_1_content[i].setBackground(0, QColor(255, 77, 77))
                 self.text9_1_content[i].setText(0, string)
-            # string6.setStyleSheet("Color : red")
 
         except:
             pass
@@ -1269,6 +1271,7 @@ class MyWidget(QWidget):
                     int(new_bias) / 60 * -1)
                 string = "★표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new)
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
+                self.text9_2_content[i].setBackground(0, QColor(255,77,77))
                 self.text9_2_content[i].setText(0, string)
 
         except:
