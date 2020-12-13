@@ -2,6 +2,7 @@ import os, sys
 import re
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QColor
 from PyQt5.QtCore import *
 import sqlite3
 from datetime import datetime, timedelta
@@ -1147,19 +1148,23 @@ class MyWidget(QWidget):
 
             self.text6_content = []
             for i in range(len(rows)):
-                string = None
+                #string = None
+                string = QTextEdit()
+                flag = 0
                 account_name, RID_int, created_on, last_login_time = rows[i]
                 # 사용자가 생성한 계정
                 if int(RID_int) > 1000:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
                             string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
                     else: # 사용자가 생성한 계정에 로그인 기록이 존재
                         # 윈도우 설치 시간이 계정 생성 시간 이후인 경우
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
                             string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
@@ -1168,15 +1173,20 @@ class MyWidget(QWidget):
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
                             string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
                         string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
                     else: # 시스템이 생성한 계정에 로그인 기록이 존재
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
                             string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
+
                 self.text6_content.append(QTreeWidgetItem(self.text6))
+                if flag == 1:
+                    self.text6_content[i].setBackground(0, QColor(255,0,0))
                 self.text6_content[i].setText(0, string)
         except:
             pass
