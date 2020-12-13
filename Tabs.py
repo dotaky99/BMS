@@ -1133,7 +1133,7 @@ class MyWidget(QWidget):
                     string = drive + ":\ : " + SI_M_timestamp
                 self.text5_content.append(QTreeWidgetItem(self.text5))
                 if flag == 1:
-                    self.text5_content[i].setBackground(0, QColor(255,0,0))
+                    self.text5_content[i].setBackground(0, QColor(255,128,128))
                 self.text5_content[i].setText(0, string)
 
         except:
