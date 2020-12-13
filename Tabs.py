@@ -1087,6 +1087,7 @@ class MyWidget(QWidget):
 
         self.text0 = QTreeWidgetItem(self.tab2_tree)
         self.text0.setText(0, "PC 정보")
+        self.text0.setBackground(0, QtGui.QColor("#FFFF99"))
         self.text1 = QTreeWidgetItem(self.text0)
         self.text1.setText(0, string1)
         self.text2 = QTreeWidgetItem(self.text0)
@@ -1149,9 +1150,14 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 string = None
                 account_name, RID_int, created_on, last_login_time = rows[i]
+                # 마지막 로그인 기록 X
                 if last_login_time == None:
                     if int(RID_int ) > 1000:
-                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on
+                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                    else:
+                        string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+
+                # 마지막 로그인 기록 O
                 else:
                     if int(RID_int) > 1000:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S"):
@@ -1165,7 +1171,7 @@ class MyWidget(QWidget):
                             # 계정 생성 -> MFT 생성 => 이상함!
                         else: # 정상인 경우
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
-                    else :
+                    else:
                         string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + last_login_time
 
                 self.text6_content.append(QTreeWidgetItem(self.text6))
