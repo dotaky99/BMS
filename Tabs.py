@@ -1157,6 +1157,9 @@ class MyWidget(QWidget):
                 flag = 0
                 account_name, RID_int, created_on, last_login_time = rows[i]
                 # 사용자가 생성한 계정
+                query = 'SELECT FN_C_timestamp FROM parsed_MFT WHERE file_path="/Users/' + account_name + '" and is_dir="Y"'
+                cur.execute(query)
+                acc_folder = cur.fetchone()
                 if int(RID_int) > 1000:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
@@ -1166,16 +1169,12 @@ class MyWidget(QWidget):
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
                     else: # 사용자가 생성한 계정에 로그인 기록이 존재
                         # 윈도우 설치 시간이 계정 생성 시간 이후인 경우
-                        query = 'SELECT FN_C_timestamp FROM parsed_MFT WHERE file_path="/Users/'+account_name+'" and is_dir="Y"'
-                        cur.execute(query)
-                        acc_folder = cur.fetchone()
-                        print(acc_folder)
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S")\
                                 or datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(acc_folder[0], "%Y-%m-%d %H:%M:%S"):
-                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            string = "★" + account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
                             flag = 1
                         else:
-                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t계정 폴더 생성 시간: " + acc_folder[0]
 
                 # 시스템이 생성한 계정
                 else:
