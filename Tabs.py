@@ -1124,7 +1124,7 @@ class MyWidget(QWidget):
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
-                        string = drive + ":\ : " + SI_M_timestamp + "\t 윈도우 설치시간과 MFT 생성 시간이 논리적 모순입니다."
+                        string = drive + ":\ : " + SI_M_timestamp + "\t ※윈도우 설치시간과 MFT 생성 시간이 논리적 모순입니다."
                         flag = 1
                         # 윈도우 설치 -> mft 생성 => 이상함!
                     else :
