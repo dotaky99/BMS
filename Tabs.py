@@ -1027,7 +1027,7 @@ class MyWidget(QWidget):
         self.tab2_table.setColumnWidth(1, self.width()*4/30)
         self.tab2_table.setColumnWidth(2, self.width()*3/30)
         self.tab2_table.setColumnWidth(3, self.width()*13/30)
-        self.tab2_table.setColumnWidth(4, self.width()*3/30)
+        self.tab2_table.setColumnWidth(4, self.width()*2/30)
         self.tab2_table.setColumnWidth(5, self.width()*4/30)
         self.tab2_table.setColumnWidth(6, self.width()*4/30)
         self.tab2_table.setColumnWidth(7, self.width()*3/30)
@@ -1133,7 +1133,7 @@ class MyWidget(QWidget):
                     string = drive + ":\ : " + SI_M_timestamp
                 self.text5_content.append(QTreeWidgetItem(self.text5))
                 if flag == 1:
-                    self.text5_content[i].setBackground(0, QColor(255,128,128))
+                    self.text5_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text5_content[i].setText(0, string)
 
         except:
@@ -1165,8 +1165,8 @@ class MyWidget(QWidget):
                 if int(RID_int) > 1000:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t ※윈도우 설치시간과 계정 생성 시간이 논리적 모순입니다."
-                            flag = 1
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            # flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
                     else: # 사용자가 생성한 계정에 로그인 기록이 존재
@@ -1182,8 +1182,8 @@ class MyWidget(QWidget):
                 else:
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
-                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time) + "\t ※윈도우 설치시간과 계정 생성 시간이 논리적 모순입니다."
-                            flag = 1
+                            string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+                            # flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
@@ -1196,7 +1196,7 @@ class MyWidget(QWidget):
 
                 self.text6_content.append(QTreeWidgetItem(self.text6))
                 if flag == 1:
-                    self.text6_content[i].setBackground(0, QColor(255, 128, 128))
+                    self.text6_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text6_content[i].setText(0, string)
         except:
             pass
@@ -1248,7 +1248,7 @@ class MyWidget(QWidget):
                 time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
                 string = "시스템 시간 변경 : time_created : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time + "\t ※시스템 시간이 변경되었습니다."
                 self.text9_1_content.append(QTreeWidgetItem(self.text9))
-                self.text9_1_content[i].setBackground(0, QColor(255, 128, 128))
+                self.text9_1_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text9_1_content[i].setText(0, string)
 
         except:
@@ -1271,7 +1271,7 @@ class MyWidget(QWidget):
                     int(new_bias) / 60 * -1)
                 string = "표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new) + "\t ※표준 시간대가 변경되었습니다."
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
-                self.text9_2_content[i].setBackground(0, QColor(255, 128, 128))
+                self.text9_2_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text9_2_content[i].setText(0, string)
 
         except:
