@@ -1085,6 +1085,26 @@ class MyWidget(QWidget):
             string2 = "윈도우 설치 시간"
             string3 = "컴퓨터 이름"
             string4 = "표준 시간대"
+        # 최대 절전모드 여부 확인
+        try:
+            GetRegKey_command = 'RegistryParse\\GetRegKey.exe COPY\\REGHIVE\\SYSTEM COPY\\REGHIVE\\SOFTWARE COPY\\REGHIVE\\SAM REGHIVE\\NTUSER.DAT COPY\\REGHIVE\\USRCLASS.DAT '
+            GetRegValue_command = 'RegistryParse\\GetRegValue.exe COPY\\REGHIVE\\SYSTEM COPY\\REGHIVE\\SOFTWARE COPY\\REGHIVE\\SAM REGHIVE\\NTUSER.DAT COPY\\REGHIVE\\USRCLASS.DAT '
+            input = 'SYSTEM "ControlSet001\\Control\\Power"'
+            result1 = os.popen(GetRegKey_command + input).read()
+            if "True" in result1:
+                input = 'SYSTEM "ControlSet001\\Control\\Power" HibernateEnabled'
+                result2 = os.popen(GetRegValue_command + input).read()
+                print(type(result2))
+                if result2 == 1:
+                    print("AAAA")
+                    hibernation = "ON"
+                else:
+                    print("BBBB")
+                    hibernation = "OFF"
+            else:
+                print(input + "의 경로를 찾을 수 없습니다")
+        except:
+            pass
 
         self.text0 = QTreeWidgetItem(self.tab2_tree)
         self.text0.setText(0, "PC 정보")
@@ -1096,6 +1116,8 @@ class MyWidget(QWidget):
         self.text3.setText(0, string3)
         self.text4 = QTreeWidgetItem(self.text0)
         self.text4.setText(0, string4)
+        self.hibernate = QTreeWidgetItem(self.text0)
+        self.hibernate.setText(0, "최대 절전모드 : " + hibernation)
         self.text5 = QTreeWidgetItem(self.tab2_tree)
         self.text5.setText(0, "MFT 생성 시간")
         self.text6 = QTreeWidgetItem(self.tab2_tree)
