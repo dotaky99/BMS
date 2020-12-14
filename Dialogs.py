@@ -2,6 +2,14 @@ from PyQt5.QtWidgets import *
 import os
 from PyQt5.QtCore import *
 from COPY import copy
+import time
+
+from EventLogParse import Save_Event
+from LnkParse import Lnk_Parse
+from BrowserParse import BrowserParser
+from PrefetchParse import Prefetch_Parse
+from NTFSParse import MFT_Parser, UsnJrnl_Parser
+from JumpListParse import Jump_Parse
 
 
 class UTCDialog(QDialog):
@@ -113,9 +121,9 @@ class FileCopy(QDialog):
 
     def setupUI(self):
         self.setWindowTitle("파일 복사")
-        self.explanation1_ = QLabel("분석에 필요한 파일을 복사중입니다.")
+        self.explanation1_ = QLabel("분석에 필요한 파일을 복사합니다.\n생성된 DB가 있는 경우, 생략 가능합니다.")
         self.blank_ = QLabel()
-        self.explanation2_ = QLabel("아래 시작 버튼을 누른 후, 조금만 기다려 주세요.\nDB가 생성되면 창이 종료됩니다.")
+        self.explanation2_ = QLabel("아래 시작 버튼을 누른 후, 조금만 기다려 주세요.\n복사가 완료되면 창이 종료됩니다.")
 
         self.progressBar = QProgressBar(self)
         self.progressBar.setRange(0,1)
@@ -124,6 +132,7 @@ class FileCopy(QDialog):
 
         self.pushButton_ = QPushButton("시작")
         self.pushButton_.clicked.connect(self.pushButtonCopy)
+        self.pushButtonFlag = True
 
         self.task = Thread()
         self.task.taskFinished.connect(self.onFinished)
@@ -139,19 +148,153 @@ class FileCopy(QDialog):
         self.setLayout(layout)
 
     def pushButtonCopy(self):
-        self.progressBar.setRange(0,0)
-        self.progLabel.setText("잠시만 기다려주세요")
-        self.progLabel.repaint()
-        self.task.start()
-        #self.close()
+        if self.pushButtonFlag:
+            self.progressBar.setRange(0,0)
+            self.explanation1_.setText("분석에 필요한 파일을 복사중입니다.")
+            self.explanation2_.setText("복사가 완료되면 창이 종료됩니다.")
+            self.progLabel.setText("잠시만 기다려주세요")
+            self.task.start()
+            self.pushButton_.setText("중단")
+            self.pushButtonFlag = False
+        else:
+            if self.task.isRunning():
+                self.task.terminate()
+                self.task.wait()
+                self.progressBar.setRange(0, 1)
+                self.explanation1_.setText("파일 복사가 중단되었습니다.")
+                self.explanation2_.setText("재시작을 원하시면 아래 버튼을 눌러주시고,\n복사를 원치 않으실 경우 창을 닫아주십시오.")
+                self.progLabel.setText("")
+                self.pushButton_.setText("재시작")
+                self.pushButtonFlag = True
 
     def onFinished(self):
+        self.pushButton_.setEnabled(False)
+        self.progLabel.setText("파일 복사가 완료되었습니다.")
         self.progressBar.setRange(0,1)
         self.progressBar.setValue(1)
-
+        time.sleep(2)
+        self.close()
 
 class Thread(QThread):
     taskFinished = pyqtSignal()
     def run(self):
-        copy.main()
+        copy.file_copy()
         self.taskFinished.emit()
+
+
+
+class Parsing(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUI()
+
+    def setupUI(self):
+        self.setWindowTitle("복사된 파일 파싱")
+        self.explanation1_ = QLabel("분석에 필요한 파일을 파싱중입니다. (생성된 DB가 있는 경우, 생략 가능합니다.)\n\n파싱이 완료되면 창이 종료됩니다.")
+
+        self.progressBar = QProgressBar(self)
+        self.progressBar.setRange(0,100)
+        self.progressBar.setValue(0)
+
+        self.progLabel = QLabel()
+
+        self.pushButton_ = QPushButton("취소")
+        self.pushButton_.clicked.connect(self.pushButtonStop)
+
+        self.task = ParsingThread()
+        self.task.taskFinished.connect(self.onFinished)
+        self.task.start()
+
+        self.timerVar = QTimer()
+        self.timerVar.setInterval(20000)
+        self.timerVar.timeout.connect(self.progressBarTimer)
+        self.timerVar.start()
+
+        self.task.change_value.connect(self.progressBar.setValue)
+        self.task.change_message.connect(self.progLabel.setText)
+        self.task.change_interval.connect(self.timerVar.setInterval)
+
+        layout = QGridLayout()
+        layout.addWidget(self.explanation1_, 0, 0)
+        layout.addWidget(self.progressBar, 3, 0)
+        layout.addWidget(self.progLabel, 4, 0)
+        layout.addWidget(self.pushButton_, 5, 0)
+
+        self.setLayout(layout)
+
+    def pushButtonStop(self):
+        self.explanation1_.setText("파싱이 중단되었습니다. 잠시후 창이 종료됩니다.")
+        self.progLabel.setText("")
+        self.explanation1_.repaint()
+        self.pushButton_.setEnabled(False)
+        self.task.terminate()
+        time.sleep(2.5)
+        self.close()
+
+    def progressBarTimer(self):
+        self.times = self.progressBar.value()
+        if self.times < self.task.check_time:
+            self.times += 1
+            self.progressBar.setValue(self.times)
+            self.timeSender(self.task)
+            if self.times >= self.progressBar.maximum():
+                self.timerVar.stop()
+
+    def timeSender(self, obj):
+        obj.times = self.times
+
+    def onFinished(self):
+        self.pushButton_.setEnabled(False)
+        self.progLabel.setText("파싱이 완료되었습니다.")
+        time.sleep(2)
+        self.close()
+
+
+
+class ParsingThread(QThread):
+    taskFinished = pyqtSignal()
+    change_value = pyqtSignal(int)
+    change_message = pyqtSignal(str)
+    change_interval = pyqtSignal(int)
+    check_time = 30
+    times = 0
+    def __init__(self):
+        super().__init__()
+    def run(self):
+        self.change_message.emit("Parsing Event Log..")
+        Save_Event.Save_Event()
+        self.adjust()
+        self.change_interval.emit(800)
+        self.check_time = 83
+        self.change_message.emit("Parsing Lnk...")
+        Lnk_Parse.main()
+
+        self.change_message.emit("Parsing Browser...")
+        BrowserParser.Browser_parser()
+
+        self.change_message.emit("Parsing Prefetch...")
+        Prefetch_Parse.main()
+
+        self.change_message.emit("Parsing JumpList...")
+        Jump_Parse.main()
+        self.change_interval.emit(20000)
+
+        self.change_message.emit("Parsing $MFT...")
+        MFT_Parser.parsing()
+        self.adjust()
+
+        self.check_time = 98
+        self.change_message.emit("Parsing $UsnJrnl...")
+        UsnJrnl_Parser.usn_parse()
+        self.adjust()
+        self.check_time = 100
+        self.change_interval.emit(800000)
+        self.change_message.emit("Parsing Registry...")
+        os.system(
+            "REGParse.exe COPY\REGHIVE\SYSTEM COPY\REGHIVE\SOFTWARE COPY\REGHIVE\SAM COPY\REGHIVE\\NTUSER.DAT COPY\REGHIVE\\USRCLASS.DAT")
+        self.adjust()
+        self.taskFinished.emit()
+
+    def adjust(self):
+        if self.times < self.check_time:
+            self.change_value.emit(self.check_time)

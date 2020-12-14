@@ -1,7 +1,6 @@
 import os
 import win32com.client
 import getpass
-import Parse
 import threading, pythoncom
 
 class Drive(threading.Thread):
@@ -88,8 +87,3 @@ def file_copy():
     # JMPLIST BMS/COPY/JUMPLIST
     os.system(r'robocopy "%UserProfile%\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations" COPY/JUMPLIST')
     os.system(r'robocopy "%UserProfile%\AppData\Roaming\Microsoft\Windows\Recent\CustomDestinations" COPY/JUMPLIST')
-
-def main():
-    file_copy()
-    print("THE END Copy")
-    Parse.main()

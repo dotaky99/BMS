@@ -22,6 +22,8 @@ class InitWindow(QMainWindow, form_class) :
         dlg.exec_()
         file = Dialogs.FileCopy()
         file.exec_()
+        file2 = Dialogs.Parsing()
+        file2.exec_()
         self.hide()
         self.window2 = SecondWindow.MainWindow()
         self.window2.show()
