@@ -1094,7 +1094,6 @@ class MyWidget(QWidget):
             if "True" in result1:
                 input = 'SYSTEM "ControlSet001\\Control\\Power" HibernateEnabled'
                 result2 = os.popen(GetRegValue_command + input).read()
-                print(type(result2))
                 if result2 == 1:
                     hibernation = "ON"
                 else:
