@@ -1096,10 +1096,8 @@ class MyWidget(QWidget):
                 result2 = os.popen(GetRegValue_command + input).read()
                 print(type(result2))
                 if result2 == 1:
-                    print("AAAA")
                     hibernation = "ON"
                 else:
-                    print("BBBB")
                     hibernation = "OFF"
             else:
                 print(input + "의 경로를 찾을 수 없습니다")
