@@ -121,8 +121,8 @@ class FileCopy(QDialog):
 
     def setupUI(self):
         self.setWindowTitle("파일 복사")
-        self.explanation1_ = QLabel("분석에 필요한 파일을 복사합니다.\n생성된 DB가 있는 경우, 생략 가능합니다.")
-        self.blank_ = QLabel()
+        self.explanation1_ = QLabel("분석에 필요한 파일을 복사합니다.\n생성된 DB가 있는 경우, 생략 가능합니다.\n")
+
         self.explanation2_ = QLabel("아래 시작 버튼을 누른 후, 조금만 기다려 주세요.\n복사가 완료되면 창이 종료됩니다.")
 
         self.progressBar = QProgressBar(self)
@@ -139,7 +139,6 @@ class FileCopy(QDialog):
 
         layout = QGridLayout()
         layout.addWidget(self.explanation1_, 0, 0)
-        layout.addWidget(self.blank_, 1, 0)
         layout.addWidget(self.explanation2_, 2, 0)
         layout.addWidget(self.progressBar, 3, 0)
         layout.addWidget(self.progLabel, 4, 0)
@@ -150,7 +149,7 @@ class FileCopy(QDialog):
     def pushButtonCopy(self):
         if self.pushButtonFlag:
             self.progressBar.setRange(0,0)
-            self.explanation1_.setText("분석에 필요한 파일을 복사중입니다.")
+            self.explanation1_.setText("분석에 필요한 파일을 복사중입니다.\n")
             self.explanation2_.setText("복사가 완료되면 창이 종료됩니다.")
             self.progLabel.setText("잠시만 기다려주세요")
             self.task.start()
@@ -161,7 +160,7 @@ class FileCopy(QDialog):
                 self.task.terminate()
                 self.task.wait()
                 self.progressBar.setRange(0, 1)
-                self.explanation1_.setText("파일 복사가 중단되었습니다.")
+                self.explanation1_.setText("파일 복사가 중단되었습니다.\n")
                 self.explanation2_.setText("재시작을 원하시면 아래 버튼을 눌러주시고,\n복사를 원치 않으실 경우 창을 닫아주십시오.")
                 self.progLabel.setText("")
                 self.pushButton_.setText("재시작")
@@ -190,7 +189,7 @@ class Parsing(QDialog):
 
     def setupUI(self):
         self.setWindowTitle("복사된 파일 파싱")
-        self.explanation1_ = QLabel("분석에 필요한 파일을 파싱중입니다. (생성된 DB가 있는 경우, 생략 가능합니다.)\n\n파싱이 완료되면 창이 종료됩니다.")
+        self.explanation1_ = QLabel("분석에 필요한 파일을 파싱합니다. (생성된 DB가 있는 경우, 생략 가능합니다.)\n\n파싱이 완료되면 창이 종료됩니다.")
 
         self.progressBar = QProgressBar(self)
         self.progressBar.setRange(0,100)
@@ -198,17 +197,16 @@ class Parsing(QDialog):
 
         self.progLabel = QLabel()
 
-        self.pushButton_ = QPushButton("취소")
+        self.pushButton_ = QPushButton("시작")
         self.pushButton_.clicked.connect(self.pushButtonStop)
+        self.pushButtonFlag = True
 
         self.task = ParsingThread()
         self.task.taskFinished.connect(self.onFinished)
-        self.task.start()
 
         self.timerVar = QTimer()
         self.timerVar.setInterval(20000)
         self.timerVar.timeout.connect(self.progressBarTimer)
-        self.timerVar.start()
 
         self.task.change_value.connect(self.progressBar.setValue)
         self.task.change_message.connect(self.progLabel.setText)
@@ -223,13 +221,22 @@ class Parsing(QDialog):
         self.setLayout(layout)
 
     def pushButtonStop(self):
-        self.explanation1_.setText("파싱이 중단되었습니다. 잠시후 창이 종료됩니다.")
-        self.progLabel.setText("")
-        self.explanation1_.repaint()
-        self.pushButton_.setEnabled(False)
-        self.task.terminate()
-        time.sleep(2.5)
-        self.close()
+        if self.pushButtonFlag:
+            self.explanation1_.setText("분석에 필요한 파일을 파싱중입니다. (생성된 DB가 있는 경우, 생략 가능합니다.)\n\n파싱이 완료되면 창이 종료됩니다.")
+            self.pushButton_.setText("취소")
+            self.explanation1_.repaint()
+            self.task.start()
+            self.timerVar.start()
+            self.pushButtonFlag = False
+        else:
+            self.explanation1_.setText("파싱이 중단되었습니다. 잠시후 창이 종료됩니다.")
+            self.progLabel.setText("")
+            self.explanation1_.repaint()
+            self.timerVar.stop()
+            self.pushButton_.setEnabled(False)
+            self.task.terminate()
+            time.sleep(2.5)
+            self.close()
 
     def progressBarTimer(self):
         self.times = self.progressBar.value()
