@@ -30,7 +30,7 @@ class MyWidget(QWidget):
 
         self.set_tab2()
         self.set_tab3()
-        self.set_tab4()
+        # self.set_tab4()
 
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
@@ -1265,7 +1265,7 @@ class MyWidget(QWidget):
             self.text9_1_content = []
             for i in range(len(rows)):
                 time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
-                string = "시스템 시간 변경 : time_created : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time + "\t ※시스템 시간이 변경되었습니다."
+                string = "시스템 시간 변경 발생시간 : " + time_created + ", 계정명 : " + sbt_usr_name+ ", 전 : " + sys_prv_time + " -> 후 : " + sys_new_time + "\t ※시스템 시간이 변경되었습니다."
                 self.text9_1_content.append(QTreeWidgetItem(self.text9))
                 self.text9_1_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text9_1_content[i].setText(0, string)
@@ -1288,7 +1288,7 @@ class MyWidget(QWidget):
                     int(old_bias) / 60 * -1)
                 new = "UTC+" + str(int(new_bias) / 60 * -1) if int(new_bias) < 0 else "UTC" + str(
                     int(new_bias) / 60 * -1)
-                string = "표준 시간대 변경 : 발생 시간 : " + time_created + " " + str(old) + " -> " + str(new) + "\t ※표준 시간대가 변경되었습니다."
+                string = "표준 시간대 변경 발생 시간 : " + str(time_created) + " " + str(old) + " -> " + str(new) + "\t ※표준 시간대가 변경되었습니다."
                 self.text9_2_content.append(QTreeWidgetItem(self.text9))
                 self.text9_2_content[i].setBackground(0, QColor(255, 153, 128))
                 self.text9_2_content[i].setText(0, string)
