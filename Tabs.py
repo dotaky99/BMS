@@ -1202,7 +1202,7 @@ class MyWidget(QWidget):
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
-                            # flag = 1
+                            flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
 
@@ -1231,7 +1231,7 @@ class MyWidget(QWidget):
                 self.text7_content.append(QTreeWidgetItem(self.text7))
                 string = None
                 if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
-                    string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + serial_num + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+                    string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + str(serial_num) + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
                 elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
                     string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
                 self.text7_content[i].setText(0, string)
