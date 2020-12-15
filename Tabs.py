@@ -30,7 +30,7 @@ class MyWidget(QWidget):
 
         self.set_tab2()
         self.set_tab3()
-        # self.set_tab4()
+        self.set_tab4()
 
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
