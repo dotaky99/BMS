@@ -533,7 +533,6 @@ class MyWidget(QWidget):
                 + len(rows5_2_1) + len(rows5_2_2) + len(rows5_2_3) \
                 + 5
 
-        print(count)
         self.tab2_table.setRowCount(count)
         self.tab2_table.setColumnCount(8)
         column_headers = ["", "프로그램", "버전", "설치 경로", "제조사", "설치 시각", "실행 시각", "삭제 여부"]
@@ -1319,16 +1318,19 @@ class MyWidget(QWidget):
             query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
             cur.execute(query)
             rows = cur.fetchall()
+            print(len(rows))
             self.text7_content = []
             for i in range(len(rows)):
                 serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
-                self.text7_content.append(QTreeWidgetItem(self.text7))
+                print(rows[i])
                 string = None
                 if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
                     string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + str(serial_num) + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
                 elif random_yn == 1: # serial_num이 PnP Manager가 부여한 랜덤 번호라면 serial_num를 출력하지 않음
                     string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
+                self.text7_content.append(QTreeWidgetItem(self.text7))
                 self.text7_content[i].setText(0, string)
+
         except:
             pass
 
