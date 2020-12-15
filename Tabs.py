@@ -2043,6 +2043,7 @@ class MyWidget(QWidget):
                 string = "계정 이름: " + sbt_usr_name + ", 변경 전 시간: " + sys_prv_time + ", 변경 후 시간: " + sys_new_time
                 self.timeline.setItem(i + accum, 2, QTableWidgetItem(string))
             self.timeline.setSortingEnabled(sortingEnabled)
+            self.set_color()
 
             query2 = "SELECT datetime(time_created, " + self.UTC + "), detailed, new_bias, old_bias FROM event_log WHERE event_id LIKE 22"
             cur.execute(query2)
@@ -2062,6 +2063,7 @@ class MyWidget(QWidget):
                 string = "detailed : " + detailed + ", old_bias : " + old_bias + ", new bias : " + new_bias
                 self.timeline.setItem(i+accum, 2, QTableWidgetItem(string))
             self.timeline.setSortingEnabled(sortingEnabled)
+            self.set_color()
         except:
             pass
 
@@ -2302,14 +2304,14 @@ class MyWidget(QWidget):
             for i in range(self.timeline_count):
                 if self.timeline.item(i, 1).text() == "안티포렌식 도구 실행":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 51, 51))
-                elif self.timeline.item(i, 1).text()=="클라우드 접근":
+                elif self.timeline.item(i, 1).text() == "클라우드 접근":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 255, 102))
                 elif self.timeline.item(i, 1).text() == "이벤트로그 삭제":
                     self.timeline.item(i, 1).setBackground(QtGui.QColor(51, 102, 225))
                 elif self.timeline.item(i, 1).text() == "시스템 시간 변경":
-                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(255, 128, 0))
+                    self.timeline.item(i, 1).setBackground(QtGui.QColor(255, 128, 0))
                 elif self.timeline.item(i, 1).text() == "표준 시간대 변경":
-                    self.timeline.itme(i, 1).setBackground(QtGui.QColor(0, 128, 255))
+                    self.timeline.item(i, 1).setBackground(QtGui.QColor(0, 128, 255))
 
 
 #################################################
