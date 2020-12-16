@@ -32,7 +32,7 @@ class MyWidget(QWidget):
         self.tabs.addTab(self.tab3, "타임라인")
         self.tabs.addTab(self.tab4, "데이터")
 
-        # self.set_tab2()
+        self.set_tab2()
         self.set_tab3()
         # self.set_tab4()
 
