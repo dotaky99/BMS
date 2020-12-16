@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.dates as mdates
+import numpy as np
 
 
 class MyWidget(QWidget):
@@ -39,6 +40,7 @@ class MyWidget(QWidget):
         total_layout = QVBoxLayout()
         total_layout.addWidget(self.tabs)
         self.setLayout(total_layout)
+
 
 #################################################
 #   tab2                                        #
@@ -1553,16 +1555,235 @@ class MyWidget(QWidget):
 
         self.timeline_tab1 = QWidget()
         self.timeline_tab2 = QWidget()
+        self.timeline_tab3 = QWidget()
         self.timeline_tabs = QTabWidget()
         self.timeline_tabs.addTab(self.timeline_tab1, "테이블")
         self.timeline_tabs.addTab(self.timeline_tab2, "그래프")
+        self.timeline_tabs.addTab(self.timeline_tab3, "타임라인")
 
         self.tab3.layout.addLayout(self.box3, 0, 0)
         self.tab3.layout.addLayout(self.box4, 1, 0)
         self.tab3.layout.addWidget(self.timeline_tabs, 2, 0)
         self.set_timeline_tab1()
         self.set_timeline_tab2()
+        self.set_timeline_tab3()
         self.tab3.setLayout(self.tab3.layout)
+
+
+#################################################
+#   tab3의 tab3                                 #
+#################################################
+    def set_timeline_tab3(self):
+        self.timeline_tab3.layout = QVBoxLayout()
+        self.scrollArea = QScrollArea()
+        self.names_label = QLabel()
+        self.dates_label = QLabel()
+        self.comments_label = QLabel()
+
+        # 타임라인이 쓰는 데이터
+        self.names = []
+        self.dates = []
+        self.comments = []
+
+        # 타임라인
+        self.fig2 = plt.Figure()
+        self.canvas2 = FigureCanvas(self.fig2)
+        self.ax3 = self.fig2.add_subplot()
+
+        # x축 눈금 설정
+        self.ax3.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+        # y축 및 테두리 제거
+        self.ax3.get_yaxis().set_visible(False)
+        self.ax3.spines["left"].set_visible(False)
+        self.ax3.spines["top"].set_visible(False)
+        self.ax3.spines["right"].set_visible(False)
+        self.ax3.margins(y=0.1)
+
+        self.canvas2.draw()
+        self.canvas2.mpl_connect('button_press_event', self.canvas2_click)
+        self.scrollArea.setWidget(self.canvas2)
+        self.canvas2_width = 1820
+        self.canvas2.resize(self.canvas2_width, 500)
+        self.timeline_tab3.layout.addWidget(self.scrollArea)
+        self.timeline_tab3.layout.addWidget(self.names_label)
+        self.timeline_tab3.layout.addWidget(self.dates_label)
+        self.timeline_tab3.layout.addWidget(self.comments_label)
+        self.timeline_tab3.setLayout(self.timeline_tab3.layout)
+
+    def set_tab3_3(self):
+        self.dates3 = [d for d in self.dates]
+        self.dates = [datetime.strptime(d, "%Y-%m-%d %H:%M:%S") for d in self.dates]
+        self.dates2 = []     # float: datetime 객체는 matplot에서 float 타입으로 출력됨.
+        for d in self.dates:
+            self.dates2.append(mdates.date2num(d))
+        self.points = None
+
+        # 날짜에 비례하여 그래프 크기 조절
+        start = mdates.date2num(self.input_datetime1.dateTime().toPyDateTime())
+        end = mdates.date2num(self.input_datetime2.dateTime().toPyDateTime())
+        if (end - start) * 40 < 1820:
+            self.canvas2_width = 1820
+        else:
+            self.canvas2_width = (end - start) * 40
+        self.canvas2.resize(self.canvas2_width, 500)
+
+        if len(self.names) != 0:
+            levels = np.tile([-3, 3, -1, 1, -3.5, 3.5, -2, 2, -1.5, 1.5, -2.5, 2.5, -0.5, 0.5], int(np.ceil(len(self.dates) / 6)))[:len(self.dates)]
+            markerline, stemline, baseline = self.ax3.stem(self.dates, levels, linefmt="C3-", basefmt="k-", use_line_collection=True)
+            plt.setp(markerline, mec="k", mfc="w", zorder=3)  # 동그라미 색깔(mec=테두리 색, mec=동그라미 색, zorder=비침)
+            # markerline.set_ydata(np.zeros(len(self.dates)))  # 동그라미 stemline 위치로
+            # 라벨
+            updown = np.array(['top', 'bottom'])[(levels > 0).astype(int)]
+            for d, l, n, ud in zip(self.dates, levels, self.names, updown):
+                self.ax3.annotate(n, xy=(d, l), xytext=(-3, np.sign(l) * 3), textcoords="offset points", va=ud, ha="right")
+
+            # 마우스 클릭 위치 계산을 위한 변수
+            self.dates_min = start
+            self.dates_max = end
+            dates_tmp = [(d - self.dates_min) / (self.dates_max - self.dates_min) * self.canvas2_width for d in self.dates2]
+            levels_tmp = [l / 6 * 500 for l in levels]
+            self.points = list(zip(dates_tmp, levels_tmp))
+        self.canvas2.draw()
+
+    def canvas2_click(self, event):
+        if event.inaxes is None:
+            return
+
+        try:
+            x = (event.xdata - self.dates_min) / (self.dates_max - self.dates_min) * self.canvas2_width
+            y = (event.ydata / 6 * 500)
+            dists = [self.distance([x, y], p) for p in self.points]
+
+            if min(dists) > (self.dates_max - self.dates_min) / 5:
+                return
+
+            index = dists.index(min(dists))
+            self.names_label.setText("<b>" + self.names[index] + "</b>")
+            self.dates_label.setText(self.dates3[index])
+            self.comments_label.setText(self.comments[index])
+        except:
+            pass
+
+    # 타임맵 - MFT 생성
+    def timemap_data1_1(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT file_path, drive, datetime(SI_M_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
+                    "(SI_M_timestamp >= '" + self.datetime1 + "' AND SI_M_timestamp <= '" + self.datetime2 + "'))"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            for i in range(len(rows)):
+                file_path, drive, timestamp = rows[i]
+                self.names.append(drive + ":/ MFT Creation")
+                self.dates.append(timestamp)
+                self.comments.append(drive + ":/ MFT 생성, 경로: " + file_path)
+        except:
+            pass
+
+    # 타임맵 - 계정 생성
+    def timemap_data1_2(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(created_on," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
+                    "WHERE (created_on >= '" + self.datetime1 + "' AND created_on <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            for i in range(len(rows)):
+                timestamp, account_name, RID = rows[i]
+                self.names.append("Account Creation")
+                self.dates.append(timestamp)
+                self.comments.append(account_name + "(" + str(RID) + ") 계정 생성")
+        except:
+            pass
+
+    # 타임맵 - Windows 설치 (Windows 업데이트는 너무 난잡해져서 뺌!!)
+    def timemap_data1_3(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            # Windows 설치
+            query = "SELECT datetime(install_date," + self.UTC + "), product_name, product_ID FROM OSInformation " \
+                    "WHERE (install_date >= '" + self.datetime1 + "' AND install_date <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            for i in range(len(rows)):
+                timestamp, product_name, product_id = rows[i]
+                self.names.append("Windows Install")
+                self.dates.append(timestamp)
+                self.comments.append("윈도우 버전: " + product_name + ", ID: " + product_id)
+        except:
+            pass
+
+    # 타임맵 - 시간 변경, 표준 시간대 변경
+    def timemap_data1_4(self):
+        try:
+            pass
+        except:
+            pass
+
+    # 타임맵 - 안티포렌식 도구 실행
+    def timemap_data2_2(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT Executable_Name, Full_Path, datetime(Last_Executed1," + self.UTC + ") from prefetch1 " \
+                    " WHERE ((Executable_Name LIKE '%CCleaner%' OR Executable_Name LIKE 'Cipher%' " \
+                    " OR Executable_Name LIKE 'Eraser%' OR Executable_Name LIKE 'SDelete%' " \
+                    " OR Executable_Name LIKE 'SetMACE%' OR Executable_Name LIKE 'TimeStomp%'  " \
+                    " OR Executable_Name LIKE 'Wise Folder Hider%') " \
+                    " AND (Last_Executed1 >= '" + self.datetime1 + "' AND (Last_Executed1 <= '" + self.datetime2 + "')))"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            for i in range(len(rows)):
+                name, path, timestamp = rows[i]
+                self.names.append("Antiforensic")
+                self.dates.append(timestamp)
+                self.comments.append("안티포렌식 도구: " + name + ", 경로: " + path)
+        except:
+            pass
+
+    # 타임맵 - 클라우드 접근
+    def timemap_data2_3(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT datetime(timestamp," + self.UTC + "), Title, URL FROM cloud " \
+                                                              " WHERE (timestamp >= '" + self.datetime1 + "' AND timestamp <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            for i in range(len(rows)):
+                timestamp, title, url = rows[i]
+                self.names.append("Cloud Access")
+                self.dates.append(timestamp)
+                self.comments.append(title + ", url: " + url)
+        except:
+            pass
+
+    # 타임맵 - 이벤트로그 삭제
+    def timemap_data2_5(self):
+        try:
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+            query = "SELECT detailed, computer, datetime(time_created," + self.UTC + "), sbt_usr_name, channel FROM event_log " \
+                    "WHERE (event_id = '104' or (event_id = '1102' AND sbt_usr_name IS NOT '' )" \
+                    "AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
+            cur.execute(query)
+            rows = cur.fetchall()
+            conn.close()
+            for i in range(len(rows)):
+                detailed, computer, timestamp, sbt_usr_name, channel = rows[i]
+                self.names.append("Eventlog Delete")
+                self.dates.append(timestamp)
+                self.comments.append("상세: " + detailed + ", 컴퓨터: " + computer + ", " + sbt_usr_name + ", " + channel)
+        except:
+            pass
 
 
 #################################################
@@ -1839,27 +2060,39 @@ class MyWidget(QWidget):
         self.datetime2 = (self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours = -self.UTC_int)).strftime("%Y-%m-%d %H:%M:%S")
         self.timeline.clearContents()
         self.timeline_count = 0
+        self.names = []
+        self.dates = []
+        self.comments = []
 
-        if self.checkbox1_1.isChecked():
+        if self.checkbox1_1.isChecked():    # MFT 생성
             self.timeline_data1_1()
-        if self.checkbox1_2.isChecked():
+            self.timemap_data1_1()
+        if self.checkbox1_2.isChecked():    # 계정 생성
             self.timeline_data1_2()
-        if self.checkbox1_3.isChecked():
+            self.timemap_data1_2()
+        if self.checkbox1_3.isChecked():    # Windows 설치, Windows 업데이트
             self.timeline_data1_3()
-        if self.checkbox1_4.isChecked():
+            self.timemap_data1_3()
+        if self.checkbox1_4.isChecked():    # 시간 변경, 표준시간대 변경
             self.timeline_data1_4()
-        if self.checkbox1_5.isChecked():
+            # self.timemap_data1_4()
+        if self.checkbox1_5.isChecked():    # 시스템 On/Off
             self.timeline_data1_5()
-        if self.checkbox2_1.isChecked():
+        if self.checkbox2_1.isChecked():    # 문서 생성 및 수정
             self.timeline_date2_1()
-        if self.checkbox2_2.isChecked():
+        if self.checkbox2_2.isChecked():    # 안티포렌식 도구 실행
             self.timeline_data2_2()
-        if self.checkbox2_3.isChecked():
+            self.timemap_data2_2()
+        if self.checkbox2_3.isChecked():    # 클라우드 접근
             self.timeline_data2_3()
-        if self.checkbox2_4.isChecked():
+            self.timemap_data2_3()
+        if self.checkbox2_4.isChecked():    # 저장장치 연결 및 해제
             self.timeline_data2_4()
-        if self.checkbox2_5.isChecked():
+        if self.checkbox2_5.isChecked():    # 이벤트로그 삭제
             self.timeline_data2_5()
+            self.timemap_data2_5()
+
+        self.set_tab3_3()
 
     # tab3의 타임라인 필터링
     def search_timeline(self, s):
