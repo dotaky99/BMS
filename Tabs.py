@@ -15,8 +15,12 @@ class MyWidget(QWidget):
     def __init__(self, parent, UTC):
         super(MyWidget, self).__init__(parent)
         self.setGeometry(100, 100, 1500, 700)
-        self.UTC = "'" + UTC + " hours'"
-        self.UTC_int = int(UTC)
+        try:
+            self.UTC = "'" + UTC + " hours'"
+            self.UTC_int = int(UTC)
+        except:
+            self.UTC = "'+0 hours'"  # UTC 선택 안하고 창 종료 시 0으로 설정
+            self.UTC_int = 0
         self.initUI()
 
     def initUI(self):
@@ -28,7 +32,7 @@ class MyWidget(QWidget):
         self.tabs.addTab(self.tab3, "타임라인")
         self.tabs.addTab(self.tab4, "데이터")
 
-        self.set_tab2()
+        # self.set_tab2()
         self.set_tab3()
         # self.set_tab4()
 
@@ -1612,42 +1616,40 @@ class MyWidget(QWidget):
         cur = conn.cursor()
         start = self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours=-self.UTC_int)
         end = self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours=-self.UTC_int)
-        start = start - timedelta(minutes=start.minute, seconds=start.second)  # 분, 초 버림
-        end = end - timedelta(hours=1, minutes=end.minute, seconds=end.second)  # 분, 초 올림
+        interval = (end - start) / 10
 
+        # times 리스트 생성
         self.times = []  # str: 쿼리에서 string 타입의 시간이 필요함. self.times는 self.times2, self.times3보다 1 더 길음. (쿼리 사용을 위함)
         self.times2 = []  # datetime: matplot 사용시 datetime 타입으로 인자를 넘겨야 함
-        interval = int((end - start).days * 24 + (end - start).seconds / 3600) + 1
         index = start
-        for i in range(interval):
+        for i in range(10):
             self.times.append(index.strftime("%Y-%m-%d %H:%M:%S"))
             self.times2.append(index)
-            index = index + timedelta(hours=1)
+            index = index + interval
+        self.times.append(end.strftime("%Y-%m-%d %H:%M:%S"))
         self.times3 = []  # float: datetime 객체는 matplot에서 float 타입으로 출력됨.
         for t in self.times2:
             self.times3.append(mdates.date2num(t))
 
-        internet_data = []
+        # 인터넷 접속 데이터 생성
+        self.internet_data = []
         try:
-            for t in range(len(self.times) - 1):
-                query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t + 1] + "')"
+            for t in range(10):
+                query = "SELECT visit_count FROM url WHERE (timestamp >= '" + self.times[t] + "') AND (timestamp <= '" + self.times[t+1] + "')"
                 cur.execute(query)
                 rows = cur.fetchall()
-                internet_data.append(len(rows))
+                self.internet_data.append(len(rows))
         except:
             pass
 
-
+        # 문서 생성/접근/수정 데이터 생성
         self.document_data = []
         try:
-            for t in range(len(self.times) - 1):
+            for t in range(10):
                 query = "SELECT OBJID_timestamp FROM parsed_MFT WHERE " \
-                        "((FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
-                            t + 1] + "') OR " \
-                                     "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
-                            t + 1] + "') OR " \
-                                     "(FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[
-                            t + 1] + "'))"
+                        "((FN_M_timestamp >= '" + self.times[t] + "' AND FN_M_timestamp < '" + self.times[t+1] + "') OR " \
+                        "(FN_A_timestamp >= '" + self.times[t] + "' AND FN_A_timestamp < '" + self.times[t+1] + "') OR " \
+                        "(FN_C_timestamp >= '" + self.times[t] + "' AND FN_C_timestamp < '" + self.times[t+1] + "'))"
                 cur.execute(query)
                 rows = cur.fetchall()
                 self.document_data.append(len(rows))
@@ -1655,14 +1657,31 @@ class MyWidget(QWidget):
             pass
         conn.close()
 
-        self.points1 = list(zip(self.times3, internet_data))
-        self.points2 = list(zip(self.times3, self.document_data))
+        # 마우스 클릭 위치 계산을 위한 변수
+        self.times3_max = max(self.times3)
+        self.times3_min = min(self.times3)
+        times3_tmp = [(t - self.times3_min) / (self.times3_max - self.times3_min) for t in self.times3]
+        internet_max = max(self.internet_data)
+        internet_min = min(self.internet_data)
+        internet_data_tmp = [(i - internet_min) / (internet_max - internet_min) for i in self.internet_data]
+        document_max = max(self.document_data)
+        document_min = min(self.document_data)
+        document_data_tmp = [(d - document_min) / (document_max - document_min) for d in self.document_data]
+        self.points1 = list(zip(times3_tmp, internet_data_tmp))
+        self.points2 = list(zip(times3_tmp, document_data_tmp))
+        if internet_max > document_max:
+            self.MAX = internet_max
+        else:
+            self.MAX = document_max
+        if internet_min < document_min:
+            self.MIN = internet_min
+        else:
+            self.MIN = document_min
 
-        N = len(internet_data)
         self.ax.cla()
         self.ax2.cla()
-        line1 = self.ax.plot(self.times2[0:N], internet_data, color="lightskyblue", label="Internet")
-        line2 = self.ax2.plot(self.times2[0:N], self.document_data, color="sandybrown", label="Documnets Create/Modify/Access")
+        line1 = self.ax.plot(self.times2, self.internet_data, color="lightskyblue", label="Internet")
+        line2 = self.ax2.plot(self.times2, self.document_data, color="sandybrown", label="Documnets Create/Modify/Access")
         lines = line1 + line2
         labels = [l.get_label() for l in lines]
         self.ax.legend(lines, labels, loc="upper left")
@@ -1678,31 +1697,27 @@ class MyWidget(QWidget):
         if event.inaxes is None:
             return
 
-        # print(max(self.document_data))
-        x = (event.xdata - self.times3[0]) * max(self.document_data)
-        y = event.ydata
-        # print(x)
-        # print(y)
+        try:
+            x = (event.xdata - self.times3_min) / (self.times3_max - self.times3_min)
+            y = (event.ydata - self.MIN) / (self.MAX - self.MIN)
+            dists1 = [self.distance([x, y], p) for p in self.points1]
+            dists2 = [self.distance([x, y], p) for p in self.points2]
+            if min(dists1) > min(dists2):
+                dists = dists2
+            else:
+                dists = dists1
 
-        dists = [self.distance([x, y], k) for k in self.points1]
-        # dists2 = [self.distance([event.xdata, event.ydata], k) for k in self.points2]
-        # print(dists1)
-        # print(dists2)
-        # if min(dists1) > min(dists2):
-        #     dists = dists2
-        # else:
-        #     dists = dists1
+            if min(dists) > (self.times3_max - self.times3_min) / 100:  # 클릭 범위 지정. 나누는 숫자가 작을 수록 클릭 가능 범위 커짐.
+                return                                                  # (self.times3_max - self.times3_min)은 범위의 크기에 유동적으로 클릭 범위를 조정하기 위함.
 
-        # if min(dists) > 5:  # 클릭 범위 지정. 숫자가 클 수록 클릭 가능 범위 커짐.
-        #     return
-        index = dists.index(min(dists))
-        # print(index)
-
-        start_label = (self.times2[index] + timedelta(hours=9)).strftime("%Y-%m-%d %H:%M:%S")
-        end_label = (self.times2[index] + timedelta(hours=10)).strftime("%Y-%m-%d %H:%M:%S")
-        self.time_label.setText(start_label + " ~ " + end_label)
-        self.set_internet_table(index)
-        self.set_document_table(index)
+            index = dists.index(min(dists))
+            start_label = (self.times2[index] + timedelta(hours=self.UTC_int)).strftime("%Y-%m-%d %H:%M:%S")
+            end_label = (self.times2[index] + timedelta(hours=(self.UTC_int + 1))).strftime("%Y-%m-%d %H:%M:%S")
+            self.time_label.setText(start_label + " ~ " + end_label)
+            self.set_internet_table(index)
+            self.set_document_table(index)
+        except:
+            pass
 
     # tab3 타임라인의 그래프 - 인터넷 테이블
     def set_internet_table(self, index):
@@ -1710,9 +1725,8 @@ class MyWidget(QWidget):
             self.internet_table.clearContents()
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url WHERE (timestamp >= '" + \
-                    self.times[index] + \
-                    "') AND (timestamp <= '" + self.times[index + 1] + "')"
+            query = "SELECT datetime(timestamp, " + self.UTC + "), url, title FROM url " \
+                    "WHERE (timestamp >= '" + self.times[index] + "') AND (timestamp <= '" + self.times[index + 1] + "')"
             cur.execute(query)
             rows = cur.fetchall()
             conn.close()
