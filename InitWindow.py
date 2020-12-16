@@ -10,7 +10,7 @@ class InitWindow(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("PreAn")
+        self.setWindowTitle("Pre-Analyzer")
         self.pushButton.clicked.connect(self.buttonFunction)
         self.qPixmap = QPixmap()
         self.qPixmap.load("BoB.png")
