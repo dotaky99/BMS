@@ -1313,6 +1313,8 @@ class MyWidget(QWidget):
         self.text4.setText(0, string4)
         self.hibernate = QTreeWidgetItem(self.text0)
         self.hibernate.setText(0, "최대 절전모드 : " + hibernation)
+        self.vss = QTreeWidgetItem(self.text0)
+        self.vss.setText(0, "볼륨 섀도우 카피")
         self.text5 = QTreeWidgetItem(self.tab2_tree)
         self.text5.setText(0, "MFT 생성 시간")
         self.text6 = QTreeWidgetItem(self.tab2_tree)
@@ -1326,6 +1328,20 @@ class MyWidget(QWidget):
         self.text9 = QTreeWidgetItem(self.tab2_tree)
         self.text9.setText(0, "시간 변경")
 
+        # Volume Shadows Copy
+        try:
+            query = 'select file_path from parsed_MFT where file_path like "%system volume Information%" and (file_path like "%{%}{%}" or file_path like "%{%}")'
+            cur.execute(query)
+            rows = cur.fetchall()
+            self.vss_content = []
+            for i in range(len(rows)):
+                file_path = rows[i]
+                string = file_path[0].split('/')[-1]
+                self.vss_content.append(QTreeWidgetItem(self.vss))
+                self.vss_content[i].setText(0, string)
+        except:
+            pass
+
         # MFT 생성 시간 + (MFT 생성 vs 시스템 설치)
         c_mft_time = ''
         try:
@@ -1338,6 +1354,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 drive, SI_M_timestamp = rows[i]
                 flag = 0
+                print(drive)
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
@@ -2385,7 +2402,7 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect('Believe_Me_Sister.db')
             cur = conn.cursor()
-            query1 = "SELECT datetime(a.time_created," + self.UTC + "), a.detailed, " \
+            query1 = "SELECT datetime(a.time_created," + self.UTC + "), " \
                     "a.sbt_usr_name, datetime(a.sys_prv_time, " + self.UTC + "), " \
                     "datetime(a.sys_new_time, " + self.UTC + ") FROM event_log a, UserAccounts b WHERE ((event_id LIKE 4616) " \
                     "AND (a.sbt_usr_name LIKE b.account_name) " \
@@ -2401,7 +2418,7 @@ class MyWidget(QWidget):
             self.timeline.setSortingEnabled(False)
 
             for i in range(len(rows)):
-                time_created, detailed, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
+                time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
                 self.timeline.setItem(i + accum, 0, QTableWidgetItem(time_created))
                 self.timeline.setItem(i + accum, 1, QTableWidgetItem("시스템 시간 변경"))
                 string = "계정 이름: " + sbt_usr_name + ", 변경 전 시간: " + sys_prv_time + ", 변경 후 시간: " + sys_new_time

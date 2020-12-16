@@ -8,7 +8,7 @@ import Dialogs
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.title = 'Believe Me Sister' # 실행 프로그램의 이름
+        self.title = 'Pre-Analyzer' # 실행 프로그램의 이름
         self.showMaximized();
         self.initUI()
         # UTC 변환
