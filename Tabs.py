@@ -32,7 +32,7 @@ class MyWidget(QWidget):
         self.tabs.addTab(self.tab3, "타임라인")
         self.tabs.addTab(self.tab4, "데이터")
 
-        # self.set_tab2()
+        self.set_tab2()
         self.set_tab3()
         # self.set_tab4()
 
@@ -1311,6 +1311,8 @@ class MyWidget(QWidget):
         self.text4.setText(0, string4)
         self.hibernate = QTreeWidgetItem(self.text0)
         self.hibernate.setText(0, "최대 절전모드 : " + hibernation)
+        self.vss = QTreeWidgetItem(self.text0)
+        self.vss.setText(0, "볼륨 섀도우 카피")
         self.text5 = QTreeWidgetItem(self.tab2_tree)
         self.text5.setText(0, "MFT 생성 시간")
         self.text6 = QTreeWidgetItem(self.tab2_tree)
@@ -1324,6 +1326,20 @@ class MyWidget(QWidget):
         self.text9 = QTreeWidgetItem(self.tab2_tree)
         self.text9.setText(0, "시간 변경")
 
+        # Volume Shadows Copy
+        try:
+            query = 'select file_path from parsed_MFT where file_path like "%system volume Information%" and (file_path like "%{%}{%}" or file_path like "%{%}")'
+            cur.execute(query)
+            rows = cur.fetchall()
+            self.vss_content = []
+            for i in range(len(rows)):
+                file_path = rows[i]
+                string = file_path[0].split('/')[-1]
+                self.vss_content.append(QTreeWidgetItem(self.vss))
+                self.vss_content[i].setText(0, string)
+        except:
+            pass
+
         # MFT 생성 시간 + (MFT 생성 vs 시스템 설치)
         c_mft_time = ''
         try:
@@ -1336,6 +1352,7 @@ class MyWidget(QWidget):
             for i in range(len(rows)):
                 drive, SI_M_timestamp = rows[i]
                 flag = 0
+                print(drive)
                 if drive == 'C':
                     c_mft_time = SI_M_timestamp
                     if datetime.strptime(SI_M_timestamp, "%Y-%m-%d %H:%M:%S") > datetime.strptime(win_install, "%Y-%m-%d %H:%M:%S"):
