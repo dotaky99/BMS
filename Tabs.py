@@ -2169,7 +2169,7 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect('Believe_Me_Sister.db')
             cur = conn.cursor()
-            query1 = "SELECT datetime(a.time_created," + self.UTC + "), a.detailed, " \
+            query1 = "SELECT datetime(a.time_created," + self.UTC + "), " \
                     "a.sbt_usr_name, datetime(a.sys_prv_time, " + self.UTC + "), " \
                     "datetime(a.sys_new_time, " + self.UTC + ") FROM event_log a, UserAccounts b WHERE ((event_id LIKE 4616) " \
                     "AND (a.sbt_usr_name LIKE b.account_name) " \
@@ -2185,7 +2185,7 @@ class MyWidget(QWidget):
             self.timeline.setSortingEnabled(False)
 
             for i in range(len(rows)):
-                time_created, detailed, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
+                time_created, sbt_usr_name, sys_prv_time, sys_new_time = rows[i]
                 self.timeline.setItem(i + accum, 0, QTableWidgetItem(time_created))
                 self.timeline.setItem(i + accum, 1, QTableWidgetItem("시스템 시간 변경"))
                 string = "계정 이름: " + sbt_usr_name + ", 변경 전 시간: " + sys_prv_time + ", 변경 후 시간: " + sys_new_time
