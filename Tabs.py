@@ -1686,34 +1686,124 @@ class MyWidget(QWidget):
         try:
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
-            query = "SELECT file_path, drive, datetime(SI_M_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
-                    "(SI_M_timestamp >= '" + self.datetime1 + "' AND SI_M_timestamp <= '" + self.datetime2 + "'))"
+            # Create
+            query = "SELECT file_path, drive, datetime(SI_C_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
+                    "(SI_C_timestamp >= '" + self.datetime1 + "' AND SI_C_timestamp <= '" + self.datetime2 + "'))"
             cur.execute(query)
             rows = cur.fetchall()
-            conn.close()
             for i in range(len(rows)):
                 file_path, drive, timestamp = rows[i]
                 self.names.append(drive + ":/ MFT Creation")
                 self.dates.append(timestamp)
                 self.comments.append(drive + ":/ MFT 생성, 경로: " + file_path)
+
+            # Access
+            query = "SELECT file_path, drive, datetime(SI_A_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
+                    "(SI_A_timestamp >= '" + self.datetime1 + "' AND SI_A_timestamp <= '" + self.datetime2 + "'))"
+            cur.execute(query)
+            rows2 = cur.fetchall()
+            for i in range(len(rows)):
+                tmp1, tmp2, timestamp1 = rows[i]
+                file_path, drive, timestamp2 = rows2[i]
+                if timestamp1 != timestamp2:    # 생성과 접근 시간이 서로 다르다면
+                    self.names.append(drive + ":/ MFT Creation")
+                    self.dates.append(timestamp)
+                    self.comments.append(drive + ":/ MFT 접근, 경로: " + file_path)
+
+            # Modified
+            query = "SELECT file_path, drive, datetime(SI_M_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
+                    "(SI_M_timestamp >= '" + self.datetime1 + "' AND SI_M_timestamp <= '" + self.datetime2 + "'))"
+            cur.execute(query)
+            rows3 = cur.fetchall()
+            for i in range(len(rows)):
+                tmp1_1, tmp1_2, timestamp1 = rows[i]
+                tmp2_1, tmp2_2, timestamp2 = rows2[i]
+                file_path, drive, timestamp3 = rows3[i]
+                if (timestamp1 != timestamp3) and (timestamp2 != timestamp3):  # 수정 시간이 생성 시간과도 다르고 접근 시간과도 다르다면
+                    self.names.append(drive + ":/ MFT Creation")
+                    self.dates.append(timestamp)
+                    self.comments.append(drive + ":/ MFT 수정, 경로: " + file_path)
+
+            # mft 변경
+            query = "SELECT file_path, drive, datetime(SI_E_timestamp," + self.UTC + ") from parsed_MFT WHERE ((file_path LIKE '/$MFT') AND " \
+                    "(SI_E_timestamp >= '" + self.datetime1 + "' AND SI_E_timestamp <= '" + self.datetime2 + "'))"
+            cur.execute(query)
+            rows4 = cur.fetchall()
+            for i in range(len(rows)):
+                tmp1_1, tmp1_2, timestamp1 = rows[i]
+                tmp2_1, tmp2_2, timestamp2 = rows2[i]
+                tmp3_1, tmp3_2, timestamp3 = rows3[i]
+                file_path, drive, timestamp4 = rows4[i]
+                if (timestamp1 != timestamp4) and (timestamp2 != timestamp4) and (timestamp3 != timestamp4):
+                # mft 변경 시간이 생성 시간, 접근 시간, 수정 시간 모두와 다르다면
+                    self.names.append(drive + ":/ MFT Creation")
+                    self.dates.append(timestamp)
+                    self.comments.append(drive + ":/ MFT 변경, 경로: " + file_path)
+
+            conn.close()
         except:
             pass
 
     # 타임맵 - 계정 생성
     def timemap_data1_2(self):
         try:
+            # 계정 생성
             conn = sqlite3.connect("Believe_Me_Sister.db")
             cur = conn.cursor()
             query = "SELECT datetime(created_on," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
                     "WHERE (created_on >= '" + self.datetime1 + "' AND created_on <= '" + self.datetime2 + "')"
             cur.execute(query)
             rows = cur.fetchall()
-            conn.close()
             for i in range(len(rows)):
                 timestamp, account_name, RID = rows[i]
                 self.names.append("Account Creation")
                 self.dates.append(timestamp)
                 self.comments.append(account_name + "(" + str(RID) + ") 계정 생성")
+
+            # 마지막 로그인
+            query = "SELECT datetime(last_login_time," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
+                    "WHERE (last_login_time >= '" + self.datetime1 + "' AND last_login_time <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            for i in range(len(rows)):
+                timestamp, account_name, RID = rows[i]
+                self.names.append("Account Login")
+                self.dates.append(timestamp)
+                self.comments.append(account_name + "(" + str(RID) + ") 계정 마지막 로그인")
+
+            # 비밀번호 변경
+            query = "SELECT datetime(last_password_change_time," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
+                    "WHERE (last_password_change_time >= '" + self.datetime1 + "' AND last_password_change_time <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            for i in range(len(rows)):
+                timestamp, account_name, RID = rows[i]
+                self.names.append("Account Password Chage")
+                self.dates.append(timestamp)
+                self.comments.append(account_name + "(" + str(RID) + ") 계정 마지막 비밀번호 변경")
+
+            # 패스워드 불일치
+            query = "SELECT datetime(last_incorrect_password_time," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
+                    "WHERE (last_incorrect_password_time >= '" + self.datetime1 + "' AND last_incorrect_password_time <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            for i in range(len(rows)):
+                timestamp, account_name, RID = rows[i]
+                self.names.append("Account Password Incorrect")
+                self.dates.append(timestamp)
+                self.comments.append(account_name + "(" + str(RID) + ") 계정 마지막으로 비밀번호 틀림")
+
+            # 계정 만료
+            query = "SELECT datetime(expires_on," + self.UTC + "), account_name, RID_int FROM UserAccounts " \
+                    "WHERE (expires_on >= '" + self.datetime1 + "' AND expires_on <= '" + self.datetime2 + "')"
+            cur.execute(query)
+            rows = cur.fetchall()
+            for i in range(len(rows)):
+                timestamp, account_name, RID = rows[i]
+                self.names.append("Account Expires")
+                self.dates.append(timestamp)
+                self.comments.append(account_name + "(" + str(RID) + ") 계정 만료")
+            conn.close()
         except:
             pass
 
@@ -1739,7 +1829,33 @@ class MyWidget(QWidget):
     # 타임맵 - 시간 변경, 표준 시간대 변경
     def timemap_data1_4(self):
         try:
-            pass
+            conn = sqlite3.connect("Believe_Me_Sister.db")
+            cur = conn.cursor()
+
+            # 시스템 시간 변경
+            query = "SELECT datetime(a.time_created," + self.UTC + "), " \
+                    "a.sbt_usr_name, datetime(a.sys_prv_time, " + self.UTC + "), " \
+                    "datetime(a.sys_new_time, " + self.UTC + ") FROM event_log a, UserAccounts b WHERE ((event_id LIKE 4616) " \
+                    "AND (a.sbt_usr_name LIKE b.account_name) " \
+                    "AND (time_created >= '" + self.datetime1 + "' AND time_created <= '" + self.datetime2 + "'))"
+            cur.execute(query)
+            rows = cur.fetchall()
+            for i in range(len(rows)):
+                timestamp, user, prv, new = rows[i]
+                self.names.append("System Time Changed")
+                self.dates.append(timestamp)
+                self.comments.append("계정: " + user + ", " + prv + " -> " + new)
+
+            # 표준 시간대 변경
+            query = "SELECT datetime(time_created, " + self.UTC + "), detailed, new_bias, old_bias FROM event_log WHERE event_id LIKE 22"
+            cur.execute(query)
+            rows = cur.fetchall()
+            for i in range(len(rows)):
+                timestamp, detailed, new, old = rows[i]
+                self.names.append("Timezone Changed")
+                self.dates.append(timestamp)
+                self.comments.append("상세: " + detailed + ", " + old + " -> " + new)
+            conn.close()
         except:
             pass
 
@@ -2093,9 +2209,9 @@ class MyWidget(QWidget):
         if self.checkbox1_4.isChecked():    # 시간 변경, 표준시간대 변경
             self.timeline_data1_4()
             # self.timemap_data1_4()
-        if self.checkbox1_5.isChecked():    # 시스템 On/Off
+        if self.checkbox1_5.isChecked():    # 시스템 On/Off (타임맵에는 없음)
             self.timeline_data1_5()
-        if self.checkbox2_1.isChecked():    # 문서 생성 및 수정
+        if self.checkbox2_1.isChecked():    # 문서 생성 및 수정 (타임맵에는 없음)
             self.timeline_date2_1()
         if self.checkbox2_2.isChecked():    # 안티포렌식 도구 실행
             self.timeline_data2_2()
@@ -2103,7 +2219,7 @@ class MyWidget(QWidget):
         if self.checkbox2_3.isChecked():    # 클라우드 접근
             self.timeline_data2_3()
             self.timemap_data2_3()
-        if self.checkbox2_4.isChecked():    # 저장장치 연결 및 해제
+        if self.checkbox2_4.isChecked():    # 저장장치 연결 및 해제 (타임맵에는 없음)
             self.timeline_data2_4()
         if self.checkbox2_5.isChecked():    # 이벤트로그 삭제
             self.timeline_data2_5()
