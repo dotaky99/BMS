@@ -5,13 +5,12 @@ from PyQt5.QtGui import *
 import SecondWindow
 import Dialogs
 
-
 form_class = uic.loadUiType("Initial Window.ui")[0]
 class InitWindow(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("Believe Me Sister")
+        self.setWindowTitle("PreAn")
         self.pushButton.clicked.connect(self.buttonFunction)
         self.qPixmap = QPixmap()
         self.qPixmap.load("BoB.png")
