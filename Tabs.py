@@ -221,7 +221,7 @@ class MyWidget(QWidget):
             rows3_1_3 = ''
             pass
 
-        # 디스크 암호화 - TrueCyrpt
+        # 디스크 암호화 - TrueCrypt
         try:
             # 설치 + 실행
             query3_2_1 = "SELECT a.name, a.version, a.publisher, b.Full_Path, " \
@@ -291,7 +291,7 @@ class MyWidget(QWidget):
             rows4_1_1 = cur.fetchall()
             if len(rows4_1_1) < 1:
                 # 설치
-                query4_1_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'CCleaner%'"
+                query4_1_2 = "SELECT name, version,  install_location, publisher, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'CCleaner%'"
                 cur.execute(query4_1_2)
                 rows4_1_2 = cur.fetchall()
                 if len(rows4_1_2) < 1:
@@ -320,7 +320,7 @@ class MyWidget(QWidget):
             rows4_2_1 = cur.fetchall()
             if len(rows4_2_1) < 1:
                 # 설치
-                query4_2_2 = "SELECT name, version, publisher, install_location, datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'Cipher%'"
+                query4_2_2 = "SELECT name, version, install_location, publisher,  datetime(install_date," + self.UTC + ") FROM Uninstall WHERE name like 'Cipher%'"
                 cur.execute(query4_2_2)
                 rows4_2_2 = cur.fetchall()
                 if len(rows4_2_2) < 1:
@@ -514,6 +514,73 @@ class MyWidget(QWidget):
             rows5_2_3 = ''
             pass
 
+    # 삭제 여부 확인
+        query3_1 ="SELECT is_in_use from parsed_MFT WHERE file_path like '%CipherShed.exe' and src='File record'"
+        cur.execute(query3_1)
+        del3_1 = cur.fetchall()
+        if (len(del3_1))<1:
+            del3_1 = [('?')]
+
+        query3_2 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%TrueCrypt.exe' and src='File record'"
+        cur.execute(query3_2)
+        del3_2 = cur.fetchall()
+        if (len(del3_2)) < 1:
+            del3_2 = [('?')]
+
+        query3_3 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%VeraCrypt.exe' and src='File record'"
+        cur.execute(query3_3)
+        del3_3 = cur.fetchall()
+        if(len(del3_3)) < 1:
+            del3_3 = [('?')]
+
+        query4_1 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%CCleaner.exe' and src='File record'"
+        cur.execute(query4_1)
+        del4_1 = cur.fetchall()
+        if(len(del4_1)) < 1:
+            del4_1 = [('?')]
+
+        query4_2 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%Cipher.exe' and src='File record'"
+        cur.execute(query4_2)
+        del4_2 = cur.fetchall()
+        if(len(del4_2)) < 1:
+            del4_2 = [('?')]
+
+        query4_3 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%Eraser.exe' and src='File record'"
+        cur.execute(query4_3)
+        del4_3 = cur.fetchall()
+        if(len(del4_3)) < 1:
+            del4_3 = [('?')]
+
+        query4_4 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%SDelete.exe' and src='File record'"
+        cur.execute(query4_4)
+        del4_4 = cur.fetchall()
+        if(len(del4_4)) < 1:
+            del4_4 = [('?')]
+
+        query4_5 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%TimeStomp.exe' and src='File record'"
+        cur.execute(query4_5)
+        del4_5 = cur.fetchall()
+        if(len(del4_5)) < 1:
+            del4_5 = [('?')]
+
+        query4_6 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%Wise Folder Hider.exe' and src='File record'"
+        cur.execute(query4_6)
+        del4_6 = cur.fetchall()
+        if(len(del4_6)) < 1:
+            del4_6 = [('?')]
+
+        query5_1 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%VirtualBox.exe' and src='File record'"
+        cur.execute(query5_1)
+        del5_1 = cur.fetchall()
+        if(len(del5_1)) < 1:
+            del5_1 = [('?')]
+
+        query5_2 = "SELECT is_in_use from parsed_MFT WHERE file_path like '%VMWare.exe' and src='File record'"
+        cur.execute(query5_2)
+        del5_2 = cur.fetchall()
+        if(len(del5_2)) < 1:
+            del5_2 = [('?')]
+
         self.tab2_table = QTableWidget(self)
         count = len(rows1_1_1) + len(rows1_1_2) + len(rows1_1_3) \
                 + len(rows1_2_1) + len(rows1_2_2) + len(rows1_2_3) \
@@ -535,7 +602,7 @@ class MyWidget(QWidget):
 
         self.tab2_table.setRowCount(count)
         self.tab2_table.setColumnCount(8)
-        column_headers = ["", "프로그램", "버전", "설치 경로", "제조사", "설치 시각", "실행 시각", "삭제 여부"]
+        column_headers = ["", "프로그램", "버전", "설치 경로", "제조사", "설치 시각", "실행 시각", "존재 여부"]
         self.tab2_table.setHorizontalHeaderLabels(column_headers)
         tab2_accum = 0
 
@@ -684,7 +751,6 @@ class MyWidget(QWidget):
         except:
             pass
         tab2_accum = tab2_accum + len(rows1_4) + 1
-        # print(tab2_accum)
 
         # 매체제어
         self.color_tab2_table("매체제어", tab2_accum)
@@ -709,6 +775,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_1[0]))
                 rows3_1 = rows3_1_1
             elif len(rows3_1_2) >= 1:
                 # 설치
@@ -719,6 +786,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_1[0]))
                 rows3_1 = rows3_1_2
             elif len(rows3_1_3) >=1:
                 # 실행
@@ -727,6 +795,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_1[0][0]))
                 rows3_1 = rows3_1_3
             else:
                 rows3_1 = ''
@@ -747,6 +816,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_2[0][0]))
                 rows3_2 = rows3_2_1
             elif len(rows3_2_2) >= 1:
                 # 설치
@@ -757,6 +827,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_2[0][0]))
                 rows3_2 = rows3_2_2
             elif len(rows3_2_3) >= 1:
                 # 실행
@@ -765,6 +836,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_2[0][0]))
                 rows3_2 = rows3_2_3
             else:
                 rows3_2 = ''
@@ -785,6 +857,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_3[0][0]))
                 rows3_3 = rows3_3_1
             elif len(rows3_3_2) >= 1:
                 # 설치
@@ -795,6 +868,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_3[0][0]))
                 rows3_3 = rows3_3_2
             elif len(rows3_3_3) >= 1:
                 #실행
@@ -803,6 +877,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del3_3[0][0]))
                 rows3_3 = rows3_3_3
             else:
                 rows3_3 = ''
@@ -824,16 +899,18 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_1[0][0]))
                 rows4_1 = rows4_1_1
             elif len(rows4_1_2) >= 1:
                 # 설치
                 for i in range(len(rows4_1_2)):
-                    name, version, publisher, install_location, install_date = rows4_1_2[i]
+                    name, version, install_location, publisher, install_date = rows4_1_2[i]
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 2, QTableWidgetItem(version))
-                    self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
-                    self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(install_location))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_1[0][0]))
                 rows4_1 = rows4_1_2
             elif len(rows4_1_3) >= 1:
                 # 실행
@@ -842,6 +919,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_1[0][0]))
                 rows4_1 = rows4_1_3
             else:
                 rows4_1 = ''
@@ -862,6 +940,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_2[0][0]))
                 rows4_2 = rows4_2_1
             elif len(rows4_2_2) >= 1:
                 # 설치
@@ -872,6 +951,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_2[0][0]))
                 rows4_2 = rows4_2_2
             elif len(rows4_2_3) >= 1:
                 # 실행
@@ -880,6 +960,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_2[0][0]))
                 rows4_2 = rows4_2_3
             else:
                 rows4_2 = ''
@@ -900,6 +981,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_3[0][0]))
                 rows4_3 = rows4_3_1
             elif len(rows4_3_2) >= 1:
                 # 설치
@@ -910,6 +992,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_3[0][0]))
                 rows4_3 = rows4_3_2
             elif len(rows4_3_3) >= 1:
                 # 실행
@@ -918,6 +1001,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_3[0][0]))
                 rows4_3 = rows4_3_3
             else:
                 rows4_3 = ''
@@ -937,6 +1021,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_4[0][0]))
                 rows4_4 = rows4_4_1
             elif len(rows4_4_2) >= 1:
                 # 설치
@@ -947,6 +1032,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_4[0][0]))
                 rows4_4 = rows4_4_2
             elif len(rows4_4_3) >= 1:
                 # 실행
@@ -955,6 +1041,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_4[0][0]))
                 rows4_4 = rows4_4_3
             else:
                 rows4_4 = ''
@@ -975,6 +1062,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_5[0][0]))
                 rows4_5 = rows4_5_1
             elif len(rows4_5_2) >= 1:
                 # 설치
@@ -985,6 +1073,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_5[0][0]))
                 rows4_5 = rows4_5_2
             elif len(rows4_5_3) >= 1:
                 # 실행
@@ -993,6 +1082,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_5[0][0]))
                 rows4_5 = rows4_5_3
             else:
                 rows4_5 = ''
@@ -1013,6 +1103,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_6[0][0]))
                 rows4_6 = rows4_6_1
             elif len(rows4_6_2) >= 1:
                 # 설치
@@ -1023,6 +1114,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_6[0][0]))
                 rows4_6 = rows4_6_2
             elif len(rows4_6_3) >= 1:
                 # 실행
@@ -1031,6 +1123,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del4_6[0][0]))
                 rows4_6 = rows4_6_3
             else:
                 rows4_6 = ''
@@ -1052,6 +1145,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del5_1[0][0]))
                 rows5_1 = rows5_1_1
             elif len(rows5_1_2) >= 1:
                 # 설치
@@ -1062,6 +1156,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del5_1[0][0]))
                 rows5_1 = rows5_1_2
             elif len(rows5_1_3) >= 1:
                 # 실행
@@ -1070,6 +1165,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del5_1[0][0]))
                 rows5_1 = rows5_1_3
             else:
                 rows5_1 = ''
@@ -1089,6 +1185,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del5_2[0][0]))
                 rows5_2 = rows5_2_1
             elif len(rows5_2_2) >= 1:
                 # 설치
@@ -1099,6 +1196,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(publisher))
                     self.tab2_table.setItem(i + tab2_accum + 1, 4, QTableWidgetItem(install_location))
                     self.tab2_table.setItem(i + tab2_accum + 1, 5, QTableWidgetItem(install_date))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del5_2[0][0]))
                 rows5_2 = rows5_2_2
             elif len(rows5_2_3) >= 1:
                 # 실행
@@ -1107,6 +1205,7 @@ class MyWidget(QWidget):
                     self.tab2_table.setItem(i + tab2_accum + 1, 1, QTableWidgetItem(Executable_Name))
                     self.tab2_table.setItem(i + tab2_accum + 1, 3, QTableWidgetItem(Full_Path))
                     self.tab2_table.setItem(i + tab2_accum + 1, 6, QTableWidgetItem(Last_Executed1))
+                    self.tab2_table.setItem(i + tab2_accum + 1, 7, QTableWidgetItem(del5_2[0][0]))
                 rows5_2 = rows5_2_3
             else:
                 rows5_2 = ''
@@ -1146,7 +1245,7 @@ class MyWidget(QWidget):
         self.tab2_table.item(accum, 4).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 5).setBackground(QtGui.QColor(229, 243, 255))
         self.tab2_table.item(accum, 6).setBackground(QtGui.QColor(229, 243, 255))
-        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(182, 244, 155)) # 미구현
+        self.tab2_table.item(accum, 7).setBackground(QtGui.QColor(229, 243, 255))
 
     # tab2 요약 정보
     def set_PCinfo(self):
@@ -1169,7 +1268,7 @@ class MyWidget(QWidget):
             rows = cur.fetchall()[0]
 
             string1 = "윈도우 버전:\t" + rows[0] + ", " + rows[1] + ", " + rows[2]
-            string2 = "윈도우 설치 시간: " + rows[6]
+            string2 = "윈도우 설치 시간:\t " + rows[6]
             string3 = "컴퓨터 이름:\t" + rows[3]
             string4 = "표준 시간대:\t" + rows[4] + " (UTC " + str(rows[5]) + ")"
 
@@ -1278,9 +1377,10 @@ class MyWidget(QWidget):
                     if last_login_time == None:
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on,"%Y-%m-%d %H:%M:%S"):
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
-                            # flag = 1
+                            flag = 1
                         else:
                             string = account_name + "(" + str(RID_int) + ")" + "\t생성: " + created_on + "\t마지막 로그인: " + str(last_login_time)
+
                     else: # 사용자가 생성한 계정에 로그인 기록이 존재
                         # 윈도우 설치 시간이 계정 생성 시간 이후인 경우
                         if datetime.strptime(win_inst[0], "%Y-%m-%d %H:%M:%S") > datetime.strptime(created_on, "%Y-%m-%d %H:%M:%S")\
@@ -1318,11 +1418,9 @@ class MyWidget(QWidget):
             query = "SELECT serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected FROM Connected_USB"
             cur.execute(query)
             rows = cur.fetchall()
-            print(len(rows))
             self.text7_content = []
             for i in range(len(rows)):
                 serial_num, random_yn, GUID, vendor_name, product_name, version, label, first_connected, last_connected = rows[i]
-                print(rows[i])
                 string = None
                 if random_yn == 0:   # serial_num이 PnP Manager가 부여한 랜덤 번호가 아니라면 serial_num를 출력함
                     string = vendor_name + " " + product_name + " " + version + " / GUID: " + GUID + ", 시리얼 번호: " + str(serial_num) + ", 최초 연결: " + first_connected + ", 마지막 연결: " + last_connected
