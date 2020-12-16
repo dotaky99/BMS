@@ -1634,6 +1634,8 @@ class MyWidget(QWidget):
         start = self.input_datetime1.dateTime().toPyDateTime() + timedelta(hours=-self.UTC_int)
         end = self.input_datetime2.dateTime().toPyDateTime() + timedelta(hours=-self.UTC_int)
         interval = (end - start) / 10
+        if start == end:
+            return
 
         # times 리스트 생성
         self.times = []  # str: 쿼리에서 string 타입의 시간이 필요함. self.times는 self.times2, self.times3보다 1 더 길음. (쿼리 사용을 위함)
@@ -1680,25 +1682,42 @@ class MyWidget(QWidget):
         times3_tmp = [(t - self.times3_min) / (self.times3_max - self.times3_min) for t in self.times3]
         internet_max = max(self.internet_data)
         internet_min = min(self.internet_data)
-        internet_data_tmp = [(i - internet_min) / (internet_max - internet_min) for i in self.internet_data]
+        if internet_min == internet_max:    # 인터넷 데이터가 없는 경우
+            internet_data_tmp = None
+            self.points1 = None
+        else:
+            internet_data_tmp = [(i - internet_min) / (internet_max - internet_min) for i in self.internet_data]
+            self.points1 = list(zip(times3_tmp, internet_data_tmp))
         document_max = max(self.document_data)
         document_min = min(self.document_data)
-        document_data_tmp = [(d - document_min) / (document_max - document_min) for d in self.document_data]
-        self.points1 = list(zip(times3_tmp, internet_data_tmp))
-        self.points2 = list(zip(times3_tmp, document_data_tmp))
-        if internet_max > document_max:
-            self.MAX = internet_max
+        if document_min == document_max:    # MFT 데이터가 없는 경우
+            document_data_tmp = None
+            self.points2 = None
         else:
+            document_data_tmp = [(d - document_min) / (document_max - document_min) for d in self.document_data]
+            self.points2 = list(zip(times3_tmp, document_data_tmp))
+        if internet_data_tmp is None:
             self.MAX = document_max
-        if internet_min < document_min:
-            self.MIN = internet_min
-        else:
             self.MIN = document_min
+        elif document_data_tmp is None:
+            self.MAX = internet_max
+            self.MIN = internet_min
+        elif (internet_data_tmp is None) and (document_data_tmp is None):
+            return
+        else:
+            if internet_max > document_max:
+                self.MAX = internet_max
+            else:
+                self.MAX = document_max
+            if internet_min < document_min:
+                self.MIN = internet_min
+            else:
+                self.MIN = document_min
 
         self.ax.cla()
         self.ax2.cla()
-        line1 = self.ax.plot(self.times2, self.internet_data, color="lightskyblue", label="Internet")
-        line2 = self.ax2.plot(self.times2, self.document_data, color="sandybrown", label="Documnets Create/Modify/Access")
+        line1 = self.ax.plot(self.times2, self.internet_data, color="lightskyblue", label="Internet", marker = 'o')
+        line2 = self.ax2.plot(self.times2, self.document_data, color="sandybrown", label="Documnets Create/Modify/Access", marker = 'o')
         lines = line1 + line2
         labels = [l.get_label() for l in lines]
         self.ax.legend(lines, labels, loc="upper left")
